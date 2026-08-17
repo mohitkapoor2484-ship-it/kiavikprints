@@ -1,0 +1,983 @@
+:root {
+  --ink: #182231;
+  --ink-soft: #607086;
+  --paper: #f6f0e8;
+  --paper-strong: #fffdf9;
+  --panel: rgba(255, 255, 255, 0.84);
+  --panel-strong: #fffdfa;
+  --line: rgba(24, 34, 49, 0.12);
+  --line-strong: rgba(24, 34, 49, 0.2);
+  --accent: #ef7b34;
+  --accent-strong: #b85718;
+  --accent-secondary: #0c5d6d;
+  --accent-tertiary: #f6c14f;
+  --surface-tint: rgba(239, 123, 52, 0.12);
+  --surface-tint-strong: rgba(12, 93, 109, 0.13);
+  --hero-gradient: linear-gradient(145deg, rgba(255, 252, 246, 0.95), rgba(246, 240, 232, 0.9));
+  --display-gradient: linear-gradient(155deg, #102937 0%, #164c58 55%, #0d3641 100%);
+  --shadow-xl: 0 30px 80px rgba(24, 34, 49, 0.12);
+  --shadow-lg: 0 18px 40px rgba(24, 34, 49, 0.1);
+  --shadow-accent: 0 22px 38px rgba(239, 123, 52, 0.26);
+  --radius-xl: 34px;
+  --radius-lg: 24px;
+  --radius-md: 18px;
+  --radius-pill: 999px;
+  --body-background:
+    radial-gradient(circle at top left, rgba(239, 123, 52, 0.17), transparent 24%),
+    radial-gradient(circle at right center, rgba(12, 93, 109, 0.16), transparent 26%),
+    linear-gradient(160deg, #fff9f2 0%, #f4eee5 52%, #eee4d7 100%);
+}
+
+.admin-body {
+  --body-background:
+    radial-gradient(circle at top left, rgba(239, 123, 52, 0.14), transparent 24%),
+    linear-gradient(160deg, #fffaf4 0%, #f5eee4 52%, #ebe2d4 100%);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--ink);
+  background: var(--body-background);
+  font-family: Aptos, "Segoe UI", sans-serif;
+}
+
+a {
+  color: inherit;
+}
+
+.store-body,
+.admin-body {
+  position: relative;
+}
+
+.ambient-shape {
+  position: fixed;
+  width: 24rem;
+  height: 24rem;
+  border-radius: 999px;
+  filter: blur(42px);
+  opacity: 0.55;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.ambient-shape-left {
+  top: -3rem;
+  left: -5rem;
+  background: rgba(255, 160, 102, 0.34);
+}
+
+.ambient-shape-right {
+  right: -5rem;
+  bottom: 7rem;
+  background: rgba(18, 103, 219, 0.18);
+}
+
+.promo-bar {
+  position: relative;
+  z-index: 4;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1.5rem;
+  background: rgba(255, 255, 255, 0.4);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(16px);
+}
+
+.promo-pill-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.promo-pill-list span,
+.theme-switch,
+.ghost-link,
+.hero-badge,
+.product-pill,
+.checkout-confidence span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.66);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 10px 24px rgba(24, 34, 49, 0.06);
+  color: var(--ink);
+  font-size: 0.88rem;
+  text-decoration: none;
+}
+
+.theme-switch,
+.ghost-link {
+  font-weight: 700;
+}
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  backdrop-filter: blur(18px);
+  background: rgba(255, 251, 245, 0.78);
+  border-bottom: 1px solid rgba(24, 34, 49, 0.08);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.85rem;
+  text-decoration: none;
+  color: inherit;
+}
+
+.brand-logo {
+  display: block;
+  width: clamp(7.6rem, 17vw, 10.4rem);
+  height: auto;
+  border-radius: 0.9rem;
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 14px 32px rgba(24, 34, 49, 0.1);
+}
+
+.brand-logo-admin {
+  width: clamp(6.6rem, 14vw, 9rem);
+}
+
+.brand-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.brand-copy-compact strong {
+  font-size: 1rem;
+}
+
+.brand-kicker,
+.eyebrow,
+.hero-card-label,
+.benefit-icon,
+.mini-preview-label,
+.product-category,
+.form-section-title {
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+}
+
+.brand-copy strong {
+  font-family: Bahnschrift, "Segoe UI", sans-serif;
+  font-size: 1.22rem;
+  letter-spacing: 0.02em;
+}
+
+.brand-kicker,
+.eyebrow,
+.hero-card-label,
+.product-category,
+.form-section-title {
+  color: var(--accent-strong);
+}
+
+.site-nav,
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.site-nav {
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.site-nav a {
+  text-decoration: none;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.cart-pill,
+.primary-button,
+.ghost-button,
+.tab-button,
+.primary-link,
+.secondary-link,
+.dialog-close {
+  border: 0;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  font: inherit;
+}
+
+.cart-pill,
+.primary-button,
+.primary-link {
+  background: linear-gradient(135deg, var(--accent) 0%, #f19c56 100%);
+  color: white;
+  box-shadow: var(--shadow-accent);
+}
+
+.cart-pill,
+.primary-button,
+.ghost-button,
+.primary-link,
+.secondary-link {
+  padding: 0.92rem 1.25rem;
+  font-weight: 800;
+}
+
+.primary-link,
+.secondary-link {
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.secondary-link,
+.ghost-button,
+.tab-button,
+.dialog-close {
+  background: rgba(255, 255, 255, 0.74);
+  color: var(--ink);
+  border: 1px solid rgba(24, 34, 49, 0.1);
+}
+
+.cart-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.cart-pill span {
+  display: inline-grid;
+  place-items: center;
+  min-width: 1.85rem;
+  min-height: 1.85rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.22);
+}
+
+main,
+.admin-main {
+  position: relative;
+  z-index: 1;
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 1.4rem 1.5rem 2rem;
+}
+
+.hero-shell {
+  display: grid;
+  gap: 1.2rem;
+}
+
+.hero-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.9fr);
+  gap: 1.4rem;
+}
+
+.hero-copy,
+.hero-display-card,
+.panel,
+.summary-card,
+.benefit-card,
+.metric-card,
+.account-intro-card,
+.signed-in-card,
+.product-card,
+.cart-item,
+.order-card,
+.admin-product-card {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--panel);
+  box-shadow: var(--shadow-lg);
+}
+
+.hero-copy {
+  padding: 2rem;
+  background: var(--hero-gradient);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+}
+
+.hero-copy h1,
+.panel h2,
+.dialog-content h3,
+.admin-auth-panel h1,
+.admin-main h2 {
+  margin: 0.35rem 0 0.8rem;
+  font-family: Bahnschrift, "Segoe UI", sans-serif;
+  line-height: 0.96;
+}
+
+.hero-copy h1 {
+  font-size: clamp(2.4rem, 5vw, 4.55rem);
+}
+
+.panel h2,
+.admin-auth-panel h1,
+.admin-main h2 {
+  font-size: clamp(1.45rem, 2.7vw, 2.2rem);
+}
+
+.hero-text,
+.summary-note,
+.card-copy,
+.dialog-description,
+.section-copy,
+.benefit-card p,
+.mini-preview-card p,
+.account-intro-card p {
+  margin: 0;
+  color: var(--ink-soft);
+  line-height: 1.65;
+}
+
+.hero-badge-row,
+.hero-actions,
+.hero-metrics,
+.category-chips,
+.tab-row,
+.checkout-confidence,
+.product-pill-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+}
+
+.hero-badge-row {
+  margin: 1.25rem 0 0;
+}
+
+.hero-actions {
+  margin-top: 1.35rem;
+}
+
+.hero-metrics {
+  margin-top: 1.5rem;
+}
+
+.metric-card {
+  min-width: 10rem;
+  padding: 1rem 1.1rem;
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.metric-card strong {
+  display: block;
+  font-family: Bahnschrift, "Segoe UI", sans-serif;
+  font-size: 1.55rem;
+}
+
+.metric-card span {
+  display: block;
+  margin-top: 0.3rem;
+  color: var(--ink-soft);
+  font-size: 0.92rem;
+}
+
+.hero-display {
+  display: grid;
+  gap: 1.2rem;
+}
+
+.hero-display-card {
+  padding: 1.45rem;
+  border-radius: var(--radius-xl);
+}
+
+.hero-display-feature {
+  color: white;
+  background: var(--display-gradient);
+}
+
+.hero-display-feature .hero-card-label {
+  color: rgba(255, 255, 255, 0.66);
+}
+
+.hero-display-feature h2 {
+  margin: 0.2rem 0 1rem;
+  font-size: 1.95rem;
+  line-height: 1.03;
+}
+
+.mini-preview-stack {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.mini-preview-card {
+  padding: 1rem 1rem 1.1rem;
+  border-radius: 1.2rem;
+  background: rgba(255, 255, 255, 0.11);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.mini-preview-card strong {
+  display: block;
+  margin: 0.25rem 0 0.35rem;
+  font-size: 1.05rem;
+}
+
+.mini-preview-card p {
+  color: rgba(255, 255, 255, 0.74);
+}
+
+.hero-display-note {
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.hero-checklist {
+  display: grid;
+  gap: 0.8rem;
+  margin: 0.9rem 0 0;
+  padding-left: 1.15rem;
+  color: var(--ink);
+}
+
+.benefits-strip,
+.content-grid,
+.admin-grid {
+  display: grid;
+  gap: 1.2rem;
+}
+
+.benefits-strip {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.benefit-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: start;
+  gap: 1rem;
+  padding: 1.15rem 1.2rem;
+}
+
+.benefit-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 2.8rem;
+  height: 2.8rem;
+  border-radius: 1rem;
+  background: linear-gradient(135deg, rgba(239, 123, 52, 0.14), rgba(12, 93, 109, 0.16));
+  font-family: Bahnschrift, "Segoe UI", sans-serif;
+  color: var(--accent-strong);
+}
+
+.benefit-card strong {
+  display: block;
+  margin-bottom: 0.3rem;
+  font-size: 1.02rem;
+}
+
+.content-grid,
+.admin-grid {
+  grid-template-columns: minmax(0, 1.28fr) minmax(340px, 0.92fr);
+  align-items: start;
+}
+
+.shop-column,
+.checkout-column,
+.admin-dashboard {
+  display: grid;
+  gap: 1.2rem;
+}
+
+.sticky-panel {
+  position: sticky;
+  top: 6.3rem;
+}
+
+.panel {
+  padding: 1.5rem;
+  border-radius: var(--radius-xl);
+}
+
+.section-heading,
+.admin-intro {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 1rem;
+  margin-bottom: 1.15rem;
+}
+
+.compact-heading h2 {
+  font-size: 1.68rem;
+}
+
+.tab-button.active,
+.category-chips .tab-button.active {
+  background: var(--ink);
+  color: white;
+}
+
+.product-grid,
+.admin-product-list,
+.orders-list,
+.cart-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.product-grid {
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+.product-card {
+  display: grid;
+  overflow: hidden;
+  border-radius: 1.45rem;
+  background: var(--panel-strong);
+}
+
+.product-card-media,
+.dialog-media,
+.image-preview,
+.mini-image {
+  display: grid;
+  place-items: center;
+  min-height: 220px;
+  background:
+    radial-gradient(circle at top left, rgba(255, 228, 194, 0.9), transparent 40%),
+    linear-gradient(135deg, rgba(239, 123, 52, 0.14), rgba(12, 93, 109, 0.16)),
+    #efe3d0;
+}
+
+.product-card-media img,
+.dialog-media img,
+.image-preview img,
+.mini-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.placeholder-art {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 1rem;
+  font-family: Bahnschrift, "Segoe UI", sans-serif;
+  font-size: 1.6rem;
+  text-align: center;
+  color: rgba(24, 34, 49, 0.54);
+}
+
+.product-card-body {
+  display: grid;
+  gap: 0.8rem;
+  padding: 1.1rem 1.1rem 1.2rem;
+}
+
+.product-topline,
+.cart-row,
+.summary-row,
+.admin-card-actions,
+.product-card-footer,
+.order-meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.product-status {
+  padding: 0.36rem 0.7rem;
+  border-radius: var(--radius-pill);
+  background: var(--surface-tint);
+  color: var(--accent-strong);
+  font-weight: 700;
+  font-size: 0.82rem;
+}
+
+.product-card h3,
+.dialog-content h3,
+.signed-in-card h3 {
+  margin: 0;
+  font-size: 1.28rem;
+}
+
+.product-price {
+  margin: 0;
+  font-family: Bahnschrift, "Segoe UI", sans-serif;
+  font-size: 1.7rem;
+  color: var(--accent-secondary);
+}
+
+.product-price span {
+  display: block;
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.product-pill,
+.checkout-confidence span {
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+}
+
+.product-card-footer {
+  align-items: end;
+}
+
+.product-card-footer .primary-button {
+  padding-inline: 1.05rem;
+}
+
+.cart-item,
+.order-card,
+.signed-in-card,
+.admin-product-card,
+.account-intro-card {
+  padding: 1rem;
+  border-radius: 1.25rem;
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.cart-item {
+  gap: 0.6rem;
+}
+
+.cart-item strong,
+.order-card strong,
+.signed-in-card strong,
+.benefit-card strong,
+.account-intro-card strong {
+  font-size: 1rem;
+}
+
+.cart-meta,
+.order-meta {
+  color: var(--ink-soft);
+  font-size: 0.92rem;
+}
+
+.cart-qty-badge {
+  display: inline-grid;
+  place-items: center;
+  min-width: 3rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-pill);
+  background: var(--surface-tint);
+  color: var(--accent-strong);
+  font-weight: 700;
+}
+
+.summary-card {
+  padding: 1rem 1.1rem;
+}
+
+.account-shell {
+  display: grid;
+  gap: 1rem;
+}
+
+.account-intro-card {
+  margin-bottom: 1rem;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(246, 240, 232, 0.8));
+}
+
+.checkout-confidence {
+  margin-bottom: 1rem;
+}
+
+.checkout-confidence span {
+  font-weight: 700;
+}
+
+.stack-form {
+  display: grid;
+  gap: 0.95rem;
+}
+
+.stack-form label,
+.shipping-options legend {
+  display: grid;
+  gap: 0.42rem;
+  font-weight: 700;
+}
+
+.stack-form input,
+.stack-form select,
+.stack-form textarea {
+  width: 100%;
+  padding: 0.92rem 1rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(24, 34, 49, 0.12);
+  background: rgba(255, 255, 255, 0.84);
+  color: var(--ink);
+  font: inherit;
+}
+
+.stack-form textarea {
+  resize: vertical;
+}
+
+.form-section-title {
+  margin-top: 0.3rem;
+}
+
+.split-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.shipping-options {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.shipping-choice {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.86rem 0.95rem;
+  margin-bottom: 0.55rem;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid var(--line);
+}
+
+.payment-area {
+  display: grid;
+  gap: 0.85rem;
+  margin-top: 1rem;
+}
+
+.paypal-shell {
+  padding: 0.95rem;
+  border-radius: 1.1rem;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid var(--line);
+}
+
+.paypal-label {
+  margin: 0 0 0.75rem;
+  font-weight: 800;
+}
+
+.empty-state {
+  padding: 1.15rem;
+  border-radius: 1.1rem;
+  border: 1px dashed var(--line-strong);
+  color: var(--ink-soft);
+  text-align: center;
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.status-toast {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 40;
+  max-width: 420px;
+  padding: 0.95rem 1.1rem;
+  border-radius: 1rem;
+  background: rgba(24, 34, 49, 0.95);
+  color: white;
+  box-shadow: var(--shadow-xl);
+}
+
+.product-dialog {
+  width: min(980px, calc(100vw - 2rem));
+  padding: 0;
+  border: 0;
+  border-radius: 1.8rem;
+  background: transparent;
+}
+
+.product-dialog::backdrop {
+  background: rgba(24, 34, 49, 0.55);
+  backdrop-filter: blur(10px);
+}
+
+.dialog-shell {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(260px, 0.9fr) minmax(260px, 1fr);
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 1.8rem;
+  background: rgba(255, 252, 246, 0.98);
+  box-shadow: var(--shadow-xl);
+}
+
+.dialog-media {
+  min-height: 480px;
+  border-radius: 1.4rem;
+}
+
+.dialog-content {
+  display: grid;
+  align-content: start;
+  gap: 0.85rem;
+  padding: 1rem 0.3rem 0.8rem 0.2rem;
+}
+
+.dialog-close {
+  position: absolute;
+  top: 0.95rem;
+  right: 0.95rem;
+  width: 2.4rem;
+  height: 2.4rem;
+  font-size: 1.35rem;
+}
+
+.checkbox-row {
+  grid-template-columns: auto 1fr;
+  align-items: center;
+}
+
+.checkbox-row input {
+  width: auto;
+  margin: 0;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.admin-main {
+  padding-top: 1.6rem;
+}
+
+.admin-header {
+  position: static;
+}
+
+.admin-dashboard {
+  gap: 1.3rem;
+}
+
+.admin-intro {
+  padding: 1.4rem;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: var(--shadow-lg);
+}
+
+.admin-product-list,
+.orders-list {
+  grid-template-columns: 1fr;
+}
+
+.admin-product-card {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.image-preview {
+  min-height: 210px;
+  border-radius: 1.1rem;
+  overflow: hidden;
+}
+
+.mini-image {
+  min-height: 180px;
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+@media (max-width: 1080px) {
+  .site-header {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-panel,
+  .content-grid,
+  .admin-grid,
+  .dialog-shell,
+  .benefits-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .sticky-panel {
+    position: static;
+  }
+
+  .site-nav,
+  .nav-actions {
+    justify-content: flex-start;
+  }
+
+  .brand {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 760px) {
+  .promo-bar,
+  .site-header,
+  .section-heading,
+  .admin-intro,
+  .product-card-footer,
+  .cart-row,
+  .summary-row,
+  .admin-card-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .site-header {
+    padding-top: 1.1rem;
+  }
+
+  .hero-copy {
+    padding: 1.45rem;
+  }
+
+  .hero-copy h1 {
+    font-size: 2.65rem;
+  }
+
+  .split-fields {
+    grid-template-columns: 1fr;
+  }
+
+  main,
+  .admin-main {
+    padding-inline: 1rem;
+  }
+
+  .promo-bar,
+  .site-header {
+    padding-inline: 1rem;
+  }
+
+  .brand-logo {
+    width: min(10.2rem, 44vw);
+  }
+
+  .brand-copy-compact {
+    width: 100%;
+  }
+}

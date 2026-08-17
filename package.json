@@ -1,0 +1,9 @@
+{
+  "name": "kiavik-prints-mvp",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Kiavik Prints local MVP storefront with admin, checkout, and PayPal-ready endpoints.",
+  "scripts": {
+    "start": "node server.js"
+  }
+}

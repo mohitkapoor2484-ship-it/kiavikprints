@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kiavik Prints | Premium Storefront</title>
+    <link rel="icon" href="./assets/kiavik-prints-logo.jpg" />
+    <link rel="stylesheet" href="./styles.css" />
+    <script defer src="./app.js"></script>
+  </head>
+  <body class="store-body premium-theme">
+    <div class="ambient-shape ambient-shape-left"></div>
+    <div class="ambient-shape ambient-shape-right"></div>
+
+    <div class="promo-bar">
+      <div class="promo-pill-list">
+        <span>Made-to-order in Australia</span>
+        <span>Guest checkout or account</span>
+        <span>Secure PayPal checkout</span>
+      </div>
+      <span class="theme-switch">Professional storefront</span>
+    </div>
+
+    <header class="site-header">
+      <a class="brand" href="#top">
+        <img
+          class="brand-logo"
+          src="./assets/kiavik-prints-logo.jpg"
+          alt="Kiavik Prints logo"
+        />
+        <span class="brand-copy brand-copy-compact">
+          <span class="brand-kicker">Kiavik Prints Studio</span>
+          <strong>Professional 3D Products</strong>
+        </span>
+      </a>
+      <nav class="site-nav">
+        <a href="#shop">Shop</a>
+        <a href="#collections">Collections</a>
+        <a href="#checkout">Checkout</a>
+        <a href="#account">Account</a>
+        <a href="./admin.html">Admin</a>
+      </nav>
+      <div class="nav-actions">
+        <span class="ghost-link">Professional</span>
+        <button class="cart-pill" id="cartPill" type="button">
+          Cart
+          <span id="cartCount">0</span>
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero-shell" id="top">
+        <div class="hero-panel">
+          <div class="hero-copy">
+            <p class="eyebrow">Kiavik Prints storefront</p>
+            <h1>Personalised prints presented like a real retail brand, not a hobby page.</h1>
+            <p class="hero-text">
+              Kiavik Prints is positioned as a polished ecommerce brand with stronger product
+              framing, premium cards, and a cleaner checkout experience.
+            </p>
+
+            <div class="hero-badge-row">
+              <span class="hero-badge">Badges</span>
+              <span class="hero-badge">Desk Signs</span>
+              <span class="hero-badge">Keychains</span>
+              <span class="hero-badge">Business Gifts</span>
+            </div>
+
+            <div class="hero-actions">
+              <a class="primary-link" href="#shop">Shop The Collection</a>
+              <a class="secondary-link" href="#checkout">Start An Order</a>
+            </div>
+
+            <div class="hero-metrics">
+              <article class="metric-card">
+                <strong id="heroProductCount">0</strong>
+                <span>starter products live</span>
+              </article>
+              <article class="metric-card">
+                <strong id="heroCategoryCount">0</strong>
+                <span>product categories</span>
+              </article>
+              <article class="metric-card">
+                <strong>24/7</strong>
+                <span>custom orders accepted</span>
+              </article>
+            </div>
+          </div>
+
+          <div class="hero-display">
+            <div class="hero-display-card hero-display-feature">
+              <p class="hero-card-label">Signature look</p>
+              <h2>Clean, confident, made for gifting and branded merchandise.</h2>
+              <div class="mini-preview-stack">
+                <article class="mini-preview-card">
+                  <span class="mini-preview-label">Club Badges</span>
+                  <strong>Gold accents</strong>
+                  <p>Structured options, consistent pricing, and personalization.</p>
+                </article>
+                <article class="mini-preview-card">
+                  <span class="mini-preview-label">Desk Name Plates</span>
+                  <strong>Professional styling</strong>
+                  <p>Fits office, hospitality, school, and event-use products.</p>
+                </article>
+              </div>
+            </div>
+            <div class="hero-display-card hero-display-note">
+              <p class="hero-card-label">Why this direction works</p>
+              <ul class="hero-checklist">
+                <li>Large product cards with stronger hierarchy</li>
+                <li>Sticky order summary and trust cues</li>
+                <li>Cleaner customisation dialog</li>
+                <li>Professional brand presence across every section</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <section class="benefits-strip" id="collections">
+          <article class="benefit-card">
+            <span class="benefit-icon">01</span>
+            <div>
+              <strong>Personalised products</strong>
+              <p>Names, colour combinations, and add-on options are built into the product flow.</p>
+            </div>
+          </article>
+          <article class="benefit-card">
+            <span class="benefit-icon">02</span>
+            <div>
+              <strong>Guest-friendly checkout</strong>
+              <p>Customers can order quickly first and choose whether they want an account.</p>
+            </div>
+          </article>
+          <article class="benefit-card">
+            <span class="benefit-icon">03</span>
+            <div>
+              <strong>Simple family admin</strong>
+              <p>Your kid can manage products from the admin side without touching code or tables.</p>
+            </div>
+          </article>
+        </section>
+      </section>
+
+      <section class="content-grid">
+        <div class="shop-column">
+          <section class="panel shop-panel" id="shop">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">Storefront</p>
+                <h2>Browse the live collection</h2>
+                <p class="section-copy">
+                  Product cards are styled to feel like a real online shop: clearer pricing,
+                  better spacing, stronger CTAs, and more obvious customization cues.
+                </p>
+              </div>
+              <div class="category-chips" id="categoryChips"></div>
+            </div>
+            <div class="product-grid" id="productsGrid"></div>
+          </section>
+
+          <section class="panel account-panel" id="account">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">Customer account</p>
+                <h2>Save order history or keep it quick with guest checkout</h2>
+              </div>
+            </div>
+
+            <div class="account-shell">
+              <div class="account-auth" id="accountAuth">
+                <div class="tab-row">
+                  <button class="tab-button active" data-auth-tab="signin" type="button">Sign In</button>
+                  <button class="tab-button" data-auth-tab="signup" type="button">Create Account</button>
+                </div>
+
+                <div class="account-intro-card">
+                  <strong>Optional account, not forced.</strong>
+                  <p>
+                    This keeps the purchase path friction-light while still letting repeat buyers
+                    log in and see previous orders.
+                  </p>
+                </div>
+
+                <form class="stack-form" id="signinForm">
+                  <label>
+                    Email
+                    <input name="email" type="email" autocomplete="email" required />
+                  </label>
+                  <label>
+                    Password
+                    <input name="password" type="password" autocomplete="current-password" required />
+                  </label>
+                  <button class="primary-button" type="submit">Sign In</button>
+                </form>
+
+                <form class="stack-form hidden" id="signupForm">
+                  <label>
+                    Full name
+                    <input name="fullName" type="text" autocomplete="name" required />
+                  </label>
+                  <label>
+                    Email
+                    <input name="email" type="email" autocomplete="email" required />
+                  </label>
+                  <label>
+                    Password
+                    <input name="password" type="password" autocomplete="new-password" minlength="8" required />
+                  </label>
+                  <button class="primary-button" type="submit">Create Account</button>
+                </form>
+              </div>
+
+              <div class="account-summary hidden" id="accountSummary">
+                <div class="signed-in-card">
+                  <p class="eyebrow">Signed in</p>
+                  <h3 id="signedInName"></h3>
+                  <p id="signedInEmail"></p>
+                  <button class="ghost-button" id="logoutButton" type="button">Sign Out</button>
+                </div>
+                <div class="orders-list" id="ordersList"></div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <aside class="checkout-column">
+          <section class="panel sticky-panel checkout-panel" id="checkout">
+            <div class="section-heading compact-heading">
+              <div>
+                <p class="eyebrow">Cart + Checkout</p>
+                <h2>Structured like a real order sidebar</h2>
+              </div>
+            </div>
+
+            <div class="checkout-confidence">
+              <span>Secure PayPal flow</span>
+              <span>Guest checkout enabled</span>
+              <span>Pickup or delivery</span>
+            </div>
+
+            <div class="cart-list" id="cartItems"></div>
+
+            <div class="summary-card">
+              <div class="summary-row">
+                <span>Subtotal</span>
+                <strong id="cartSubtotal">$0.00</strong>
+              </div>
+              <p class="summary-note">
+                Shipping is selected below. The final checkout flow is already wired for PayPal.
+              </p>
+            </div>
+
+            <form class="stack-form" id="checkoutForm">
+              <div class="form-section-title">Customer details</div>
+              <label>
+                Full name
+                <input name="customerName" type="text" autocomplete="name" required />
+              </label>
+              <label>
+                Email
+                <input name="customerEmail" type="email" autocomplete="email" required />
+              </label>
+              <label>
+                Phone
+                <input name="customerPhone" type="tel" autocomplete="tel" />
+              </label>
+
+              <div class="form-section-title">Shipping details</div>
+              <label>
+                Shipping name
+                <input name="shippingName" type="text" autocomplete="shipping name" required />
+              </label>
+              <label>
+                Address line 1
+                <input name="addressLine1" type="text" autocomplete="shipping address-line1" required />
+              </label>
+              <label>
+                Address line 2
+                <input name="addressLine2" type="text" autocomplete="shipping address-line2" />
+              </label>
+              <div class="split-fields">
+                <label>
+                  Suburb
+                  <input name="suburb" type="text" autocomplete="shipping address-level2" required />
+                </label>
+                <label>
+                  State
+                  <input name="state" type="text" autocomplete="shipping address-level1" required />
+                </label>
+              </div>
+              <div class="split-fields">
+                <label>
+                  Postcode
+                  <input name="postcode" type="text" autocomplete="shipping postal-code" required />
+                </label>
+                <label>
+                  Country
+                  <input name="country" type="text" value="Australia" autocomplete="shipping country" required />
+                </label>
+              </div>
+
+              <fieldset class="shipping-options">
+                <legend>Delivery method</legend>
+                <div id="shippingOptions"></div>
+              </fieldset>
+
+              <label>
+                Order notes
+                <textarea
+                  name="orderNotes"
+                  rows="3"
+                  placeholder="Text notes, pickup instructions, color preferences, or gift notes"
+                ></textarea>
+              </label>
+            </form>
+
+            <div class="payment-area">
+              <button class="primary-button" id="previewOrderButton" type="button">Save Draft Order</button>
+              <div class="paypal-shell hidden" id="paypalShell">
+                <p class="paypal-label">Checkout with PayPal</p>
+                <div id="paypalButtons"></div>
+              </div>
+              <p class="summary-note" id="paypalNotice">
+                PayPal buttons appear here once the credentials are set. Until then, draft orders
+                still save locally so the flow can be tested end-to-end.
+              </p>
+            </div>
+          </section>
+        </aside>
+      </section>
+    </main>
+
+    <div class="status-toast hidden" id="statusToast"></div>
+
+    <dialog class="product-dialog" id="productDialog">
+      <div class="dialog-shell">
+        <button class="dialog-close" id="closeProductDialog" type="button" aria-label="Close">
+          ×
+        </button>
+        <div class="dialog-media" id="dialogMedia"></div>
+        <div class="dialog-content">
+          <p class="eyebrow" id="dialogCategory"></p>
+          <h3 id="dialogName"></h3>
+          <p class="product-price" id="dialogPrice"></p>
+          <p class="dialog-description" id="dialogDescription"></p>
+          <form class="stack-form" id="productOptionForm">
+            <input id="dialogProductId" type="hidden" />
+            <label id="sizeField" class="hidden">
+              Size
+              <select id="dialogSize"></select>
+            </label>
+            <label id="colorField" class="hidden">
+              Colour
+              <select id="dialogColor"></select>
+            </label>
+            <label id="textField" class="hidden">
+              Custom text
+              <input id="dialogText" type="text" maxlength="40" placeholder="Type the name or wording" />
+            </label>
+            <label>
+              Quantity
+              <input id="dialogQuantity" type="number" min="1" max="99" value="1" />
+            </label>
+            <button class="primary-button" type="submit">Add To Cart</button>
+          </form>
+        </div>
+      </div>
+    </dialog>
+  </body>
+</html>

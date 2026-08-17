@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kiavik Prints Admin</title>
+    <link rel="icon" href="./assets/kiavik-prints-logo.jpg" />
+    <link rel="stylesheet" href="./styles.css" />
+    <script defer src="./admin.js"></script>
+  </head>
+  <body class="admin-body">
+    <header class="site-header admin-header">
+      <a class="brand" href="./index.html">
+        <img
+          class="brand-logo brand-logo-admin"
+          src="./assets/kiavik-prints-logo.jpg"
+          alt="Kiavik Prints logo"
+        />
+        <span class="brand-copy brand-copy-compact">
+          <span class="brand-kicker">Family product manager</span>
+          <strong>Admin dashboard</strong>
+        </span>
+      </a>
+      <nav class="site-nav">
+        <a href="./index.html">Storefront</a>
+      </nav>
+    </header>
+
+    <main class="admin-main">
+      <section class="panel admin-auth-panel" id="adminAuthPanel">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Admin sign in</p>
+            <h1>Simple enough for daily product updates</h1>
+          </div>
+        </div>
+        <form class="stack-form" id="adminLoginForm">
+          <label>
+            Email
+            <input name="email" type="email" required />
+          </label>
+          <label>
+            Password
+            <input name="password" type="password" required />
+          </label>
+          <button class="primary-button" type="submit">Sign In</button>
+        </form>
+        <p class="summary-note">
+          Use the admin account from `.env`. Change the default password before real use.
+        </p>
+      </section>
+
+      <section class="admin-dashboard hidden" id="adminDashboard">
+        <div class="panel admin-intro">
+          <div>
+            <p class="eyebrow">Signed in</p>
+            <h2 id="adminWelcome"></h2>
+            <p class="summary-note">Add products, hide them, or remove them without editing code.</p>
+          </div>
+          <button class="ghost-button" id="adminLogoutButton" type="button">Sign Out</button>
+        </div>
+
+        <div class="admin-grid">
+          <section class="panel">
+            <div class="section-heading compact-heading">
+              <div>
+                <p class="eyebrow">Product editor</p>
+                <h2>Add or update a product</h2>
+              </div>
+            </div>
+
+            <form class="stack-form" id="productForm">
+              <input id="productId" type="hidden" />
+              <label>
+                Product name
+                <input id="productName" type="text" required />
+              </label>
+              <div class="split-fields">
+                <label>
+                  Category
+                  <input id="productCategory" type="text" />
+                </label>
+                <label>
+                  Price
+                  <input id="productPrice" type="number" min="0" step="0.01" required />
+                </label>
+              </div>
+              <label>
+                Description
+                <textarea id="productDescription" rows="4"></textarea>
+              </label>
+              <label>
+                Size options
+                <input id="productSizes" type="text" placeholder="Example: 30mm, 45mm, 55mm" />
+              </label>
+              <label>
+                Colour options
+                <input id="productColors" type="text" placeholder="Example: Black + Gold, White + Gold" />
+              </label>
+              <label class="checkbox-row">
+                <input id="productCustomText" type="checkbox" />
+                Allow custom text
+              </label>
+              <label class="checkbox-row">
+                <input id="productActive" type="checkbox" checked />
+                Show this product on the store
+              </label>
+              <label>
+                Product image
+                <input id="productImageFile" type="file" accept="image/*" />
+              </label>
+              <div class="image-preview" id="imagePreview"></div>
+              <div class="inline-actions">
+                <button class="primary-button" type="submit">Save Product</button>
+                <button class="ghost-button" id="resetProductButton" type="button">Clear Form</button>
+              </div>
+            </form>
+          </section>
+
+          <section class="panel">
+            <div class="section-heading compact-heading">
+              <div>
+                <p class="eyebrow">Catalog</p>
+                <h2>Current products</h2>
+              </div>
+            </div>
+            <div class="admin-product-list" id="adminProductList"></div>
+          </section>
+        </div>
+
+        <section class="panel">
+          <div class="section-heading compact-heading">
+            <div>
+              <p class="eyebrow">Orders</p>
+              <h2>Recent orders</h2>
+            </div>
+          </div>
+          <div class="orders-list" id="adminOrdersList"></div>
+        </section>
+      </section>
+    </main>
+
+    <div class="status-toast hidden" id="adminStatusToast"></div>
+  </body>
+</html>
