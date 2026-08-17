@@ -1,9 +1,19 @@
 (function () {
+  const shopCategories = [
+    { slug: "lamps-light-boxes", label: "Lamps & Light Boxes", matches: ["Lamps & Light Boxes"] },
+    { slug: "personalised-gifts", label: "Personalised Gifts", matches: ["Personalised Gifts", "Badges", "Keychains", "Desk Signs"] },
+    { slug: "keychains", label: "Keychains", matches: ["Keychains"] },
+    { slug: "signs-name-plates", label: "Signs & Name Plates", matches: ["Desk Signs", "Signs & Name Plates"] },
+    { slug: "toys-fidgets", label: "Toys & Fidgets", matches: ["Toys & Fidgets"] },
+    { slug: "home-decor", label: "Home & Décor", matches: ["Home & Decor", "Home & Décor"] },
+    { slug: "fathers-day-seasonal", label: "Father's Day / Seasonal", matches: ["Father's Day / Seasonal"] },
+  ];
+  const categoryMap = new Map(shopCategories.map((category) => [category.slug, category]));
   const state = {
     bootstrap: null,
     products: [],
     cart: loadCart(),
-    activeCategory: "All",
+    activeCategory: readCategoryFromUrl(),
     paypalScriptLoaded: false,
     localOrderId: "",
   };
@@ -63,7 +73,7 @@
 
   async function refreshBootstrap() {
     try {
-      const response = await fetch("./api/bootstrap");
+      const response = await fetch("/api/bootstrap");
       const payload = await response.json();
       if (!response.ok) {
         throw new Error(payload.error || "Could not load store data.");
@@ -91,7 +101,7 @@
 
   function renderStoreMetrics() {
     const productCount = state.products.length;
-    const categoryCount = new Set(state.products.map((product) => product.category).filter(Boolean)).size;
+    const categoryCount = shopCategories.length;
     const productMetric = document.getElementById("heroProductCount");
     const categoryMetric = document.getElementById("heroCategoryCount");
 
@@ -105,16 +115,16 @@
   }
 
   function renderCategories() {
-    const categories = ["All", ...new Set(state.products.map((product) => product.category).filter(Boolean))];
+    const categories = [{ slug: "all", label: "All Products" }, ...shopCategories];
     categoryChips.innerHTML = categories
       .map(
         (category) => `
           <button
-            class="tab-button ${category === state.activeCategory ? "active" : ""}"
-            data-category="${escapeHtml(category)}"
+            class="tab-button ${category.slug === state.activeCategory ? "active" : ""}"
+            data-category="${escapeHtml(category.slug)}"
             type="button"
           >
-            ${escapeHtml(category)}
+            ${escapeHtml(category.label)}
           </button>
         `,
       )
@@ -123,6 +133,7 @@
     categoryChips.querySelectorAll("[data-category]").forEach((button) => {
       button.addEventListener("click", () => {
         state.activeCategory = button.dataset.category;
+        writeCategoryToUrl(state.activeCategory);
         renderProducts();
         renderCategories();
       });
@@ -130,12 +141,18 @@
   }
 
   function renderProducts() {
-    const filtered = state.activeCategory === "All"
+    const filtered = state.activeCategory === "all"
       ? state.products
-      : state.products.filter((product) => product.category === state.activeCategory);
+      : state.products.filter((product) => matchesActiveCategory(product, state.activeCategory));
 
     if (!filtered.length) {
-      productsGrid.innerHTML = `<div class="empty-state">No products in this category yet.</div>`;
+      productsGrid.innerHTML = `
+        <div class="empty-state">
+          No products in this category yet. You can still use
+          <a class="text-link" href="/custom-print/">Custom Print</a>
+          to request something made for you.
+        </div>
+      `;
       return;
     }
 
@@ -146,8 +163,8 @@
           : `<div class="placeholder-art">${escapeHtml(product.name)}</div>`;
         const productPills = [
           product.customTextEnabled ? "Personalised" : "Ready made",
-          product.sizeOptions.length ? `${product.sizeOptions.length} sizes` : "Single size",
-          product.colorOptions.length ? `${product.colorOptions.length} colours` : "Single colour",
+          product.sizeOptions.length ? `${product.sizeOptions.length} size options` : "Single size",
+          product.colorOptions.length ? `${product.colorOptions.length} colour options` : "Single colour",
         ];
         const description = product.description
           ? escapeHtml(product.description.length > 105 ? `${product.description.slice(0, 102)}...` : product.description)
@@ -167,7 +184,7 @@
               </div>
               <div class="product-card-footer">
                 <p class="product-price"><span>From</span>$${product.priceLabel}</p>
-                <button class="primary-button" data-open-product="${product.id}" type="button">Customize</button>
+                <button class="primary-button" data-open-product="${product.id}" type="button">Choose options</button>
               </div>
             </div>
           </article>
@@ -393,7 +410,7 @@
   async function handlePreviewOrder() {
     try {
       previewOrderButton.disabled = true;
-      const response = await fetch("./api/orders/preview", {
+      const response = await fetch("/api/orders/preview", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(buildCheckoutPayload()),
@@ -438,7 +455,7 @@
           label: "paypal",
         },
         createOrder: async () => {
-          const response = await fetch("./api/paypal/create-order", {
+          const response = await fetch("/api/paypal/create-order", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(buildCheckoutPayload()),
@@ -451,7 +468,7 @@
           return payload.paypalOrderId;
         },
         onApprove: async (data) => {
-          const response = await fetch("./api/paypal/capture-order", {
+          const response = await fetch("/api/paypal/capture-order", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -487,17 +504,17 @@
   async function handleSignin(event) {
     event.preventDefault();
     const formData = Object.fromEntries(new FormData(event.currentTarget).entries());
-    await authRequest("./api/auth/login", formData, "Signed in.");
+    await authRequest("/api/auth/login", formData, "Signed in.");
   }
 
   async function handleSignup(event) {
     event.preventDefault();
     const formData = Object.fromEntries(new FormData(event.currentTarget).entries());
-    await authRequest("./api/auth/signup", formData, "Account created.");
+    await authRequest("/api/auth/signup", formData, "Account created.");
   }
 
   async function handleLogout() {
-    await authRequest("./api/auth/logout", {}, "Signed out.", "POST");
+    await authRequest("/api/auth/logout", {}, "Signed out.", "POST");
   }
 
   async function authRequest(url, body, successMessage, method = "POST") {
@@ -526,6 +543,32 @@
     document.querySelectorAll("[data-auth-tab]").forEach((button) => {
       button.classList.toggle("active", button.dataset.authTab === tab);
     });
+  }
+
+  function matchesActiveCategory(product, activeSlug) {
+    const category = categoryMap.get(activeSlug);
+    if (!category) {
+      return true;
+    }
+
+    return category.matches.includes(product.category);
+  }
+
+  function readCategoryFromUrl() {
+    const current = new URL(window.location.href);
+    const slug = current.searchParams.get("category") || "all";
+    return categoryMap.has(slug) || slug === "all" ? slug : "all";
+  }
+
+  function writeCategoryToUrl(slug) {
+    const current = new URL(window.location.href);
+    if (!slug || slug === "all") {
+      current.searchParams.delete("category");
+    } else {
+      current.searchParams.set("category", slug);
+    }
+
+    window.history.replaceState({}, "", current);
   }
 
   function loadPaypalScript(clientId, currencyCode, env) {

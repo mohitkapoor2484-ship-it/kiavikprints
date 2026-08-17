@@ -4,16 +4,16 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Kiavik Prints Admin</title>
-    <link rel="icon" href="./assets/kiavik-prints-logo.jpg" />
-    <link rel="stylesheet" href="./styles.css" />
-    <script defer src="./admin.js"></script>
+    <link rel="icon" href="/assets/kiavik-prints-logo.jpg" />
+    <link rel="stylesheet" href="/styles.css" />
+    <script defer src="/admin.js"></script>
   </head>
   <body class="admin-body">
     <header class="site-header admin-header">
-      <a class="brand" href="./index.html">
+      <a class="brand" href="/">
         <img
           class="brand-logo brand-logo-admin"
-          src="./assets/kiavik-prints-logo.jpg"
+          src="/assets/kiavik-prints-logo.jpg"
           alt="Kiavik Prints logo"
         />
         <span class="brand-copy brand-copy-compact">
@@ -22,7 +22,8 @@
         </span>
       </a>
       <nav class="site-nav">
-        <a href="./index.html">Storefront</a>
+        <a href="/">Home</a>
+        <a href="/shop/">Shop</a>
       </nav>
     </header>
 
@@ -46,7 +47,7 @@
           <button class="primary-button" type="submit">Sign In</button>
         </form>
         <p class="summary-note">
-          Use the admin account from `.env`. Change the default password before real use.
+          Use the admin account from your Netlify environment variables. Change the default password before real use.
         </p>
       </section>
 

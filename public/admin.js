@@ -32,7 +32,7 @@
 
   async function refreshPage() {
     try {
-      const response = await fetch("./api/bootstrap");
+      const response = await fetch("/api/bootstrap");
       const payload = await response.json();
       if (!response.ok) {
         throw new Error(payload.error || "Could not load admin session.");
@@ -61,11 +61,11 @@
   async function handleLogin(event) {
     event.preventDefault();
     const body = Object.fromEntries(new FormData(event.currentTarget).entries());
-    await authRequest("./api/auth/login", body, "Admin signed in.");
+    await authRequest("/api/auth/login", body, "Admin signed in.");
   }
 
   async function handleLogout() {
-    await authRequest("./api/auth/logout", {}, "Signed out.");
+    await authRequest("/api/auth/logout", {}, "Signed out.");
   }
 
   async function authRequest(url, body, successMessage) {
@@ -87,7 +87,7 @@
   }
 
   async function loadProducts() {
-    const response = await fetch("./api/admin/products");
+    const response = await fetch("/api/admin/products");
     const payload = await response.json();
     if (!response.ok) {
       throw new Error(payload.error || "Could not load products.");
@@ -97,7 +97,7 @@
   }
 
   async function loadOrders() {
-    const response = await fetch("./api/admin/orders");
+    const response = await fetch("/api/admin/orders");
     const payload = await response.json();
     if (!response.ok) {
       throw new Error(payload.error || "Could not load orders.");
@@ -234,7 +234,7 @@
     }
 
     try {
-      const response = await fetch(`./api/admin/products?id=${encodeURIComponent(product.id)}`, {
+      const response = await fetch(`/api/admin/products?id=${encodeURIComponent(product.id)}`, {
         method: "DELETE",
       });
       const payload = await response.json();
@@ -268,7 +268,7 @@
 
   async function saveProductRequest(body, method, successMessage) {
     try {
-      const response = await fetch("./api/admin/products", {
+      const response = await fetch("/api/admin/products", {
         method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),

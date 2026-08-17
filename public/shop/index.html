@@ -3,45 +3,43 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Kiavik Prints | Premium Storefront</title>
-    <link rel="icon" href="./assets/kiavik-prints-logo.jpg" />
-    <link rel="stylesheet" href="./styles.css" />
-    <script defer src="./app.js"></script>
+    <title>Kiavik Prints | Shop</title>
+    <link rel="icon" href="/assets/kiavik-prints-logo.jpg" />
+    <link rel="stylesheet" href="/styles.css" />
+    <script defer src="/app.js"></script>
   </head>
-  <body class="store-body premium-theme">
-    <div class="ambient-shape ambient-shape-left"></div>
-    <div class="ambient-shape ambient-shape-right"></div>
-
+  <body class="store-body clean-storefront site-page">
     <div class="promo-bar">
       <div class="promo-pill-list">
         <span>Made-to-order in Australia</span>
-        <span>Guest checkout or account</span>
+        <span>Guest checkout available</span>
         <span>Secure PayPal checkout</span>
       </div>
-      <span class="theme-switch">Professional storefront</span>
     </div>
 
     <header class="site-header">
-      <a class="brand" href="#top">
+      <a class="brand" href="/">
         <img
           class="brand-logo"
-          src="./assets/kiavik-prints-logo.jpg"
+          src="/assets/kiavik-prints-logo.jpg"
           alt="Kiavik Prints logo"
         />
         <span class="brand-copy brand-copy-compact">
-          <span class="brand-kicker">Kiavik Prints Studio</span>
-          <strong>Professional 3D Products</strong>
+          <span class="brand-kicker">Kiavik Prints</span>
+          <strong>Custom 3D Printing Store</strong>
         </span>
       </a>
       <nav class="site-nav">
-        <a href="#shop">Shop</a>
-        <a href="#collections">Collections</a>
-        <a href="#checkout">Checkout</a>
-        <a href="#account">Account</a>
-        <a href="./admin.html">Admin</a>
+        <a href="/">Home</a>
+        <a href="/shop/">Shop</a>
+        <a href="/custom-print/">Custom Print</a>
+        <a href="/our-prints/">Our Prints</a>
+        <a href="/about-kiavik/">About Kiavik</a>
+        <a href="/faq/">FAQ</a>
+        <a href="/contact/">Contact</a>
       </nav>
       <div class="nav-actions">
-        <span class="ghost-link">Professional</span>
+        <a class="ghost-link" href="/admin.html">Admin</a>
         <button class="cart-pill" id="cartPill" type="button">
           Cart
           <span id="cartCount">0</span>
@@ -50,96 +48,85 @@
     </header>
 
     <main>
-      <section class="hero-shell" id="top">
-        <div class="hero-panel">
-          <div class="hero-copy">
-            <p class="eyebrow">Kiavik Prints storefront</p>
-            <h1>Personalised prints presented like a real retail brand, not a hobby page.</h1>
-            <p class="hero-text">
-              Kiavik Prints is positioned as a polished ecommerce brand with stronger product
-              framing, premium cards, and a cleaner checkout experience.
-            </p>
-
-            <div class="hero-badge-row">
-              <span class="hero-badge">Badges</span>
-              <span class="hero-badge">Desk Signs</span>
-              <span class="hero-badge">Keychains</span>
-              <span class="hero-badge">Business Gifts</span>
-            </div>
-
-            <div class="hero-actions">
-              <a class="primary-link" href="#shop">Shop The Collection</a>
-              <a class="secondary-link" href="#checkout">Start An Order</a>
-            </div>
-
-            <div class="hero-metrics">
-              <article class="metric-card">
-                <strong id="heroProductCount">0</strong>
-                <span>starter products live</span>
-              </article>
-              <article class="metric-card">
-                <strong id="heroCategoryCount">0</strong>
-                <span>product categories</span>
-              </article>
-              <article class="metric-card">
-                <strong>24/7</strong>
-                <span>custom orders accepted</span>
-              </article>
-            </div>
-          </div>
-
-          <div class="hero-display">
-            <div class="hero-display-card hero-display-feature">
-              <p class="hero-card-label">Signature look</p>
-              <h2>Clean, confident, made for gifting and branded merchandise.</h2>
-              <div class="mini-preview-stack">
-                <article class="mini-preview-card">
-                  <span class="mini-preview-label">Club Badges</span>
-                  <strong>Gold accents</strong>
-                  <p>Structured options, consistent pricing, and personalization.</p>
-                </article>
-                <article class="mini-preview-card">
-                  <span class="mini-preview-label">Desk Name Plates</span>
-                  <strong>Professional styling</strong>
-                  <p>Fits office, hospitality, school, and event-use products.</p>
-                </article>
-              </div>
-            </div>
-            <div class="hero-display-card hero-display-note">
-              <p class="hero-card-label">Why this direction works</p>
-              <ul class="hero-checklist">
-                <li>Large product cards with stronger hierarchy</li>
-                <li>Sticky order summary and trust cues</li>
-                <li>Cleaner customisation dialog</li>
-                <li>Professional brand presence across every section</li>
-              </ul>
-            </div>
+      <section class="page-hero" id="top">
+        <div class="page-hero-copy">
+          <p class="eyebrow">Shop</p>
+          <h1>Browse made-to-order products by category.</h1>
+          <p class="hero-text">
+            Explore the full Kiavik Prints range, filter by product type, and customise each item
+            before adding it to your cart.
+          </p>
+          <div class="hero-actions">
+            <a class="primary-link" href="#shop">Browse all products</a>
+            <a class="secondary-link" href="/custom-print/">Request something custom</a>
           </div>
         </div>
 
-        <section class="benefits-strip" id="collections">
-          <article class="benefit-card">
-            <span class="benefit-icon">01</span>
-            <div>
-              <strong>Personalised products</strong>
-              <p>Names, colour combinations, and add-on options are built into the product flow.</p>
-            </div>
-          </article>
-          <article class="benefit-card">
-            <span class="benefit-icon">02</span>
-            <div>
-              <strong>Guest-friendly checkout</strong>
-              <p>Customers can order quickly first and choose whether they want an account.</p>
-            </div>
-          </article>
-          <article class="benefit-card">
-            <span class="benefit-icon">03</span>
-            <div>
-              <strong>Simple family admin</strong>
-              <p>Your kid can manage products from the admin side without touching code or tables.</p>
-            </div>
-          </article>
-        </section>
+        <div class="page-hero-aside">
+          <div class="page-panel">
+            <p class="hero-card-label">Shop categories</p>
+            <ul class="page-list">
+              <li><a href="/shop/lamps-light-boxes/">Lamps &amp; Light Boxes</a></li>
+              <li><a href="/shop/personalised-gifts/">Personalised Gifts</a></li>
+              <li><a href="/shop/keychains/">Keychains</a></li>
+              <li><a href="/shop/signs-name-plates/">Signs &amp; Name Plates</a></li>
+              <li><a href="/shop/toys-fidgets/">Toys &amp; Fidgets</a></li>
+              <li><a href="/shop/home-decor/">Home &amp; Décor</a></li>
+              <li><a href="/shop/fathers-day-seasonal/">Father's Day / Seasonal</a></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="collection-strip page-collections" id="collections">
+        <article class="collection-card">
+          <span class="collection-kicker">Shop category</span>
+          <h3>Lamps &amp; Light Boxes</h3>
+          <p>Light-up display pieces, signage, and custom photo or logo lighting concepts.</p>
+          <a class="text-link" href="/shop/lamps-light-boxes/">View category</a>
+        </article>
+        <article class="collection-card">
+          <span class="collection-kicker">Shop category</span>
+          <h3>Personalised Gifts</h3>
+          <p>Custom gift ideas made with names, messages, colour combinations, and branding.</p>
+          <a class="text-link" href="/shop/personalised-gifts/">View category</a>
+        </article>
+        <article class="collection-card">
+          <span class="collection-kicker">Shop category</span>
+          <h3>Keychains</h3>
+          <p>Simple and gift-friendly keychains for names, teams, schools, clubs, and events.</p>
+          <a class="text-link" href="/shop/keychains/">View category</a>
+        </article>
+        <article class="collection-card">
+          <span class="collection-kicker">Shop category</span>
+          <h3>Signs &amp; Name Plates</h3>
+          <p>Reception, desk, shelf, and event signage with clear personalised text options.</p>
+          <a class="text-link" href="/shop/signs-name-plates/">View category</a>
+        </article>
+        <article class="collection-card">
+          <span class="collection-kicker">Shop category</span>
+          <h3>Toys &amp; Fidgets</h3>
+          <p>Playful printed pieces and simple moving products for kids, gifts, and novelty use.</p>
+          <a class="text-link" href="/shop/toys-fidgets/">View category</a>
+        </article>
+        <article class="collection-card">
+          <span class="collection-kicker">Shop category</span>
+          <h3>Home &amp; Décor</h3>
+          <p>Printed decor accents, shelf pieces, and practical display items for home spaces.</p>
+          <a class="text-link" href="/shop/home-decor/">View category</a>
+        </article>
+        <article class="collection-card">
+          <span class="collection-kicker">Shop category</span>
+          <h3>Father's Day / Seasonal</h3>
+          <p>Seasonal collections and themed items for events, family occasions, and holidays.</p>
+          <a class="text-link" href="/shop/fathers-day-seasonal/">View category</a>
+        </article>
+        <article class="collection-card">
+          <span class="collection-kicker">Need something else?</span>
+          <h3>Custom Print</h3>
+          <p>Upload files, logos, or photos and tell us what you want to make.</p>
+          <a class="text-link" href="/custom-print/">Go to custom print</a>
+        </article>
       </section>
 
       <section class="content-grid">
@@ -147,11 +134,11 @@
           <section class="panel shop-panel" id="shop">
             <div class="section-heading">
               <div>
-                <p class="eyebrow">Storefront</p>
-                <h2>Browse the live collection</h2>
+                <p class="eyebrow">Products</p>
+                <h2>Browse and customise products</h2>
                 <p class="section-copy">
-                  Product cards are styled to feel like a real online shop: clearer pricing,
-                  better spacing, stronger CTAs, and more obvious customization cues.
+                  Switch between categories, open any product, and choose the options that suit
+                  your order before adding it to your cart.
                 </p>
               </div>
               <div class="category-chips" id="categoryChips"></div>
@@ -162,8 +149,8 @@
           <section class="panel account-panel" id="account">
             <div class="section-heading">
               <div>
-                <p class="eyebrow">Customer account</p>
-                <h2>Save order history or keep it quick with guest checkout</h2>
+                <p class="eyebrow">Account</p>
+                <h2>Guest checkout or customer account</h2>
               </div>
             </div>
 
@@ -175,10 +162,10 @@
                 </div>
 
                 <div class="account-intro-card">
-                  <strong>Optional account, not forced.</strong>
+                  <strong>Accounts are optional.</strong>
                   <p>
-                    This keeps the purchase path friction-light while still letting repeat buyers
-                    log in and see previous orders.
+                    Returning customers can sign in to view previous orders, while new customers
+                    can place an order quickly with guest checkout.
                   </p>
                 </div>
 
@@ -228,14 +215,14 @@
           <section class="panel sticky-panel checkout-panel" id="checkout">
             <div class="section-heading compact-heading">
               <div>
-                <p class="eyebrow">Cart + Checkout</p>
-                <h2>Structured like a real order sidebar</h2>
+                <p class="eyebrow">Checkout</p>
+                <h2>Your cart and shipping details</h2>
               </div>
             </div>
 
             <div class="checkout-confidence">
-              <span>Secure PayPal flow</span>
-              <span>Guest checkout enabled</span>
+              <span>Secure PayPal</span>
+              <span>Guest or account</span>
               <span>Pickup or delivery</span>
             </div>
 
@@ -247,7 +234,8 @@
                 <strong id="cartSubtotal">$0.00</strong>
               </div>
               <p class="summary-note">
-                Shipping is selected below. The final checkout flow is already wired for PayPal.
+                Choose your shipping option below. You can save a draft order first or continue to
+                PayPal when checkout is enabled.
               </p>
             </div>
 
@@ -323,12 +311,42 @@
               </div>
               <p class="summary-note" id="paypalNotice">
                 PayPal buttons appear here once the credentials are set. Until then, draft orders
-                still save locally so the flow can be tested end-to-end.
+                can still be saved so the full order flow can be tested.
               </p>
             </div>
           </section>
         </aside>
       </section>
+
+      <footer class="site-footer">
+        <div class="site-footer-grid">
+          <div>
+            <p class="eyebrow">Kiavik Prints</p>
+            <p class="footer-copy">
+              Shop personalised products, request custom work, and place orders with guest checkout
+              or your own account.
+            </p>
+          </div>
+          <div>
+            <p class="footer-heading">Explore</p>
+            <ul class="footer-links">
+              <li><a href="/">Home</a></li>
+              <li><a href="/shop/">Shop</a></li>
+              <li><a href="/custom-print/">Custom Print</a></li>
+              <li><a href="/our-prints/">Our Prints</a></li>
+            </ul>
+          </div>
+          <div>
+            <p class="footer-heading">Info</p>
+            <ul class="footer-links">
+              <li><a href="/about-kiavik/">About Kiavik</a></li>
+              <li><a href="/faq/">FAQ</a></li>
+              <li><a href="/contact/">Contact</a></li>
+              <li><a href="/admin.html">Admin</a></li>
+            </ul>
+          </div>
+        </div>
+      </footer>
     </main>
 
     <div class="status-toast hidden" id="statusToast"></div>

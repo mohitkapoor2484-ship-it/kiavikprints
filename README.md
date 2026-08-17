@@ -1,6 +1,6 @@
 # Kiavik Prints MVP
 
-This is a local full-stack MVP for `Kiavik Prints`.
+This is a Netlify-native MVP for `Kiavik Prints`.
 
 It includes:
 
@@ -11,17 +11,23 @@ It includes:
 - customer signup and login
 - saved order history for signed-in users
 - family-friendly admin page for adding, editing, hiding, and deleting products
-- PayPal-ready server endpoints with a local preview-order fallback
+- PayPal-ready server endpoints with a preview-order fallback
 
 ## Stack
 
-- `Node.js 24+`
-- built-in `node:sqlite` local database
+- `Netlify` static hosting from [`public/`](./public)
+- `Netlify Functions` for `/api/*`
+- `Netlify Database` for users, sessions, products, and orders
 - plain HTML, CSS, and JavaScript frontend
 
-This path was chosen so the MVP can run today without waiting on package installs or hosted setup.
+## Project layout
 
-## Run
+- storefront publish directory: `public/`
+- serverless backend: `netlify/functions/api.mjs`
+- database migrations: `netlify/database/migrations/`
+- shared backend logic: `lib/`
+
+## Local development
 
 1. Open `Projects/Kiavik Prints`
 2. Copy `.env.example` to `.env`
@@ -29,47 +35,33 @@ This path was chosen so the MVP can run today without waiting on package install
 4. Run:
 
 ```powershell
-node server.js
+npx netlify dev
 ```
 
-5. Open:
+Netlify will serve the static site, functions, and local database-compatible environment together.
 
-```text
-http://127.0.0.1:4280
-```
+## Live Netlify setup
 
-For phone access on the same Wi-Fi:
+In the Netlify project dashboard, set these environment variables:
 
-- leave `HOST=0.0.0.0` in `.env`
-- start the server
-- use the printed `LAN access: http://...:4280` URL on your phone
-- if Windows prompts for firewall access, allow it on your private network
-
-## Default admin route
-
-- Storefront: `/`
-- Product admin: `/admin.html`
-
-## PayPal setup
-
-To enable real PayPal checkout, add these values in `.env`:
-
+- `SHOP_NAME`
+- `SHOP_CURRENCY`
+- `ADMIN_EMAIL`
+- `ADMIN_PASSWORD`
+- `PAYPAL_ENV`
 - `PAYPAL_CLIENT_ID`
 - `PAYPAL_CLIENT_SECRET`
-- `PAYPAL_ENV=sandbox` or `PAYPAL_ENV=live`
 
-When PayPal is not configured, the app still allows `Create Preview Order`, which stores the order locally for testing the flow.
+The database schema is defined in `netlify/database/migrations/` and is applied by Netlify during deploys.
 
-## Data storage
+## Default routes
 
-The local database is created automatically at:
-
-```text
-data/kiavik-prints.db
-```
+- Storefront: `/`
+- Product admin: `/admin` or `/admin.html`
+- API: `/api/*`
 
 ## Notes
 
-- Sample products are seeded automatically on first run.
-- A default admin account is created if none exists.
-- Change the default admin password before using this outside local MVP testing.
+- Sample products are seeded automatically when the database is empty.
+- A default admin account is created if no admin exists yet.
+- Product images are still stored as inline image data for the MVP. Moving uploads to Netlify Blobs is the next storage upgrade after this.

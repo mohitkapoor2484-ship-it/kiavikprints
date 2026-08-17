@@ -907,17 +907,407 @@ main,
   overflow: hidden;
 }
 
+.clean-storefront {
+  background: linear-gradient(180deg, #f6f5f1 0%, #fbfaf7 18%, #f4f1eb 100%);
+}
+
+.clean-storefront .promo-bar {
+  justify-content: center;
+  padding-block: 0.7rem;
+  background: #1c2931;
+  border-bottom: 0;
+  backdrop-filter: none;
+}
+
+.clean-storefront .promo-pill-list span {
+  padding: 0;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.9rem;
+}
+
+.clean-storefront .site-header {
+  background: rgba(255, 255, 255, 0.98);
+  border-bottom: 1px solid rgba(24, 34, 49, 0.08);
+  backdrop-filter: none;
+}
+
+.clean-storefront .site-nav a {
+  color: #31404c;
+}
+
+.clean-storefront .site-nav a:hover,
+.clean-storefront .text-link:hover {
+  color: var(--accent-secondary);
+}
+
+.clean-storefront .brand-logo {
+  border: 1px solid rgba(24, 34, 49, 0.08);
+  box-shadow: none;
+}
+
+.clean-storefront main {
+  max-width: 1260px;
+  padding-top: 1.7rem;
+}
+
+.clean-storefront .hero-panel {
+  grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+  align-items: stretch;
+}
+
+.clean-storefront .hero-copy,
+.clean-storefront .hero-display-card,
+.clean-storefront .panel,
+.clean-storefront .summary-card,
+.clean-storefront .metric-card,
+.clean-storefront .account-intro-card,
+.clean-storefront .signed-in-card,
+.clean-storefront .product-card,
+.clean-storefront .cart-item,
+.clean-storefront .order-card {
+  background: rgba(255, 255, 255, 0.96);
+  border-color: rgba(24, 34, 49, 0.08);
+  box-shadow: 0 12px 34px rgba(24, 34, 49, 0.05);
+}
+
+.clean-storefront .hero-copy {
+  padding: 2.3rem;
+  background: rgba(255, 255, 255, 0.98);
+}
+
+.clean-storefront .hero-copy h1 {
+  max-width: 12ch;
+  font-size: clamp(2.25rem, 4.6vw, 4rem);
+  line-height: 1.05;
+}
+
+.clean-storefront .hero-text,
+.clean-storefront .section-copy,
+.clean-storefront .summary-note,
+.clean-storefront .card-copy,
+.clean-storefront .dialog-description,
+.clean-storefront .mini-preview-card p,
+.clean-storefront .account-intro-card p {
+  color: #5f6c77;
+}
+
+.clean-storefront .brand-kicker,
+.clean-storefront .eyebrow,
+.clean-storefront .hero-card-label,
+.clean-storefront .product-category,
+.clean-storefront .form-section-title,
+.collection-kicker {
+  color: var(--accent-strong);
+}
+
+.clean-storefront .hero-badge,
+.clean-storefront .product-pill,
+.clean-storefront .checkout-confidence span,
+.clean-storefront .product-status {
+  box-shadow: none;
+}
+
+.clean-storefront .hero-badge,
+.clean-storefront .product-pill,
+.clean-storefront .checkout-confidence span {
+  background: #f4f7f8;
+  border-color: #dfe8eb;
+  color: #33424c;
+}
+
+.clean-storefront .product-status {
+  background: #fbefe5;
+  color: #b85718;
+}
+
+.clean-storefront .cart-pill,
+.clean-storefront .primary-button,
+.clean-storefront .primary-link {
+  background: linear-gradient(135deg, #0c5d6d 0%, #147185 100%);
+  box-shadow: none;
+}
+
+.clean-storefront .secondary-link,
+.clean-storefront .ghost-button,
+.clean-storefront .tab-button,
+.clean-storefront .dialog-close {
+  background: #fff;
+  border-color: #d8e0e3;
+  box-shadow: none;
+}
+
+.clean-storefront .tab-button.active,
+.clean-storefront .category-chips .tab-button.active {
+  background: #1e2d36;
+  color: #fff;
+}
+
+.clean-storefront .metric-card {
+  min-width: 9rem;
+  background: #faf8f4;
+}
+
+.clean-storefront .hero-display-feature {
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.98);
+}
+
+.clean-storefront .hero-display-feature .hero-card-label {
+  color: var(--accent-strong);
+}
+
+.clean-storefront .hero-display-feature h2 {
+  font-size: 1.75rem;
+  line-height: 1.12;
+}
+
+.clean-storefront .mini-preview-card {
+  background: #f8f8f5;
+  border-color: rgba(24, 34, 49, 0.08);
+}
+
+.clean-storefront .hero-display-note {
+  background: rgba(255, 255, 255, 0.98);
+}
+
+.clean-storefront .hero-checklist {
+  color: #51606b;
+}
+
+.collection-strip {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.collection-card {
+  padding: 1.35rem;
+  border: 1px solid rgba(24, 34, 49, 0.08);
+  border-radius: 1.5rem;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 12px 30px rgba(24, 34, 49, 0.05);
+}
+
+.collection-card h3 {
+  margin: 0.3rem 0 0.55rem;
+  font-family: Bahnschrift, "Segoe UI", sans-serif;
+  font-size: 1.25rem;
+}
+
+.collection-card p {
+  margin: 0 0 1rem;
+  color: #5f6c77;
+  line-height: 1.6;
+}
+
+.text-link {
+  font-weight: 700;
+  text-decoration: none;
+  color: var(--accent-secondary);
+}
+
+.clean-storefront .panel {
+  padding: 1.65rem;
+}
+
+.clean-storefront .content-grid {
+  grid-template-columns: minmax(0, 1.18fr) minmax(340px, 0.82fr);
+  gap: 1.25rem;
+}
+
+.clean-storefront .product-grid {
+  gap: 1.1rem;
+}
+
+.clean-storefront .product-card {
+  border-radius: 1.4rem;
+}
+
+.clean-storefront .product-card-media,
+.clean-storefront .dialog-media {
+  background: linear-gradient(180deg, #faf7f2 0%, #f1ede7 100%);
+}
+
+.clean-storefront .placeholder-art {
+  padding: 1.5rem;
+  font-size: 1.25rem;
+  color: #6a7680;
+}
+
+.clean-storefront .product-card-body {
+  gap: 0.9rem;
+  padding: 1.2rem;
+}
+
+.clean-storefront .product-price {
+  font-size: 1.55rem;
+  color: #1f2d36;
+}
+
+.clean-storefront .summary-card,
+.clean-storefront .account-intro-card,
+.clean-storefront .cart-item,
+.clean-storefront .signed-in-card,
+.clean-storefront .order-card {
+  background: #fbfbf9;
+}
+
+.clean-storefront .shipping-choice,
+.clean-storefront .paypal-shell {
+  background: #fff;
+  border-color: rgba(24, 34, 49, 0.08);
+}
+
+.clean-storefront .product-dialog::backdrop {
+  background: rgba(15, 25, 31, 0.54);
+}
+
+.clean-storefront .dialog-shell {
+  background: rgba(255, 255, 255, 0.98);
+  border: 1px solid rgba(24, 34, 49, 0.08);
+}
+
+.site-page main {
+  display: grid;
+  gap: 1.35rem;
+}
+
+.page-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.18fr) minmax(300px, 0.82fr);
+  gap: 1.2rem;
+  align-items: stretch;
+}
+
+.page-hero-copy,
+.page-panel {
+  padding: 1.6rem;
+  border-radius: var(--radius-xl);
+  border: 1px solid rgba(24, 34, 49, 0.08);
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 12px 34px rgba(24, 34, 49, 0.05);
+}
+
+.page-hero-copy h1,
+.page-panel h2,
+.collection-card h3,
+.faq-list summary {
+  margin: 0.3rem 0 0.7rem;
+  font-family: Bahnschrift, "Segoe UI", sans-serif;
+  line-height: 1.05;
+}
+
+.page-hero-copy h1 {
+  font-size: clamp(2.2rem, 4.5vw, 3.9rem);
+}
+
+.page-panel h2,
+.collection-card h3 {
+  font-size: clamp(1.28rem, 2.2vw, 1.8rem);
+}
+
+.page-hero-aside,
+.faq-list,
+.sitemap-grid,
+.info-grid,
+.site-footer-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.sitemap-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.info-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.page-list,
+.footer-links {
+  margin: 0;
+  padding-left: 1.1rem;
+  color: #53616d;
+  line-height: 1.7;
+}
+
+.page-list a,
+.footer-links a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.page-list a:hover,
+.footer-links a:hover {
+  color: var(--accent-secondary);
+}
+
+.page-panel p,
+.footer-copy {
+  margin: 0;
+  color: #5f6c77;
+  line-height: 1.65;
+}
+
+.footer-heading {
+  margin: 0 0 0.55rem;
+  font-weight: 800;
+}
+
+.site-footer {
+  padding: 0.2rem 0 1rem;
+}
+
+.site-footer-grid {
+  grid-template-columns: minmax(0, 1.4fr) repeat(2, minmax(180px, 0.8fr));
+  padding: 1.4rem 1.6rem;
+  border-radius: var(--radius-xl);
+  border: 1px solid rgba(24, 34, 49, 0.08);
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 12px 34px rgba(24, 34, 49, 0.05);
+}
+
+.faq-list summary {
+  cursor: pointer;
+  list-style: none;
+}
+
+.faq-list summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq-list details p {
+  margin-top: 0.8rem;
+  color: #5f6c77;
+  line-height: 1.65;
+}
+
+.page-collections {
+  margin-top: -0.05rem;
+}
+
 @media (max-width: 1080px) {
   .site-header {
     grid-template-columns: 1fr;
   }
 
   .hero-panel,
+  .page-hero,
   .content-grid,
   .admin-grid,
   .dialog-shell,
-  .benefits-strip {
+  .benefits-strip,
+  .collection-strip {
     grid-template-columns: 1fr;
+  }
+
+  .sitemap-grid,
+  .info-grid,
+  .site-footer-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .sticky-panel {
@@ -979,5 +1369,15 @@ main,
 
   .brand-copy-compact {
     width: 100%;
+  }
+
+  .clean-storefront .promo-bar {
+    justify-content: flex-start;
+  }
+
+  .sitemap-grid,
+  .info-grid,
+  .site-footer-grid {
+    grid-template-columns: 1fr;
   }
 }
