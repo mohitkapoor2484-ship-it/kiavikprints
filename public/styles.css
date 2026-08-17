@@ -1970,3 +1970,562 @@ main,
     grid-template-columns: 1fr;
   }
 }
+
+/* Varbits-inspired storefront shell */
+
+.varbits-inspired {
+  margin: 0;
+  color: #1f1f1f;
+  background: #ffffff;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.varbits-inspired *,
+.varbits-inspired *::before,
+.varbits-inspired *::after {
+  box-sizing: border-box;
+}
+
+.varbits-inspired .promo-bar,
+.varbits-inspired .site-header,
+.varbits-inspired .site-footer,
+.varbits-inspired .site-footer-grid {
+  display: none;
+}
+
+.varbits-inspired a {
+  color: inherit;
+}
+
+.varbits-inspired .vb-header-shell {
+  border-bottom: 1px solid #e5e5e5;
+  background: #fff;
+}
+
+.varbits-inspired .vb-header,
+.varbits-inspired .vb-search-row,
+.varbits-inspired .vb-main,
+.varbits-inspired .vb-footer-inner {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.varbits-inspired .vb-header {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1rem 1.5rem;
+}
+
+.varbits-inspired .vb-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.85rem;
+  text-decoration: none;
+}
+
+.varbits-inspired .vb-brand-logo {
+  width: 4.5rem;
+  height: auto;
+  display: block;
+}
+
+.varbits-inspired .vb-brand-copy {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.varbits-inspired .vb-brand-copy strong {
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.varbits-inspired .vb-brand-copy span {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.varbits-inspired .vb-nav,
+.varbits-inspired .vb-account-links,
+.varbits-inspired .vb-footer-nav {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.varbits-inspired .vb-nav {
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.varbits-inspired .vb-nav a,
+.varbits-inspired .vb-account-links a,
+.varbits-inspired .vb-footer-nav a {
+  text-decoration: none;
+}
+
+.varbits-inspired .vb-nav a:hover,
+.varbits-inspired .vb-account-links a:hover,
+.varbits-inspired .vb-footer-nav a:hover,
+.varbits-inspired .vb-text-link:hover {
+  text-decoration: underline;
+}
+
+.varbits-inspired .vb-search-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 0 1.5rem 1rem;
+}
+
+.varbits-inspired .vb-search {
+  width: min(340px, 100%);
+}
+
+.varbits-inspired .vb-search-label {
+  display: none;
+}
+
+.varbits-inspired .vb-search input {
+  width: 100%;
+  padding: 0.78rem 0.95rem;
+  border: 1px solid #d9d9d9;
+  border-radius: 0;
+  background: #fff;
+  color: #1f1f1f;
+  font: inherit;
+}
+
+.varbits-inspired .vb-cart-button,
+.varbits-inspired .vb-button,
+.varbits-inspired .varbits-inspired .primary-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.85rem 1.25rem;
+  border: 1px solid #111;
+  border-radius: 0;
+  background: #111;
+  color: #fff;
+  font: inherit;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.varbits-inspired .vb-cart-button {
+  white-space: nowrap;
+}
+
+.varbits-inspired .vb-main {
+  display: grid;
+  gap: 3.5rem;
+  padding: 2rem 1.5rem 3rem;
+}
+
+.varbits-inspired .vb-intro {
+  display: grid;
+  grid-template-columns: minmax(0, 780px);
+}
+
+.varbits-inspired .vb-intro-copy h1,
+.varbits-inspired .vb-featured-details h2,
+.varbits-inspired .vb-category-copy h2,
+.varbits-inspired .varbits-inspired .panel h2 {
+  margin: 0 0 1rem;
+  font-size: clamp(2rem, 3vw, 2.7rem);
+  font-weight: 600;
+  line-height: 1.15;
+}
+
+.varbits-inspired .vb-intro-copy p,
+.varbits-inspired .vb-featured-details p,
+.varbits-inspired .vb-category-copy p,
+.varbits-inspired .section-copy,
+.varbits-inspired .summary-note,
+.varbits-inspired .account-intro-card p {
+  margin: 0 0 1rem;
+  color: #3f3f3f;
+  line-height: 1.7;
+}
+
+.varbits-inspired .vb-featured-product,
+.varbits-inspired .vb-category-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: 2.5rem;
+  align-items: start;
+}
+
+.varbits-inspired .vb-category-row-reverse {
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+}
+
+.varbits-inspired .vb-category-row-reverse .vb-category-media {
+  order: 2;
+}
+
+.varbits-inspired .vb-category-row-reverse .vb-category-copy {
+  order: 1;
+}
+
+.varbits-inspired .vb-featured-image,
+.varbits-inspired .vb-category-art {
+  width: 100%;
+  min-height: 420px;
+  border: 1px solid #e5e5e5;
+  background: #f3f3f3;
+}
+
+.varbits-inspired .vb-product-art,
+.varbits-inspired .vb-category-art {
+  position: relative;
+  overflow: hidden;
+}
+
+.varbits-inspired .vb-product-art::before,
+.varbits-inspired .vb-category-art::before,
+.varbits-inspired .vb-thumb::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.varbits-inspired .vb-product-art span {
+  position: absolute;
+  left: 1.5rem;
+  bottom: 1.5rem;
+  z-index: 1;
+  display: inline-block;
+  padding: 0.6rem 0.8rem;
+  background: rgba(255, 255, 255, 0.88);
+  font-weight: 700;
+}
+
+.varbits-inspired .vb-product-art-jersey::before {
+  background:
+    radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.55), transparent 18%),
+    linear-gradient(135deg, #0f6662 0%, #0f6662 48%, #e77932 48%, #e77932 100%);
+}
+
+.varbits-inspired .vb-thumb-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.varbits-inspired .vb-thumb {
+  min-height: 104px;
+  border: 1px solid #e5e5e5;
+  background: #f3f3f3;
+}
+
+.varbits-inspired .vb-thumb-one::before {
+  background: linear-gradient(135deg, #0f6662 0%, #e77932 100%);
+}
+
+.varbits-inspired .vb-thumb-two::before {
+  background: linear-gradient(135deg, #222 0%, #666 100%);
+}
+
+.varbits-inspired .vb-thumb-three::before {
+  background: linear-gradient(135deg, #f4d6a0 0%, #cf8c44 100%);
+}
+
+.varbits-inspired .vb-section-kicker {
+  margin: 0 0 0.75rem;
+  color: #666;
+  font-size: 0.95rem;
+}
+
+.varbits-inspired .vb-price {
+  margin: 0 0 0.3rem;
+  font-size: 1.7rem;
+  font-weight: 700;
+}
+
+.varbits-inspired .vb-tax-note {
+  color: #666;
+  font-size: 0.95rem;
+}
+
+.varbits-inspired .vb-option-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem;
+  margin: 1rem 0 1.2rem;
+}
+
+.varbits-inspired .vb-option-grid span {
+  display: block;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid #e4e4e4;
+  background: #fafafa;
+  font-size: 0.95rem;
+}
+
+.varbits-inspired .vb-text-link {
+  color: #111;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.varbits-inspired .vb-category-art-keychains::before {
+  background:
+    linear-gradient(135deg, rgba(12, 102, 99, 0.95), rgba(10, 74, 72, 0.95)),
+    #0f6662;
+}
+
+.varbits-inspired .vb-category-art-fidgets::before {
+  background:
+    radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.35), transparent 18%),
+    linear-gradient(145deg, #efcf9d, #d9984f);
+}
+
+.varbits-inspired .vb-category-art-lightboxes::before {
+  background:
+    radial-gradient(circle at center, rgba(255, 245, 189, 0.95), rgba(242, 187, 86, 0.62) 35%, rgba(36, 44, 56, 0.92) 100%);
+}
+
+.varbits-inspired .vb-category-art-gifts::before {
+  background:
+    linear-gradient(145deg, #ece7df, #c9b49c);
+}
+
+.varbits-inspired .vb-category-copy {
+  align-self: center;
+}
+
+.varbits-inspired .vb-footer {
+  padding-top: 1rem;
+  border-top: 1px solid #e5e5e5;
+}
+
+.varbits-inspired .vb-footer-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem 0;
+  color: #666;
+  font-size: 0.95rem;
+}
+
+.varbits-inspired .vb-shop-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
+  margin-top: -1rem;
+}
+
+.varbits-inspired .vb-shop-links a {
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.varbits-inspired .vb-commerce-grid {
+  gap: 2rem;
+}
+
+.varbits-inspired .panel,
+.varbits-inspired .summary-card,
+.varbits-inspired .account-intro-card,
+.varbits-inspired .cart-item,
+.varbits-inspired .signed-in-card,
+.varbits-inspired .order-card,
+.varbits-inspired .shipping-choice,
+.varbits-inspired .paypal-shell,
+.varbits-inspired .product-card {
+  border: 1px solid #e5e5e5;
+  border-radius: 0;
+  background: #fff;
+  box-shadow: none;
+}
+
+.varbits-inspired .panel {
+  padding: 1.5rem;
+}
+
+.varbits-inspired .eyebrow,
+.varbits-inspired .form-section-title,
+.varbits-inspired .product-category {
+  color: #666;
+  font-size: 0.85rem;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.varbits-inspired .section-heading,
+.varbits-inspired .product-topline,
+.varbits-inspired .product-card-footer,
+.varbits-inspired .cart-row,
+.varbits-inspired .summary-row {
+  gap: 1rem;
+}
+
+.varbits-inspired .section-heading {
+  margin-bottom: 1.25rem;
+}
+
+.varbits-inspired .category-chips {
+  gap: 0.5rem;
+}
+
+.varbits-inspired .tab-button,
+.varbits-inspired .ghost-button,
+.varbits-inspired .secondary-link,
+.varbits-inspired .dialog-close {
+  padding: 0.7rem 0.95rem;
+  border: 1px solid #d9d9d9;
+  border-radius: 0;
+  background: #fff;
+  color: #1f1f1f;
+  box-shadow: none;
+}
+
+.varbits-inspired .tab-button.active,
+.varbits-inspired .category-chips .tab-button.active {
+  border-color: #111;
+  background: #111;
+  color: #fff;
+}
+
+.varbits-inspired .product-grid {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.25rem;
+}
+
+.varbits-inspired .product-card {
+  display: grid;
+  overflow: hidden;
+}
+
+.varbits-inspired .product-card-media,
+.varbits-inspired .dialog-media {
+  min-height: 220px;
+  border-bottom: 1px solid #e5e5e5;
+  background: #f4f4f4;
+}
+
+.varbits-inspired .placeholder-art {
+  padding: 1.5rem;
+  color: #666;
+  font-size: 1.1rem;
+}
+
+.varbits-inspired .product-card-body {
+  padding: 1.1rem;
+}
+
+.varbits-inspired .product-status,
+.varbits-inspired .product-pill,
+.varbits-inspired .checkout-confidence span,
+.varbits-inspired .cart-qty-badge {
+  border: 1px solid #e4e4e4;
+  border-radius: 0;
+  background: #fafafa;
+  color: #444;
+  box-shadow: none;
+}
+
+.varbits-inspired .product-price {
+  color: #111;
+  font-size: 1.4rem;
+}
+
+.varbits-inspired .stack-form label,
+.varbits-inspired .shipping-options legend {
+  font-weight: 700;
+}
+
+.varbits-inspired .stack-form input,
+.varbits-inspired .stack-form select,
+.varbits-inspired .stack-form textarea {
+  width: 100%;
+  padding: 0.85rem 0.95rem;
+  border: 1px solid #d9d9d9;
+  border-radius: 0;
+  background: #fff;
+  color: #1f1f1f;
+  font: inherit;
+}
+
+.varbits-inspired .status-toast {
+  border-radius: 0;
+}
+
+.varbits-inspired .product-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.varbits-inspired .dialog-shell {
+  border: 1px solid #d9d9d9;
+  border-radius: 0;
+  background: #fff;
+  box-shadow: none;
+}
+
+@media (max-width: 1100px) {
+  .varbits-inspired .vb-header,
+  .varbits-inspired .vb-featured-product,
+  .varbits-inspired .vb-category-row,
+  .varbits-inspired .vb-category-row-reverse,
+  .varbits-inspired .content-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .varbits-inspired .vb-category-row-reverse .vb-category-media,
+  .varbits-inspired .vb-category-row-reverse .vb-category-copy {
+    order: initial;
+  }
+
+  .varbits-inspired .sticky-panel {
+    position: static;
+  }
+}
+
+@media (max-width: 760px) {
+  .varbits-inspired .vb-header,
+  .varbits-inspired .vb-search-row,
+  .varbits-inspired .vb-footer-inner {
+    padding-inline: 1rem;
+  }
+
+  .varbits-inspired .vb-header,
+  .varbits-inspired .vb-footer-inner {
+    grid-template-columns: 1fr;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .varbits-inspired .vb-search-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .varbits-inspired .vb-main {
+    padding-inline: 1rem;
+    gap: 2.5rem;
+  }
+
+  .varbits-inspired .vb-featured-image,
+  .varbits-inspired .vb-category-art {
+    min-height: 260px;
+  }
+
+  .varbits-inspired .vb-option-grid,
+  .varbits-inspired .split-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .varbits-inspired .section-heading,
+  .varbits-inspired .cart-row,
+  .varbits-inspired .summary-row,
+  .varbits-inspired .product-card-footer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
