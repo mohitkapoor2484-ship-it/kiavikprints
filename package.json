@@ -2,10 +2,11 @@
   "name": "kiavik-prints-mvp",
   "version": "0.1.0",
   "private": true,
-  "description": "Kiavik Prints Netlify-native MVP storefront with admin, checkout, and PayPal-ready endpoints.",
+  "description": "Kiavik Prints Netlify storefront, seller admin, accounts, orders and PayPal-ready checkout.",
   "scripts": {
     "dev": "npx netlify dev",
-    "start": "npx netlify dev"
+    "start": "npx netlify dev",
+    "check": "node --check public/app.js && node --check public/admin.js && node --check public/brand.js && node --check lib/api-handler.mjs && node --check lib/netlify-store.mjs && node --check netlify/functions/api.mjs"
   },
   "dependencies": {
     "@netlify/database": "^1.1.0"

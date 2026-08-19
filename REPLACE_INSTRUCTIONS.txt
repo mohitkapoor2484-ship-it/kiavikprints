@@ -1,0 +1,21 @@
+KIAVIK PRINTS — CLEAN REPLACEMENT INSTRUCTIONS
+
+This package is a FULL source dump, not an overlay.
+
+If you want to keep the existing Git history:
+1. Back up the current local repository folder.
+2. Keep the hidden .git folder only.
+3. Delete the old project source files/folders from the repo working tree.
+4. Copy EVERYTHING from this package into the repo root.
+5. Do not copy node_modules or .netlify from an old folder.
+6. Run npm install, then npx netlify dev.
+7. Hard-refresh the browser (Ctrl+F5). CSS/JS also have cache-busting query strings.
+
+The approved visual pass specifically fixes:
+- hero image cropping
+- 3-line hero heading on desktop
+- tiny/whitespace-heavy logo rendering
+- cramped category cards
+- category image cropping
+- product image cropping in cards/dialogs/admin
+- stale CSS/JS browser cache after copy-paste

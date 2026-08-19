@@ -1,67 +1,37 @@
-# Kiavik Prints MVP
+# Kiavik Prints — complete Netlify repository
 
-This is a Netlify-native MVP for `Kiavik Prints`.
+This is the full source package: redesigned storefront plus the Netlify-native backend.
 
-It includes:
+## Included
 
-- storefront with starter products
-- product detail dialog with size, colour, and custom text
-- cart and checkout form
-- guest checkout
-- customer signup and login
-- saved order history for signed-in users
-- family-friendly admin page for adding, editing, hiding, and deleting products
-- PayPal-ready server endpoints with a preview-order fallback
+- `public/` — homepage, shop, custom printing, materials, about, contact, admin UI and assets.
+- `public/app.js` — product catalogue, cart, accounts, shipping, draft orders and PayPal UI.
+- `public/admin.js` — seller login, product CRUD, image upload-to-database and order list.
+- `lib/api-handler.mjs` — `/api/*` request routing, authentication and PayPal server-side calls.
+- `lib/netlify-store.mjs` — Netlify Database persistence for users, sessions, products and orders.
+- `netlify/functions/api.mjs` — Netlify Function entry point.
+- `netlify/database/migrations/` — full SQL schema.
+- `netlify.toml` — publish/functions config and legacy route redirects.
+- `package.json` and `package-lock.json`.
+- `.env.example` and `.gitignore`.
 
-## Stack
+## First local run
 
-- `Netlify` static hosting from [`public/`](./public)
-- `Netlify Functions` for `/api/*`
-- `Netlify Database` for users, sessions, products, and orders
-- plain HTML, CSS, and JavaScript frontend
+1. Use Node 20.6.1 or newer.
+2. Copy `.env.example` to `.env` and set a strong `ADMIN_EMAIL` and `ADMIN_PASSWORD`.
+3. Run `npm install`.
+4. Run `npx netlify dev` (or `npm run dev`).
+5. Open the local URL Netlify prints in the terminal.
+6. Seller/admin route: `/admin`.
 
-## Project layout
+## Existing Netlify project
 
-- storefront publish directory: `public/`
-- serverless backend: `netlify/functions/api.mjs`
-- database migrations: `netlify/database/migrations/`
-- shared backend logic: `lib/`
+If you are applying this to the existing Kiavik Prints Netlify project, keep the project's existing Database and environment variables. The migration uses `CREATE TABLE IF NOT EXISTS`, so it is safe for an existing schema with these tables.
 
-## Local development
+## PayPal
 
-1. Open `Projects/Kiavik Prints`
-2. Copy `.env.example` to `.env`
-3. Set the admin email and password
-4. Run:
+PayPal remains disabled until `PAYPAL_CLIENT_ID` and `PAYPAL_CLIENT_SECRET` are set. Use `PAYPAL_ENV=sandbox` while testing.
 
-```powershell
-npx netlify dev
-```
+## Important
 
-Netlify will serve the static site, functions, and local database-compatible environment together.
-
-## Live Netlify setup
-
-In the Netlify project dashboard, set these environment variables:
-
-- `SHOP_NAME`
-- `SHOP_CURRENCY`
-- `ADMIN_EMAIL`
-- `ADMIN_PASSWORD`
-- `PAYPAL_ENV`
-- `PAYPAL_CLIENT_ID`
-- `PAYPAL_CLIENT_SECRET`
-
-The database schema is defined in `netlify/database/migrations/` and is applied by Netlify during deploys.
-
-## Default routes
-
-- Storefront: `/`
-- Product admin: `/admin` or `/admin.html`
-- API: `/api/*`
-
-## Notes
-
-- Sample products are seeded automatically when the database is empty.
-- A default admin account is created if no admin exists yet.
-- Product images are still stored as inline image data for the MVP. Moving uploads to Netlify Blobs is the next storage upgrade after this.
+This ZIP intentionally excludes `.git/`, `.netlify/` and `node_modules/`. Those are machine/repository metadata, not source code. Put the contents in your local Git working folder, then use `git status` to review changes before committing.

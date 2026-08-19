@@ -9,3 +9,53 @@
   from = "/admin"
   to = "/admin.html"
   status = 200
+
+[[redirects]]
+  from = "/custom-printing/*"
+  to = "/custom-print/"
+  status = 301
+
+[[redirects]]
+  from = "/about/*"
+  to = "/about-kiavik/"
+  status = 301
+
+[[redirects]]
+  from = "/seller/inventory/*"
+  to = "/admin"
+  status = 301
+
+[[redirects]]
+  from = "/shop/lamps-light-boxes/*"
+  to = "/shop/?category=lamps-light-boxes"
+  status = 301
+
+[[redirects]]
+  from = "/shop/personalised-gifts/*"
+  to = "/shop/?category=personalised-gifts"
+  status = 301
+
+[[redirects]]
+  from = "/shop/keychains/*"
+  to = "/shop/?category=keychains"
+  status = 301
+
+[[redirects]]
+  from = "/shop/signs-name-plates/*"
+  to = "/shop/?category=signs-name-plates"
+  status = 301
+
+[[redirects]]
+  from = "/shop/toys-fidgets/*"
+  to = "/shop/?category=toys-fidgets"
+  status = 301
+
+[[redirects]]
+  from = "/shop/home-decor/*"
+  to = "/shop/?category=home-decor"
+  status = 301
+
+[[redirects]]
+  from = "/shop/fathers-day-seasonal/*"
+  to = "/shop/?category=fathers-day-seasonal"
+  status = 301

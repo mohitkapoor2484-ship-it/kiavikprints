@@ -1,0 +1,14 @@
+KIAVIK PRINTS - COMPLETE SOURCE DUMP
+
+This is the full project, including the lib folder and Netlify backend.
+
+Recommended safe process:
+1. Extract this ZIP into a NEW folder first.
+2. Confirm you can see: lib/, netlify/, public/, package.json and netlify.toml.
+3. Copy .env.example to .env and set ADMIN_EMAIL / ADMIN_PASSWORD.
+4. Run: npm install
+5. Run: npx netlify dev
+6. Test /, /shop/, /custom-print/, /materials/, /about-kiavik/, /contact/ and /admin.
+7. Only after local testing, copy/commit it into your Git branch.
+
+Do not copy node_modules, .netlify or old mixed files from earlier packages into this folder.
