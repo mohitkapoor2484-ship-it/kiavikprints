@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS kp_sessions (
   expires_at TIMESTAMPTZ NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
 CREATE INDEX IF NOT EXISTS kp_sessions_user_id_idx ON kp_sessions(user_id);
 
 CREATE TABLE IF NOT EXISTS kp_products (
@@ -31,6 +32,7 @@ CREATE TABLE IF NOT EXISTS kp_products (
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
 CREATE INDEX IF NOT EXISTS kp_products_active_created_idx ON kp_products(is_active, created_at DESC);
 
 CREATE TABLE IF NOT EXISTS kp_orders (
@@ -62,6 +64,7 @@ CREATE TABLE IF NOT EXISTS kp_orders (
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
 CREATE INDEX IF NOT EXISTS kp_orders_user_created_idx ON kp_orders(user_id, created_at DESC);
 CREATE INDEX IF NOT EXISTS kp_orders_created_idx ON kp_orders(created_at DESC);
 
@@ -78,4 +81,5 @@ CREATE TABLE IF NOT EXISTS kp_order_items (
   line_total_cents INTEGER NOT NULL CHECK (line_total_cents >= 0),
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
 CREATE INDEX IF NOT EXISTS kp_order_items_order_id_idx ON kp_order_items(order_id, created_at ASC);
