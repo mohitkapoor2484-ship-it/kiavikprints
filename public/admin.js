@@ -13,6 +13,7 @@
 
   async function init() {
     bind();
+    syncColorConfig();
     try {
       const bootstrap = await request("/api/bootstrap");
       state.user = bootstrap.user;
@@ -26,12 +27,18 @@
     el("productForm")?.addEventListener("submit", saveProduct);
     el("resetProductButton")?.addEventListener("click", resetForm);
     el("productImageFile")?.addEventListener("change", readImage);
+    el("productColorMode")?.addEventListener("change", syncColorConfig);
+    el("productColorSlots")?.addEventListener("change", syncColorConfig);
+    el("clearProductButton")?.addEventListener("click", resetForm);
+    el("adminSearch")?.addEventListener("input", renderProducts);
+    el("adminCategoryFilter")?.addEventListener("change", renderProducts);
   }
 
   function showLogin() { el("adminAuthPanel")?.classList.remove("hidden"); el("adminDashboard")?.classList.add("hidden"); }
   async function showDashboard() {
     el("adminAuthPanel")?.classList.add("hidden"); el("adminDashboard")?.classList.remove("hidden");
-    el("adminWelcome").textContent = state.user?.fullName || "Kiavik Prints";
+    const adminWelcome = el("adminWelcome");
+    if (adminWelcome) adminWelcome.textContent = state.user?.fullName || "Kiavik Prints";
     await Promise.all([loadProducts(), loadOrders()]);
   }
 
@@ -50,18 +57,55 @@
   }
 
   async function loadProducts() {
-    const result = await request("/api/admin/products"); state.products = result.products || []; renderProducts();
+    const result = await request("/api/admin/products"); state.products = result.products || []; renderCategoryFilter(); renderProducts(); renderStats();
   }
   async function loadOrders() {
-    const result = await request("/api/admin/orders"); state.orders = result.orders || []; renderOrders();
+    const result = await request("/api/admin/orders"); state.orders = result.orders || []; renderOrders(); renderStats();
   }
 
   function renderProducts() {
     const target = el("adminProductList"); if (!target) return;
-    if (!state.products.length) { target.innerHTML = `<div class="empty-state">No products yet.</div>`; return; }
-    target.innerHTML = state.products.map((p) => `<article class="admin-product-card"><div>${p.imageData ? `<img src="${p.imageData}" alt="${esc(p.name)}">` : `<div class="placeholder-art">${esc(p.name)}</div>`}</div><div><strong>${esc(p.name)}</strong><div class="cart-meta">${esc(p.category || "Uncategorised")} · $${esc(p.priceLabel)}</div><div class="product-pill-row"><span class="product-pill">${p.isActive ? "Active" : "Draft"}</span>${p.customTextEnabled ? `<span class="product-pill">Custom text</span>` : ""}</div></div><div class="inline-actions"><button class="ghost-button" type="button" data-edit="${esc(p.id)}">Edit</button><button class="ghost-button" type="button" data-delete="${esc(p.id)}">Delete</button></div></article>`).join("");
+    if (!state.products.length) { target.innerHTML = `<tr><td colspan="6" class="empty-state">No products yet.</td></tr>`; return; }
+    const query = String(el("adminSearch")?.value || "").trim().toLowerCase();
+    const category = String(el("adminCategoryFilter")?.value || "");
+    const products = state.products.filter((product) => {
+      const queryOk = !query || [product.name, product.category, product.description].join(" ").toLowerCase().includes(query);
+      const categoryOk = !category || String(product.category || "") === category;
+      return queryOk && categoryOk;
+    });
+    target.innerHTML = products.map((p) => `<tr>
+      <td><div class="inventory-product">${p.imageData ? `<img src="${p.imageData}" alt="${esc(p.name)}">` : `<div class="placeholder-art">${esc(p.name)}</div>`}<div><strong>${esc(p.name)}</strong><div class="cart-meta">${esc(p.description || "").slice(0, 42)}</div></div></div></td>
+      <td>${esc(p.category || "Uncategorised")}</td>
+      <td>$${esc(p.priceLabel)}</td>
+      <td>${esc(formatColorSetup(p))}</td>
+      <td><span class="status">${p.isActive ? "Active" : "Hidden"}</span></td>
+      <td><div class="inline-actions"><button class="edit-action" type="button" data-edit="${esc(p.id)}">Edit</button><button class="edit-action" type="button" data-delete="${esc(p.id)}">Delete</button></div></td>
+    </tr>`).join("");
     target.querySelectorAll("[data-edit]").forEach((b) => b.addEventListener("click", () => editProduct(b.dataset.edit)));
     target.querySelectorAll("[data-delete]").forEach((b) => b.addEventListener("click", () => deleteProduct(b.dataset.delete)));
+  }
+
+  function renderCategoryFilter() {
+    const target = el("adminCategoryFilter"); if (!target) return;
+    const current = target.value;
+    const categories = [...new Set(state.products.map((product) => String(product.category || "").trim()).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+    target.innerHTML = `<option value="">All categories</option>${categories.map((category) => `<option value="${esc(category)}">${esc(category)}</option>`).join("")}`;
+    target.value = categories.includes(current) ? current : "";
+  }
+
+  function formatColorSetup(product) {
+    const count = Number(product.colorSlotCount || 1);
+    return count > 1 ? `${count} buyer colours` : "Single colour";
+  }
+
+  function renderStats() {
+    const active = state.products.filter((product) => product.isActive).length;
+    const hidden = state.products.filter((product) => !product.isActive).length;
+    const customers = new Set(state.orders.map((order) => order.customerEmail).filter(Boolean)).size;
+    if (el("statActiveProducts")) el("statActiveProducts").textContent = String(active);
+    if (el("statHiddenProducts")) el("statHiddenProducts").textContent = String(hidden);
+    if (el("statRecentOrders")) el("statRecentOrders").textContent = String(state.orders.length);
+    if (el("statCustomers")) el("statCustomers").textContent = String(customers);
   }
 
   function renderOrders() {
@@ -75,12 +119,31 @@
     el("productId").value = p.id; el("productName").value = p.name || ""; el("productCategory").value = p.category || "";
     el("productPrice").value = (Number(p.priceCents || 0) / 100).toFixed(2); el("productDescription").value = p.description || "";
     el("productSizes").value = (p.sizeOptions || []).join(", "); el("productColors").value = (p.colorOptions || []).join(", ");
+    el("productColorMode").value = p.colorMode === "multi" ? "multi" : "single";
+    el("productColorSlots").value = String(p.colorSlotCount || 1);
+    el("productTextColors").value = (p.textColorOptions || []).join(", ");
     el("productCustomText").checked = Boolean(p.customTextEnabled); el("productActive").checked = Boolean(p.isActive); state.imageData = p.imageData || "";
-    renderImage(); el("productName").focus();
+    syncColorConfig(); renderImage(); el("productName").focus();
   }
 
   function resetForm() {
-    el("productForm")?.reset(); el("productId").value = ""; el("productActive").checked = true; state.imageData = ""; renderImage();
+    el("productForm")?.reset(); el("productId").value = ""; el("productColorMode").value = "single"; el("productColorSlots").value = "1"; el("productActive").checked = true; state.imageData = ""; syncColorConfig(); renderImage();
+  }
+
+  function syncColorConfig() {
+    const mode = el("productColorMode")?.value || "single";
+    const slots = el("productColorSlots");
+    if (!slots) return;
+    const singleOption = slots.querySelector('option[value="1"]');
+    if (mode === "multi") {
+      if (singleOption) singleOption.disabled = true;
+      slots.disabled = false;
+      if (Number(slots.value || 0) < 2) slots.value = "2";
+      return;
+    }
+    if (singleOption) singleOption.disabled = false;
+    slots.value = "1";
+    slots.disabled = true;
   }
 
   function readImage(event) {
@@ -100,7 +163,10 @@
       price: Number(el("productPrice").value || 0),
       description: el("productDescription").value,
       sizeOptions: el("productSizes").value,
+      colorMode: el("productColorMode").value,
+      colorSlotCount: Number(el("productColorSlots").value || 1),
       colorOptions: el("productColors").value,
+      textColorOptions: el("productTextColors").value,
       customTextEnabled: el("productCustomText").checked,
       isActive: el("productActive").checked,
       imageData: state.imageData,

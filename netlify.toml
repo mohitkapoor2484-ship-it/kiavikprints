@@ -5,24 +5,49 @@
   directory = "netlify/functions"
   node_bundler = "esbuild"
 
+[[headers]]
+  for = "/seller/inventory/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow, noarchive"
+
 [[redirects]]
   from = "/admin"
-  to = "/admin.html"
-  status = 200
-
-[[redirects]]
-  from = "/custom-printing/*"
-  to = "/custom-print/"
+  to = "/seller/inventory/"
   status = 301
 
 [[redirects]]
-  from = "/about/*"
-  to = "/about-kiavik/"
+  from = "/admin.html"
+  to = "/seller/inventory/"
   status = 301
 
 [[redirects]]
-  from = "/seller/inventory/*"
-  to = "/admin"
+  from = "/custom-print"
+  to = "/custom-printing/"
+  status = 301
+
+[[redirects]]
+  from = "/custom-print/*"
+  to = "/custom-printing/"
+  status = 301
+
+[[redirects]]
+  from = "/about-kiavik"
+  to = "/about/"
+  status = 301
+
+[[redirects]]
+  from = "/about-kiavik/*"
+  to = "/about/"
+  status = 301
+
+[[redirects]]
+  from = "/shop"
+  to = "/"
+  status = 301
+
+[[redirects]]
+  from = "/shop/"
+  to = "/"
   status = 301
 
 [[redirects]]

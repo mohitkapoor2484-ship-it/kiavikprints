@@ -15,6 +15,9 @@
     cart: loadCart(),
     activeCategory: new URL(location.href).searchParams.get("category") || "all",
     query: (new URL(location.href).searchParams.get("q") || "").trim().toLowerCase(),
+    sort: new URL(location.href).searchParams.get("sort") || "featured",
+    activeColor: (new URL(location.href).searchParams.get("color") || "").trim().toLowerCase(),
+    maxPrice: Number(new URL(location.href).searchParams.get("maxPrice") || 150),
     currentProduct: null,
     paypalLoaded: false,
     localOrderId: "",
@@ -32,13 +35,20 @@
   function money(cents) { return (Number(cents || 0) / 100).toFixed(2); }
 
   function bind() {
+    const menuButton = document.querySelector(".menu-button");
+    const nav = document.querySelector(".main-nav");
+    if (menuButton && nav) menuButton.addEventListener("click", () => nav.classList.toggle("open"));
+
     el("cartPill")?.addEventListener("click", () => el("checkout")?.scrollIntoView({ behavior: "smooth", block: "start" }));
     el("closeProductDialog")?.addEventListener("click", () => el("productDialog")?.close());
-    el("productOptionForm")?.addEventListener("submit", (e) => { e.preventDefault(); addCurrentProduct(); });
+    el("productOptionForm")?.addEventListener("submit", (e) => { e.preventDefault(); if (!e.currentTarget.reportValidity()) return; addCurrentProduct(); });
     el("signinForm")?.addEventListener("submit", signIn);
     el("signupForm")?.addEventListener("submit", signUp);
     el("logoutButton")?.addEventListener("click", logout);
     el("previewOrderButton")?.addEventListener("click", saveDraft);
+    el("priceRange")?.addEventListener("input", updatePriceRange);
+    el("shopSort")?.addEventListener("change", updateSort);
+    document.querySelectorAll("[data-search-form]").forEach((form) => form.addEventListener("submit", submitSearch));
     document.querySelectorAll("[data-auth-tab]").forEach((button) => button.addEventListener("click", () => switchAuth(button.dataset.authTab)));
     el("productDialog")?.addEventListener("close", () => {
       const u = new URL(location.href); u.searchParams.delete("product"); history.replaceState({}, "", u);
@@ -65,7 +75,10 @@
 
   function renderAll() {
     renderCategories();
+    renderColorFilters();
+    syncSearchInputs();
     renderProducts();
+    renderShopControls();
     renderCart();
     renderShipping();
     renderAccount();
@@ -73,16 +86,45 @@
   }
 
   function renderCategories() {
-    const target = el("categoryChips"); if (!target) return;
-    const all = [{ slug: "all", label: "All Products" }, ...categories];
-    target.innerHTML = all.map((c) => `<button type="button" class="tab-button ${state.activeCategory === c.slug ? "active" : ""}" data-category="${esc(c.slug)}">${esc(c.label)}</button>`).join("");
-    target.querySelectorAll("[data-category]").forEach((button) => button.addEventListener("click", () => {
+    const targets = [el("categoryChips"), el("categorySidebar")].filter(Boolean);
+    if (!targets.length) return;
+    const all = [{ slug: "all", label: "All Prints" }, ...categories];
+    const counts = new Map(all.map((category) => [category.slug, countProductsForCategory(category.slug)]));
+    const markup = all.map((category) => `<button type="button" class="category-link ${state.activeCategory === category.slug ? "active" : ""}" data-category="${esc(category.slug)}"><span>${esc(category.label)}</span><b>${counts.get(category.slug) || 0}</b></button>`).join("");
+    targets.forEach((target) => { target.innerHTML = markup; });
+    document.querySelectorAll("[data-category]").forEach((button) => button.addEventListener("click", () => {
       state.activeCategory = button.dataset.category;
       const u = new URL(location.href);
       if (state.activeCategory === "all") u.searchParams.delete("category"); else u.searchParams.set("category", state.activeCategory);
       history.replaceState({}, "", u);
+      scrollToCatalog();
       renderCategories(); renderProducts();
     }));
+  }
+
+  function renderColorFilters() {
+    const buttons = document.querySelectorAll("[data-color-chip]");
+    if (!buttons.length) return;
+    buttons.forEach((button) => {
+      const value = String(button.dataset.colorChip || "").trim().toLowerCase();
+      button.classList.toggle("is-active", value === state.activeColor);
+      button.onclick = () => {
+        state.activeColor = value;
+        const u = new URL(location.href);
+        if (!state.activeColor) u.searchParams.delete("color"); else u.searchParams.set("color", state.activeColor);
+        history.replaceState({}, "", u);
+        scrollToCatalog();
+        renderColorFilters();
+        renderProducts();
+      };
+    });
+  }
+
+  function countProductsForCategory(slug) {
+    if (slug === "all") return state.products.length;
+    const category = categories.find((item) => item.slug === slug);
+    if (!category) return 0;
+    return state.products.filter((product) => category.matches.some((match) => String(product.category || "").toLowerCase() === match.toLowerCase())).length;
   }
 
   function productMatches(product) {
@@ -90,22 +132,118 @@
     const catOk = !category || state.activeCategory === "all" || category.matches.some((m) => String(product.category || "").toLowerCase() === m.toLowerCase());
     const q = state.query;
     const qOk = !q || [product.name, product.category, product.description].join(" ").toLowerCase().includes(q);
-    return catOk && qOk;
+    const colors = Array.isArray(product.colorOptions) ? product.colorOptions : [];
+    const colorOk = !state.activeColor || colors.some((value) => String(value).toLowerCase().includes(state.activeColor));
+    const priceOk = Number(product.priceCents || 0) <= state.maxPrice * 100;
+    return catOk && qOk && colorOk && priceOk;
   }
 
   function renderProducts() {
     const target = el("productsGrid"); if (!target) return;
-    const products = state.products.filter(productMatches);
+    const products = sortProducts(state.products.filter(productMatches));
+    renderShopResults(products.length, state.products.length);
     if (!products.length) {
-      target.innerHTML = `<div class="empty-state">No products match this view yet. <a href="/custom-print/">Request a custom print</a>.</div>`;
+      target.innerHTML = `<div class="empty-state">No products match this view right now. Try another filter or use the enquiry form below.</div>`;
       return;
     }
-    target.innerHTML = products.map((p) => {
+    target.innerHTML = products.map((p, index) => {
       const media = p.imageData ? `<img src="${p.imageData}" alt="${esc(p.name)}">` : `<div class="placeholder-art">${esc(p.name)}</div>`;
-      const pills = [p.customTextEnabled ? "Personalised" : "Ready made", p.sizeOptions?.length ? `${p.sizeOptions.length} sizes` : "Single size", p.colorOptions?.length ? `${p.colorOptions.length} colours` : "Single colour"];
-      return `<article class="product-card"><div class="product-card-media">${media}</div><div class="product-card-body"><div class="product-topline"><span class="product-category">${esc(p.category || "Kiavik")}</span><span class="product-status">Made to order</span></div><h3>${esc(p.name)}</h3><p class="card-copy">${esc((p.description || "Custom 3D printed product").slice(0,110))}</p><div class="product-pill-row">${pills.map((x) => `<span class="product-pill">${esc(x)}</span>`).join("")}</div><div class="product-card-footer"><p class="product-price"><span>From</span>$${esc(p.priceLabel || money(p.priceCents))}</p><button class="primary-button" type="button" data-open-product="${esc(p.id)}">${p.customTextEnabled ? "Customise" : "Choose options"}</button></div></div></article>`;
+      const badge = index % 3 === 1 ? "Popular" : "New";
+      return `<article class="product-card catalog-card">
+        <div class="product-card-media catalog-media">
+          <span class="product-badge ${badge === "Popular" ? "hot" : ""}">${badge}</span>
+          <button class="catalog-heart" type="button" aria-label="Save item">♡</button>
+          ${media}
+        </div>
+        <div class="product-card-body catalog-body">
+          <div class="catalog-swatches">${renderSwatches(p.colorOptions || [])}</div>
+          <h3>${esc(p.name)}</h3>
+          <p class="card-copy">${esc((p.description || "Custom 3D printed product").slice(0, 72))}</p>
+          <div class="product-card-footer">
+            <p class="product-price">$${esc(p.priceLabel || money(p.priceCents))}</p>
+            <button class="ghost-button catalog-action" type="button" data-open-product="${esc(p.id)}">${p.customTextEnabled ? "Customise" : "View"} →</button>
+          </div>
+        </div>
+      </article>`;
     }).join("");
     target.querySelectorAll("[data-open-product]").forEach((button) => button.addEventListener("click", () => openProduct(button.dataset.openProduct)));
+  }
+
+  function renderSwatches(colors) {
+    const palette = [];
+    colors.forEach((value) => String(value).split(/[+,/]/).forEach((part) => {
+      const key = part.trim().toLowerCase();
+      const color = COLOR_MAP[key];
+      if (color && !palette.includes(color)) palette.push(color);
+    }));
+    return (palette.slice(0, 4).length ? palette.slice(0, 4) : ["#0b6e73", "#f26722"]).map((color) => `<span class="swatch" style="background:${color}"></span>`).join("");
+  }
+
+  function sortProducts(products) {
+    const copy = [...products];
+    if (state.sort === "price-asc") copy.sort((a, b) => Number(a.priceCents || 0) - Number(b.priceCents || 0));
+    if (state.sort === "price-desc") copy.sort((a, b) => Number(b.priceCents || 0) - Number(a.priceCents || 0));
+    if (state.sort === "name-asc") copy.sort((a, b) => String(a.name || "").localeCompare(String(b.name || "")));
+    return copy;
+  }
+
+  function renderShopResults(filteredCount, totalCount) {
+    const target = el("shopResultsText");
+    if (!target) return;
+    target.textContent = `Showing ${filteredCount} of ${totalCount} products`;
+  }
+
+  function renderShopControls() {
+    const range = el("priceRange");
+    const label = el("priceRangeValue");
+    const sort = el("shopSort");
+    if (range) range.value = String(state.maxPrice);
+    if (label) label.textContent = `$10 to $${state.maxPrice}`;
+    if (sort) sort.value = state.sort;
+  }
+
+  function syncSearchInputs() {
+    document.querySelectorAll('[data-search-form] input[type="search"]').forEach((input) => {
+      input.value = state.query;
+    });
+  }
+
+  function submitSearch(event) {
+    event.preventDefault();
+    const input = event.currentTarget.querySelector('input[type="search"]');
+    state.query = String(input?.value || "").trim().toLowerCase();
+    const u = new URL(location.href);
+    if (state.query) u.searchParams.set("q", state.query); else u.searchParams.delete("q");
+    history.replaceState({}, "", u);
+    syncSearchInputs();
+    scrollToCatalog();
+    renderProducts();
+  }
+
+  function updatePriceRange(event) {
+    state.maxPrice = Number(event.currentTarget.value || 150);
+    const u = new URL(location.href);
+    u.searchParams.set("maxPrice", String(state.maxPrice));
+    history.replaceState({}, "", u);
+    renderShopControls();
+    renderProducts();
+  }
+
+  function updateSort(event) {
+    state.sort = event.currentTarget.value;
+    const u = new URL(location.href);
+    if (state.sort === "featured") u.searchParams.delete("sort"); else u.searchParams.set("sort", state.sort);
+    history.replaceState({}, "", u);
+    renderProducts();
+  }
+
+  function scrollToCatalog() {
+    el("catalog")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function describeColorSetup(product) {
+    const count = Number(product.colorSlotCount || 1);
+    return count > 1 ? `${count} colour build` : "Single colour";
   }
 
   function openProduct(id) {
@@ -118,18 +256,44 @@
     el("dialogDescription").textContent = p.description || "";
     el("dialogMedia").innerHTML = p.imageData ? `<img src="${p.imageData}" alt="${esc(p.name)}">` : `<div class="placeholder-art">${esc(p.name)}</div>`;
     populateSelect("sizeField", "dialogSize", p.sizeOptions || []);
-    populateSelect("colorField", "dialogColor", p.colorOptions || []);
+    renderColorFields(p);
     el("textField")?.classList.toggle("hidden", !p.customTextEnabled);
+    populateSelect("textColorField", "dialogTextColor", p.customTextEnabled ? (p.textColorOptions || []) : [], "Choose text colour");
     if (el("dialogText")) el("dialogText").value = "";
+    if (el("dialogTextColor")) el("dialogTextColor").value = "";
     if (el("dialogQuantity")) el("dialogQuantity").value = 1;
     el("productDialog")?.showModal();
     const u = new URL(location.href); u.searchParams.set("product", p.id); history.replaceState({}, "", u);
   }
 
-  function populateSelect(fieldId, selectId, values) {
+  function populateSelect(fieldId, selectId, values, placeholder = "") {
     const field = el(fieldId), select = el(selectId); if (!field || !select) return;
     field.classList.toggle("hidden", !values.length);
-    select.innerHTML = values.map((x) => `<option>${esc(x)}</option>`).join("");
+    if (!values.length) { select.innerHTML = ""; return; }
+    const options = placeholder ? [`<option value="">${esc(placeholder)}</option>`] : [];
+    options.push(...values.map((x) => `<option value="${esc(x)}">${esc(x)}</option>`));
+    select.innerHTML = options.join("");
+    if (placeholder) select.value = "";
+  }
+
+  function renderColorFields(product) {
+    const target = el("colorFields"); if (!target) return;
+    const options = product.colorOptions || [];
+    const count = Math.max(1, Number(product.colorSlotCount || 1));
+    if (!options.length) {
+      target.innerHTML = "";
+      target.classList.add("hidden");
+      return;
+    }
+    target.classList.remove("hidden");
+    target.innerHTML = Array.from({ length: count }, (_, index) => `<label>${esc(colorSlotLabel(index, count))}<select data-color-slot="${index}" required><option value="">Choose a colour</option>${options.map((value) => `<option value="${esc(value)}">${esc(value)}</option>`).join("")}</select></label>`).join("");
+  }
+
+  function colorSlotLabel(index, total) {
+    if (total === 1) return "Colour";
+    if (index === 0) return "Primary colour";
+    if (index === 1) return "Secondary colour";
+    return `Colour ${index + 1}`;
   }
 
   function openDeepLink() {
@@ -138,6 +302,15 @@
 
   function addCurrentProduct() {
     const p = state.currentProduct; if (!p) return;
+    const colorChoices = Array.from(document.querySelectorAll("#colorFields select")).map((select) => select.value).filter(Boolean);
+    const customText = el("textField")?.classList.contains("hidden") ? "" : (el("dialogText")?.value || "").trim();
+    const textColorRequired = !el("textColorField")?.classList.contains("hidden") && Boolean(customText);
+    const textColorChoice = textColorRequired ? (el("dialogTextColor")?.value || "") : "";
+    if (textColorRequired && !textColorChoice) {
+      toast("Choose a text colour for the custom text.", true);
+      el("dialogTextColor")?.focus();
+      return;
+    }
     const item = {
       id: crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`,
       productId: p.id,
@@ -145,8 +318,10 @@
       priceCents: p.priceCents,
       quantity: Math.max(1, Number(el("dialogQuantity")?.value || 1)),
       sizeChoice: el("sizeField")?.classList.contains("hidden") ? "" : (el("dialogSize")?.value || ""),
-      colorChoice: el("colorField")?.classList.contains("hidden") ? "" : (el("dialogColor")?.value || ""),
-      customText: el("textField")?.classList.contains("hidden") ? "" : (el("dialogText")?.value || ""),
+      colorChoices,
+      colorChoice: colorChoices.join(" / "),
+      customText,
+      textColorChoice,
     };
     state.cart.push(item); saveCart(); renderCart(); el("productDialog")?.close(); toast("Added to cart.");
   }
@@ -163,7 +338,7 @@
     if (el("cartSubtotal")) el("cartSubtotal").textContent = `$${money(cartSubtotal())}`;
     const target = el("cartItems"); if (!target) return;
     if (!state.cart.length) { target.innerHTML = `<div class="empty-state">Your cart is empty.</div>`; return; }
-    target.innerHTML = state.cart.map((item) => `<article class="cart-item"><div class="cart-row"><strong>${esc(item.name)}</strong><span class="cart-qty-badge">Qty ${item.quantity}</span></div><div class="cart-meta">${esc(item.sizeChoice || "Default")} · ${esc(item.colorChoice || "Default")}</div>${item.customText ? `<div class="cart-meta">Text: ${esc(item.customText)}</div>` : ""}<div class="cart-row"><strong>$${money(item.priceCents * item.quantity)}</strong><button class="ghost-button" data-remove="${esc(item.id)}" type="button">Remove</button></div></article>`).join("");
+    target.innerHTML = state.cart.map((item) => `<article class="cart-item"><div class="cart-row"><strong>${esc(item.name)}</strong><span class="cart-qty-badge">Qty ${item.quantity}</span></div><div class="cart-meta">${esc(item.sizeChoice || "Default")} · ${esc((item.colorChoices?.length ? item.colorChoices.join(" / ") : item.colorChoice) || "Default")}</div>${item.customText ? `<div class="cart-meta">Text: ${esc(item.customText)}${item.textColorChoice ? ` · ${esc(item.textColorChoice)}` : ""}</div>` : ""}<div class="cart-row"><strong>$${money(item.priceCents * item.quantity)}</strong><button class="ghost-button" data-remove="${esc(item.id)}" type="button">Remove</button></div></article>`).join("");
     target.querySelectorAll("[data-remove]").forEach((button) => button.addEventListener("click", () => { state.cart = state.cart.filter((x) => x.id !== button.dataset.remove); saveCart(); renderCart(); }));
   }
 
@@ -221,7 +396,15 @@
     const fd = new FormData(form);
     return {
       ...Object.fromEntries(fd),
-      items: state.cart.map((i) => ({ productId: i.productId, quantity: i.quantity, sizeChoice: i.sizeChoice, colorChoice: i.colorChoice, customText: i.customText })),
+      items: state.cart.map((i) => ({
+        productId: i.productId,
+        quantity: i.quantity,
+        sizeChoice: i.sizeChoice,
+        colorChoice: i.colorChoice,
+        colorChoices: i.colorChoices || [],
+        customText: i.customText,
+        textColorChoice: i.textColorChoice || "",
+      })),
     };
   }
 
@@ -274,4 +457,23 @@
     target.textContent = message; target.style.background = error ? "#8f2d20" : ""; target.classList.remove("hidden");
     clearTimeout(toast.timer); toast.timer = setTimeout(() => target.classList.add("hidden"), 4200);
   }
+
+  const COLOR_MAP = {
+    black: "#111111",
+    white: "#f6f6f2",
+    silver: "#c5c9d1",
+    grey: "#a5a9b0",
+    gray: "#a5a9b0",
+    teal: "#0b6e73",
+    orange: "#f26722",
+    gold: "#f2b34a",
+    yellow: "#f0c642",
+    navy: "#224567",
+    blue: "#2f74d6",
+    pink: "#d46ea0",
+    purple: "#7f58c8",
+    red: "#d53535",
+    cream: "#f0e5cd",
+    clear: "#eceff2",
+  };
 })();

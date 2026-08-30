@@ -1,1 +1,215 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#067f80"><title>Shop All Prints | Kiavik Prints</title><link rel="icon" href="/assets/kiavik-prints-logo.jpg"><link rel="stylesheet" href="/styles.css?v=20260819-2"><script defer src="/app.js?v=20260819-2"></script></head><body><div class="trustbar"><div class="shell trustbar-inner"><span>▣ Melbourne-made</span><span>♡ Australian owned</span><span>◇ Quality checked</span><span class="trust-right">Need help? <a href="/contact/">Contact us</a></span></div></div><header class="site-header"><div class="shell header-inner"><a href="/" class="brand"><img src="/assets/kiavik-prints-logo.jpg" alt="Kiavik Prints"></a><button class="menu-button" aria-label="Open menu">☰</button><nav class="main-nav"><a href="/shop/">Shop</a><a href="/custom-print/">Custom Printing</a><a href="/materials/">Materials</a><a href="/about-kiavik/">About</a><a href="/contact/">Contact</a></nav><div class="header-actions"><form class="search-form" action="/shop/"><input type="search" name="q" placeholder="Search products…"><button>⌕</button></form><a class="cart-link" href="/shop/#checkout">Cart <b id="headerCartCount">0</b></a></div></div></header><main><section class="page-hero simple-hero"><div class="shell"><p class="eyebrow">Shop</p><h1>Shop All Prints</h1><p>Thoughtful designs. 3D printed with care in Melbourne.</p><svg class="simple-filament" viewBox="0 0 900 90"><path d="M0 62 C260 32 500 22 690 48 C760 58 800 22 830 20 C860 18 842 76 900 66"/></svg></div></section><section class="shell commerce-shell"><div class="shop-column"><section class="shop-panel"><div class="shop-heading"><div><p class="eyebrow">Current catalogue</p><h2>Find your next print.</h2></div><button class="cart-pill" id="cartPill" type="button">Cart (<span id="cartCount">0</span>)</button></div><div class="category-chips" id="categoryChips"></div><div class="product-grid store-product-grid" id="productsGrid"></div></section><section class="account-panel" id="account"><div class="section-title"><div><p class="eyebrow">Account</p><h2>Orders & account</h2></div></div><div class="account-shell"><div class="account-auth" id="accountAuth"><div class="tab-row"><button class="tab-button active" data-auth-tab="signin" type="button">Sign In</button><button class="tab-button" data-auth-tab="signup" type="button">Create Account</button></div><div class="account-intro-card"><strong>Accounts are optional.</strong><p>Guest checkout works too. Sign in if you want to see previous orders.</p></div><form class="stack-form" id="signinForm"><label>Email<input name="email" type="email" required></label><label>Password<input name="password" type="password" required></label><button class="primary-button" type="submit">Sign In</button></form><form class="stack-form hidden" id="signupForm"><label>Full name<input name="fullName" required></label><label>Email<input name="email" type="email" required></label><label>Password<input name="password" type="password" minlength="8" required></label><button class="primary-button" type="submit">Create Account</button></form></div><div class="account-summary hidden" id="accountSummary"><div class="signed-in-card"><p class="eyebrow">Signed in</p><h3 id="signedInName"></h3><p id="signedInEmail"></p><button class="ghost-button" id="logoutButton" type="button">Sign Out</button></div><div class="orders-list" id="ordersList"></div></div></div></section></div><aside class="checkout-column"><section class="checkout-panel" id="checkout"><p class="eyebrow">Checkout</p><h2>Cart & shipping</h2><div class="checkout-confidence"><span>Secure PayPal</span><span>Guest or account</span><span>Pickup or delivery</span></div><div class="cart-list" id="cartItems"></div><div class="summary-card"><div class="summary-row"><span>Subtotal</span><strong id="cartSubtotal">$0.00</strong></div></div><form class="stack-form" id="checkoutForm"><h3>Customer details</h3><label>Full name<input name="customerName" required></label><label>Email<input name="customerEmail" type="email" required></label><label>Phone<input name="customerPhone" type="tel"></label><h3>Shipping details</h3><label>Shipping name<input name="shippingName" required></label><label>Address line 1<input name="addressLine1" required></label><label>Address line 2<input name="addressLine2"></label><div class="split-fields"><label>Suburb<input name="suburb" required></label><label>State<input name="state" required></label></div><div class="split-fields"><label>Postcode<input name="postcode" required></label><label>Country<input name="country" value="Australia" required></label></div><fieldset class="shipping-options"><legend>Delivery method</legend><div id="shippingOptions"></div></fieldset><label>Order notes<textarea name="orderNotes" rows="3"></textarea></label></form><div class="payment-area"><button class="primary-button" id="previewOrderButton" type="button">Save Draft Order</button><div class="paypal-shell hidden" id="paypalShell"><p class="paypal-label">Checkout with PayPal</p><div id="paypalButtons"></div></div><p class="summary-note" id="paypalNotice">PayPal buttons appear once checkout credentials are configured.</p></div></section></aside></section><div class="status-toast hidden" id="statusToast"></div><dialog class="product-dialog" id="productDialog"><div class="dialog-shell"><button class="dialog-close" id="closeProductDialog" type="button">×</button><div class="dialog-media" id="dialogMedia"></div><div class="dialog-content"><p class="eyebrow" id="dialogCategory"></p><h3 id="dialogName"></h3><p class="product-price" id="dialogPrice"></p><p class="dialog-description" id="dialogDescription"></p><form class="stack-form" id="productOptionForm"><input id="dialogProductId" type="hidden"><label id="sizeField" class="hidden">Size<select id="dialogSize"></select></label><label id="colorField" class="hidden">Colour<select id="dialogColor"></select></label><label id="textField" class="hidden">Custom text<input id="dialogText" maxlength="40"></label><label>Quantity<input id="dialogQuantity" type="number" min="1" max="99" value="1"></label><button class="primary-button" type="submit">Add To Cart</button></form></div></div></dialog></main><footer class="footer"><div class="shell footer-grid"><div><img src="/assets/kiavik-prints-logo.jpg" alt="Kiavik Prints"><p>Useful. Personal. Printed your way.</p></div><div><h4>Shop</h4><a href="/shop/">All prints</a><a href="/custom-print/">Custom printing</a><a href="/materials/">Materials</a></div><div><h4>Kiavik</h4><a href="/about-kiavik/">About</a><a href="/contact/">Contact</a><a href="/admin">Seller inventory</a></div><div><h4>Made in Melbourne</h4><p>Small-batch 3D printing with custom colours and practical design.</p></div></div><div class="shell footer-bottom">© 2026 Kiavik Prints · Melbourne, Australia</div></footer><script src="/brand.js?v=20260819-2" defer></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#067f80">
+  <title>Shop All Prints | Kiavik Prints</title>
+  <link rel="icon" href="/assets/kiavik-prints-logo.jpg">
+  <link rel="stylesheet" href="/styles.css?v=20260819-5">
+  <script defer src="/app.js?v=20260819-4"></script>
+</head>
+<body class="customer-page page-shop">
+  <div class="trustbar">
+    <div class="shell trustbar-inner">
+      <span>✦ Melbourne-made</span>
+      <span>♡ Australian owned</span>
+      <span>⬡ Quality guaranteed</span>
+      <span class="trust-right">Need help?</span>
+      <a class="trust-email" href="mailto:hello@kiavikprints.com.au">hello@kiavikprints.com.au</a>
+    </div>
+  </div>
+  <header class="site-header">
+    <div class="shell header-inner">
+      <a href="/" class="brand"><img src="/assets/kiavik-prints-logo.jpg" alt="Kiavik Prints"></a>
+      <button class="menu-button" aria-label="Open menu">☰</button>
+      <nav class="main-nav">
+        <a class="active" href="/shop/">Shop</a>
+        <a href="/custom-printing/">Custom Printing</a>
+        <a href="/materials/">Materials</a>
+        <a href="/about/">About</a>
+        <a href="/contact/">Contact</a>
+      </nav>
+      <div class="header-actions">
+        <form class="search-form" action="/shop/"><input type="search" name="q" placeholder="Search products..."><button type="submit" aria-label="Search">⌕</button></form>
+        <a class="header-icon-link" href="#account" aria-label="Account"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a4.2 4.2 0 1 0-4.2-4.2A4.2 4.2 0 0 0 12 12Zm0 2.1c-4.14 0-7.5 2.47-7.5 5.52V21h15v-1.38c0-3.05-3.36-5.52-7.5-5.52Z"/></svg></a>
+        <a class="header-icon-link cart-link" href="#checkout" aria-label="Cart"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.2 6.3h13l-1.36 6.44a1 1 0 0 1-.98.79H9.37a1 1 0 0 1-.98-.8L6.3 4.5H3.5"/><circle cx="10.2" cy="18.3" r="1.35"/><circle cx="17.3" cy="18.3" r="1.35"/></svg><b id="headerCartCount">0</b></a>
+      </div>
+    </div>
+  </header>
+  <main>
+    <section class="page-hero simple-hero shop-hero-reference">
+      <div class="shell shop-hero-shell">
+        <div>
+          <h1>Shop All Prints</h1>
+          <p>Thoughtful designs. 3D printed with care in Melbourne.</p>
+        </div>
+        <svg class="simple-filament" viewBox="0 0 900 90"><path d="M0 62 C260 32 500 22 690 48 C760 58 800 22 830 20 C860 18 842 76 900 66"/></svg>
+      </div>
+    </section>
+
+    <section class="shell shop-layout shop-layout-reference">
+      <aside class="filters filters-reference">
+        <div class="filter-card">
+          <h3>Categories</h3>
+          <div class="category-sidebar" id="categorySidebar"></div>
+        </div>
+        <div class="filter-card">
+          <h3>Filter by</h3>
+          <label class="range-label">Price
+            <input id="priceRange" type="range" min="10" max="150" value="150">
+            <span id="priceRangeValue">$10 to $150</span>
+          </label>
+          <div class="filter-group">
+            <h4>Colour</h4>
+            <div class="colour-filter-row">
+              <button type="button" class="colour-dot teal is-active" data-color-chip="teal" aria-label="Teal"></button>
+              <button type="button" class="colour-dot black" data-color-chip="black" aria-label="Black"></button>
+              <button type="button" class="colour-dot white" data-color-chip="white" aria-label="White"></button>
+              <button type="button" class="colour-dot cream" data-color-chip="cream" aria-label="Cream"></button>
+              <button type="button" class="colour-dot orange" data-color-chip="orange" aria-label="Orange"></button>
+              <button type="button" class="colour-dot plus" data-color-chip="" aria-label="More colours">+</button>
+            </div>
+          </div>
+          <div class="filter-group">
+            <h4>Material</h4>
+            <label class="check-line"><input type="checkbox" disabled> PLA <span>45</span></label>
+            <label class="check-line"><input type="checkbox" disabled> PETG <span>12</span></label>
+            <label class="check-line"><input type="checkbox" disabled> Resin <span>7</span></label>
+            <label class="check-line"><input type="checkbox" disabled> Wood-fill <span>4</span></label>
+          </div>
+        </div>
+      </aside>
+
+      <div class="shop-main-reference">
+        <div class="shop-toolbar shop-toolbar-reference">
+          <p id="shopResultsText">Showing 0–0 of 0 products</p>
+          <div class="shop-toolbar-actions">
+            <select id="shopSort" aria-label="Sort products">
+              <option value="featured">Sort by: Featured</option>
+              <option value="price-asc">Price: Low to high</option>
+              <option value="price-desc">Price: High to low</option>
+              <option value="name-asc">Name: A to Z</option>
+            </select>
+            <button class="cart-pill" id="cartPill" type="button">View cart (<span id="cartCount">0</span>)</button>
+          </div>
+        </div>
+
+        <div class="product-grid store-product-grid shop-products-reference" id="productsGrid"></div>
+      </div>
+    </section>
+
+    <section class="shell shop-benefits shop-benefits-reference">
+      <div class="benefit-row">
+        <span><b>Melbourne made</b>Designed and printed locally</span>
+        <span><b>Premium materials</b>Strong, reliable and long-lasting</span>
+        <span><b>Made for you</b>Personalised &amp; custom options</span>
+        <span><b>Fast local delivery</b>Dispatch in 1–3 business days</span>
+      </div>
+    </section>
+
+    <section class="shell shop-support-panels">
+      <section class="account-panel" id="account">
+        <div class="section-title">
+          <div>
+            <p class="eyebrow">Account</p>
+            <h2>Orders &amp; account</h2>
+          </div>
+        </div>
+        <div class="account-shell">
+          <div class="account-auth" id="accountAuth">
+            <div class="tab-row">
+              <button class="tab-button active" data-auth-tab="signin" type="button">Sign In</button>
+              <button class="tab-button" data-auth-tab="signup" type="button">Create Account</button>
+            </div>
+            <div class="account-intro-card">
+              <strong>Accounts are optional.</strong>
+              <p>Guest checkout works too. Sign in if you want to see previous orders.</p>
+            </div>
+            <form class="stack-form" id="signinForm">
+              <label>Email<input name="email" type="email" required></label>
+              <label>Password<input name="password" type="password" required></label>
+              <button class="primary-button" type="submit">Sign In</button>
+            </form>
+            <form class="stack-form hidden" id="signupForm">
+              <label>Full name<input name="fullName" required></label>
+              <label>Email<input name="email" type="email" required></label>
+              <label>Password<input name="password" type="password" minlength="8" required></label>
+              <button class="primary-button" type="submit">Create Account</button>
+            </form>
+          </div>
+          <div class="account-summary hidden" id="accountSummary">
+            <div class="signed-in-card">
+              <p class="eyebrow">Signed in</p>
+              <h3 id="signedInName"></h3>
+              <p id="signedInEmail"></p>
+              <button class="ghost-button" id="logoutButton" type="button">Sign Out</button>
+            </div>
+            <div class="orders-list" id="ordersList"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="checkout-panel checkout-panel-inline" id="checkout">
+        <p class="eyebrow">Checkout</p>
+        <h2>Cart &amp; shipping</h2>
+        <div class="checkout-confidence"><span>Secure PayPal</span><span>Guest or account</span><span>Pickup or delivery</span></div>
+        <div class="cart-list" id="cartItems"></div>
+        <div class="summary-card"><div class="summary-row"><span>Subtotal</span><strong id="cartSubtotal">$0.00</strong></div></div>
+        <form class="stack-form" id="checkoutForm">
+          <h3>Customer details</h3>
+          <label>Full name<input name="customerName" required></label>
+          <label>Email<input name="customerEmail" type="email" required></label>
+          <label>Phone<input name="customerPhone" type="tel"></label>
+          <h3>Shipping details</h3>
+          <label>Shipping name<input name="shippingName" required></label>
+          <label>Address line 1<input name="addressLine1" required></label>
+          <label>Address line 2<input name="addressLine2"></label>
+          <div class="split-fields"><label>Suburb<input name="suburb" required></label><label>State<input name="state" required></label></div>
+          <div class="split-fields"><label>Postcode<input name="postcode" required></label><label>Country<input name="country" value="Australia" required></label></div>
+          <fieldset class="shipping-options"><legend>Delivery method</legend><div id="shippingOptions"></div></fieldset>
+          <label>Order notes<textarea name="orderNotes" rows="3"></textarea></label>
+        </form>
+        <div class="payment-area">
+          <button class="primary-button" id="previewOrderButton" type="button">Save Draft Order</button>
+          <div class="paypal-shell hidden" id="paypalShell"><p class="paypal-label">Checkout with PayPal</p><div id="paypalButtons"></div></div>
+          <p class="summary-note" id="paypalNotice">PayPal buttons appear once checkout credentials are configured.</p>
+        </div>
+      </section>
+    </section>
+
+    <div class="status-toast hidden" id="statusToast"></div>
+    <dialog class="product-dialog" id="productDialog">
+      <div class="dialog-shell">
+        <button class="dialog-close" id="closeProductDialog" type="button">×</button>
+        <div class="dialog-media" id="dialogMedia"></div>
+        <div class="dialog-content">
+          <p class="eyebrow" id="dialogCategory"></p>
+          <h3 id="dialogName"></h3>
+          <p class="product-price" id="dialogPrice"></p>
+          <p class="dialog-description" id="dialogDescription"></p>
+          <form class="stack-form" id="productOptionForm">
+            <input id="dialogProductId" type="hidden">
+            <label id="sizeField" class="hidden">Size<select id="dialogSize"></select></label>
+            <div id="colorFields" class="stack-form hidden"></div>
+            <label id="textField" class="hidden">Custom text<input id="dialogText" maxlength="40"></label>
+            <label id="textColorField" class="hidden">Text colour<select id="dialogTextColor"></select></label>
+            <label>Quantity<input id="dialogQuantity" type="number" min="1" max="99" value="1"></label>
+            <button class="primary-button" type="submit">Add To Cart</button>
+          </form>
+        </div>
+      </div>
+    </dialog>
+  </main>
+  <footer class="footer">
+    <div class="shell footer-grid">
+      <div><img src="/assets/kiavik-prints-logo.jpg" alt="Kiavik Prints"><p>Useful. Personal. Printed your way.</p></div>
+      <div><h4>Shop</h4><a href="/shop/">All prints</a><a href="/custom-printing/">Custom printing</a><a href="/materials/">Materials</a></div>
+      <div><h4>Kiavik</h4><a href="/about/">About</a><a href="/contact/">Contact</a><a href="/custom-printing/">Custom printing</a></div>
+      <div><h4>Made in Melbourne</h4><p>Small-batch 3D printing with custom colours and practical design.</p></div>
+    </div>
+    <div class="shell footer-bottom">© 2026 Kiavik Prints · Melbourne, Australia</div>
+  </footer>
+  <script src="/brand.js?v=20260819-4" defer></script>
+</body>
+</html>

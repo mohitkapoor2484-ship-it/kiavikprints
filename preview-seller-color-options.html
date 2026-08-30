@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Kiavik Seller Preview</title>
+  <link rel="stylesheet" href="public/styles.css?v=20260819-3">
+  <style>
+    body { background: #f5f7f6; margin: 0; }
+    .preview-shell { width: min(1320px, calc(100% - 40px)); margin: 22px auto 40px; }
+    .preview-top { background: #fff; border: 1px solid #d9dfdd; border-radius: 18px; padding: 24px 28px; margin-bottom: 18px; }
+    .preview-kicker { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: #6f7b7f; margin: 0 0 8px; }
+    .preview-admin-grid { display: grid; grid-template-columns: 1.05fr .95fr; gap: 20px; }
+    .preview-panel { background: #fff; border: 1px solid #d9dfdd; border-radius: 18px; padding: 20px; box-shadow: 0 18px 40px rgba(0,0,0,.05); }
+    .preview-panel .admin-product-card { margin-bottom: 12px; }
+    .preview-panel .admin-product-card:last-child { margin-bottom: 0; }
+    @media (max-width: 900px) {
+      .preview-admin-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="preview-shell">
+    <div class="preview-top">
+      <p class="preview-kicker">Seller Inventory Preview</p>
+      <h1 style="margin:0 0 8px">Product colour controls for Kiavik Prints</h1>
+      <p style="margin:0;color:#667377">The seller decides whether the buyer gets one colour or a multi-colour setup, how many colours can be chosen, and what text colours are available.</p>
+    </div>
+
+    <div class="preview-admin-grid">
+      <section class="preview-panel">
+        <div class="section-title">
+          <div>
+            <p class="eyebrow">Catalog</p>
+            <h2>Current products</h2>
+          </div>
+        </div>
+
+        <article class="admin-product-card">
+          <div><img src="public/assets/products/octopus.jpg" alt="Flexi Fidget Dragon"></div>
+          <div>
+            <strong>Flexi Fidget Dragon</strong>
+            <div class="cart-meta">Toys &amp; Fidgets · $18.00</div>
+            <div class="product-pill-row">
+              <span class="product-pill">Active</span>
+              <span class="product-pill">2 buyer colours</span>
+              <span class="product-pill">Custom text</span>
+              <span class="product-pill">Text colours</span>
+            </div>
+          </div>
+          <div class="inline-actions">
+            <button class="ghost-button" type="button">Edit</button>
+          </div>
+        </article>
+
+        <article class="admin-product-card">
+          <div><img src="public/assets/products/name-tag.jpg" alt="School bag tag"></div>
+          <div>
+            <strong>School Bag Tag</strong>
+            <div class="cart-meta">Personalised Gifts · $9.00</div>
+            <div class="product-pill-row">
+              <span class="product-pill">Active</span>
+              <span class="product-pill">Single colour</span>
+              <span class="product-pill">Custom text</span>
+            </div>
+          </div>
+          <div class="inline-actions">
+            <button class="ghost-button" type="button">Edit</button>
+          </div>
+        </article>
+      </section>
+
+      <section class="product-editor-panel preview-panel">
+        <div class="section-title">
+          <div>
+            <p class="eyebrow">Add / Edit Product</p>
+            <h2>Product details</h2>
+          </div>
+        </div>
+        <form class="stack-form">
+          <label>Product name<input value="Flexi Fidget Dragon"></label>
+          <div class="split-fields">
+            <label>Category<input value="Toys &amp; Fidgets"></label>
+            <label>Price (AUD)<input type="number" value="18.00"></label>
+          </div>
+          <label>Description<textarea rows="4">Articulated dragon fidget with optional personalised tag and seller-controlled colour selection.</textarea></label>
+          <label>Size options<input value="Standard, Large"></label>
+          <label>Available product colours<input value="Teal, Orange, Black, White"></label>
+          <div class="split-fields">
+            <label>Buyer colour setup
+              <select>
+                <option>Multi colour</option>
+              </select>
+            </label>
+            <label>Buyer chooses
+              <select>
+                <option>2 colours</option>
+                <option>3 colours</option>
+                <option>4 colours</option>
+              </select>
+            </label>
+          </div>
+          <label>Text colour options<input value="White, Black, Gold"></label>
+          <p class="field-note">Used when custom text is enabled, for example on fidgets or personalised names.</p>
+          <div class="checkbox-grid">
+            <label class="checkbox-row"><input type="checkbox" checked> Allow custom text</label>
+            <label class="checkbox-row"><input type="checkbox" checked> Show on store</label>
+          </div>
+          <div class="image-preview"><img src="public/assets/products/octopus.jpg" alt="Product preview"></div>
+          <div class="inline-actions">
+            <button class="primary-button" type="button">Save Product</button>
+            <button class="ghost-button" type="button">Clear Form</button>
+          </div>
+        </form>
+      </section>
+    </div>
+  </div>
+</body>
+</html>
