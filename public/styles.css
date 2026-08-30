@@ -265,6 +265,8 @@
 .seller-order-status{display:flex;align-items:end;gap:12px;padding:0 0 18px}
 .seller-order-status label{display:flex;flex-direction:column;gap:6px;flex:1;font-size:12px;font-weight:800}
 .seller-order-status select{border:1px solid var(--border);border-radius:9px;padding:10px;background:#fff}
+.seller-order-actions{display:flex;gap:10px;padding:0 0 18px}
+.danger-button{border-color:#e7b4ad;color:#a33025}
 @media(max-width:520px){.cart-item-options{grid-template-columns:1fr}.seller-order-head{align-items:flex-start;flex-direction:column}.seller-order-head>div:last-child{align-items:flex-start}.seller-order-details{grid-template-columns:1fr}.seller-order-items li{grid-template-columns:1fr}.seller-order-items li b{justify-self:start}}
 
 .admin-body,.admin-reference-page{background:#f5f7f6}

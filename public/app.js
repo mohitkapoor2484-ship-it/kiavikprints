@@ -490,6 +490,7 @@
       out_for_delivery: "Out for delivery",
       delivered: "Delivered",
       completed: "Completed",
+      cancelled: "Cancelled",
     })[status] || "Order received";
   }
 
