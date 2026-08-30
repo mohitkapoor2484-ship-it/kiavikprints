@@ -42,7 +42,7 @@
     el("cartPill")?.addEventListener("click", () => el("checkout")?.scrollIntoView({ behavior: "smooth", block: "start" }));
     el("closeProductDialog")?.addEventListener("click", () => el("productDialog")?.close());
     el("productOptionForm")?.addEventListener("submit", (e) => { e.preventDefault(); if (!e.currentTarget.reportValidity()) return; addCurrentProduct(); });
-    el("dialogSize")?.addEventListener("change", renderClickerCharacterGrid);
+    el("dialogSize")?.addEventListener("change", () => { renderClickerCharacterGrid(); updateClickerPrice(); });
     el("clickerTextGrid")?.addEventListener("input", normalizeClickerCharacter);
     el("signinForm")?.addEventListener("submit", signIn);
     el("signupForm")?.addEventListener("submit", signUp);
