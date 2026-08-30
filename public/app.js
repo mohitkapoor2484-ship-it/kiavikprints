@@ -476,8 +476,21 @@
     el("signedInEmail").textContent = user.email || "";
     const orders = state.bootstrap.orders || [];
     const target = el("ordersList");
-    target.innerHTML = orders.length ? orders.map((o) => `<article class="order-card"><strong>${esc(o.orderNumber)}</strong><div class="cart-meta">${new Date(o.createdAt).toLocaleDateString()} · ${esc(o.paymentStatus)}</div><div class="cart-row"><span>${o.items?.length || 0} item(s)</span><strong>$${esc(o.totalLabel)}</strong></div>${o.paymentStatus === "draft" ? `<button class="ghost-button draft-delete-button" data-delete-draft="${esc(o.id)}" type="button">Delete draft</button>` : ""}</article>`).join("") : `<div class="empty-state">No orders yet.</div>`;
+    target.innerHTML = orders.length ? orders.map((o) => `<article class="order-card"><strong>${esc(o.orderNumber)}</strong><div class="cart-meta">${new Date(o.createdAt).toLocaleDateString()} · ${esc(formatOrderStatus(o.fulfillmentStatus || o.paymentStatus))}</div><div class="cart-row"><span>${o.items?.length || 0} item(s)</span><strong>$${esc(o.totalLabel)}</strong></div>${o.paymentStatus === "draft" ? `<button class="ghost-button draft-delete-button" data-delete-draft="${esc(o.id)}" type="button">Delete draft</button>` : ""}</article>`).join("") : `<div class="empty-state">No orders yet.</div>`;
     target.querySelectorAll("[data-delete-draft]").forEach((button) => button.addEventListener("click", () => deleteDraftOrder(button.dataset.deleteDraft)));
+  }
+
+  function formatOrderStatus(status) {
+    return ({
+      draft: "Draft",
+      awaiting_payment: "Awaiting payment",
+      received: "Order received",
+      in_progress: "In progress",
+      awaiting_pickup: "Awaiting pickup",
+      out_for_delivery: "Out for delivery",
+      delivered: "Delivered",
+      completed: "Completed",
+    })[status] || "Order received";
   }
 
   async function signIn(event) {

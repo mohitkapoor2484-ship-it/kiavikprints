@@ -1,5 +1,13 @@
 (function () {
   const state = { user: null, orders: [] };
+  const fulfillmentStatuses = [
+    ["received", "Order received"],
+    ["in_progress", "In progress"],
+    ["awaiting_pickup", "Awaiting pickup"],
+    ["out_for_delivery", "Out for delivery"],
+    ["delivered", "Delivered"],
+    ["completed", "Completed"],
+  ];
   const el = (id) => document.getElementById(id);
   const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (c) => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", "\"":"&quot;", "'":"&#039;" }[c]));
 
@@ -50,8 +58,24 @@
       const delivery = order.deliveryMethod === "pickup" ? "Cash pickup" : "Delivery";
       const address = [order.addressLine1, order.addressLine2, order.suburb, order.state, order.postcode, order.country].filter(Boolean).join(", ");
       const items = (order.items || []).map((item) => `<li><strong>${esc(item.quantity)} × ${esc(item.productName)}</strong><span>${esc(item.sizeChoice || "Default")} · ${esc(item.colorChoices?.join(" / ") || item.colorChoice || "Default")}${item.customText ? ` · Text: ${esc(item.customText)}` : ""}</span><b>$${esc(item.lineTotalLabel)}</b></li>`).join("");
-      return `<article class="seller-order-card"><div class="seller-order-head"><div><p class="eyebrow">${esc(delivery)}</p><h2>${esc(order.orderNumber)}</h2><p>${new Date(order.createdAt).toLocaleString()}</p></div><div><span class="product-pill">${esc(order.paymentStatus.replaceAll("_", " "))}</span><strong>$${esc(order.totalLabel)} ${esc(order.currencyCode)}</strong></div></div><div class="seller-order-details"><div><h3>Customer</h3><p>${esc(order.customerName)}<br>${esc(order.customerEmail)}${order.customerPhone ? `<br>${esc(order.customerPhone)}` : ""}</p></div><div><h3>${delivery}</h3><p>${order.deliveryMethod === "pickup" ? "Customer will pay cash when collecting." : esc(address || "Address not supplied.")}</p></div><div><h3>Notes</h3><p>${esc(order.orderNotes || "No notes.")}</p></div></div><h3>Items</h3><ul class="seller-order-items">${items}</ul></article>`;
+      const options = fulfillmentStatuses.map(([value, label]) => `<option value="${value}" ${order.fulfillmentStatus === value ? "selected" : ""}>${label}</option>`).join("");
+      return `<article class="seller-order-card"><div class="seller-order-head"><div><p class="eyebrow">${esc(delivery)}</p><h2>${esc(order.orderNumber)}</h2><p>${new Date(order.createdAt).toLocaleString()}</p></div><div><span class="product-pill">${esc(formatStatus(order.fulfillmentStatus))}</span><strong>$${esc(order.totalLabel)} ${esc(order.currencyCode)}</strong></div></div><div class="seller-order-details"><div><h3>Customer</h3><p>${esc(order.customerName)}<br>${esc(order.customerEmail)}${order.customerPhone ? `<br>${esc(order.customerPhone)}` : ""}</p></div><div><h3>${delivery}</h3><p>${order.deliveryMethod === "pickup" ? "Customer will pay cash when collecting." : esc(address || "Address not supplied.")}</p></div><div><h3>Notes</h3><p>${esc(order.orderNotes || "No notes.")}</p></div></div><div class="seller-order-status"><label>Customer progress<select data-order-status="${esc(order.id)}">${options}</select></label><button class="primary-button" type="button" data-save-status="${esc(order.id)}">Update status</button></div><h3>Items</h3><ul class="seller-order-items">${items}</ul></article>`;
     }).join("");
+    target.querySelectorAll("[data-save-status]").forEach((button) => button.addEventListener("click", () => saveStatus(button.dataset.saveStatus)));
+  }
+
+  function formatStatus(status) {
+    return fulfillmentStatuses.find(([value]) => value === status)?.[1] || "Order received";
+  }
+
+  async function saveStatus(orderId) {
+    const status = targetStatus(orderId);
+    if (!status) return;
+    try { await request("/api/admin/orders/status", { method: "PUT", body: JSON.stringify({ orderId, fulfillmentStatus: status }) }); toast("Order status updated."); await showDashboard(); } catch (error) { toast(error.message, true); }
+  }
+
+  function targetStatus(orderId) {
+    return Array.from(document.querySelectorAll("[data-order-status]")).find((select) => select.dataset.orderStatus === orderId)?.value || "";
   }
 
   function toast(message, error = false) {
