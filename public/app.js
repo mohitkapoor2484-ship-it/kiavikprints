@@ -242,6 +242,7 @@
   }
 
   function describeColorSetup(product) {
+    if ((product.baseColorOptions || []).length || (product.buttonColorOptions || []).length) return "Base + button colours";
     const count = Number(product.colorSlotCount || 1);
     return count > 1 ? `${count} colour build` : "Single colour";
   }
@@ -278,6 +279,16 @@
 
   function renderColorFields(product) {
     const target = el("colorFields"); if (!target) return;
+    const baseOptions = product.baseColorOptions || [];
+    const buttonOptions = product.buttonColorOptions || [];
+    if (baseOptions.length || buttonOptions.length) {
+      const fields = [];
+      if (baseOptions.length) fields.push(colorSelect("Base colour", "base", baseOptions));
+      if (buttonOptions.length) fields.push(colorSelect("Click-button colour", "button", buttonOptions));
+      target.classList.remove("hidden");
+      target.innerHTML = fields.join("");
+      return;
+    }
     const options = product.colorOptions || [];
     const count = Math.max(1, Number(product.colorSlotCount || 1));
     if (!options.length) {
@@ -286,7 +297,11 @@
       return;
     }
     target.classList.remove("hidden");
-    target.innerHTML = Array.from({ length: count }, (_, index) => `<label>${esc(colorSlotLabel(index, count))}<select data-color-slot="${index}" required><option value="">Choose a colour</option>${options.map((value) => `<option value="${esc(value)}">${esc(value)}</option>`).join("")}</select></label>`).join("");
+    target.innerHTML = Array.from({ length: count }, (_, index) => colorSelect(colorSlotLabel(index, count), index, options)).join("");
+  }
+
+  function colorSelect(label, slot, options) {
+    return `<label>${esc(label)}<select data-color-slot="${esc(slot)}" required><option value="">Choose a colour</option>${options.map((value) => `<option value="${esc(value)}">${esc(value)}</option>`).join("")}</select></label>`;
   }
 
   function colorSlotLabel(index, total) {

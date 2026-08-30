@@ -94,6 +94,9 @@
   }
 
   function formatColorSetup(product) {
+    if ((product.baseColorOptions || []).length || (product.buttonColorOptions || []).length) {
+      return "Base + button colours";
+    }
     const count = Number(product.colorSlotCount || 1);
     return count > 1 ? `${count} buyer colours` : "Single colour";
   }
@@ -119,6 +122,8 @@
     el("productId").value = p.id; el("productName").value = p.name || ""; el("productCategory").value = p.category || "";
     el("productPrice").value = (Number(p.priceCents || 0) / 100).toFixed(2); el("productDescription").value = p.description || "";
     el("productSizes").value = (p.sizeOptions || []).join(", "); el("productColors").value = (p.colorOptions || []).join(", ");
+    el("productBaseColors").value = (p.baseColorOptions || []).join(", ");
+    el("productButtonColors").value = (p.buttonColorOptions || []).join(", ");
     el("productColorMode").value = p.colorMode === "multi" ? "multi" : "single";
     el("productColorSlots").value = String(p.colorSlotCount || 1);
     el("productTextColors").value = (p.textColorOptions || []).join(", ");
@@ -166,6 +171,8 @@
       colorMode: el("productColorMode").value,
       colorSlotCount: Number(el("productColorSlots").value || 1),
       colorOptions: el("productColors").value,
+      baseColorOptions: el("productBaseColors").value,
+      buttonColorOptions: el("productButtonColors").value,
       textColorOptions: el("productTextColors").value,
       customTextEnabled: el("productCustomText").checked,
       isActive: el("productActive").checked,
