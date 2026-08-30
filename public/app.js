@@ -349,10 +349,6 @@
     if (next instanceof HTMLInputElement) next.focus();
   }
 
-  function hasClickerCustomText() {
-    return Array.from(document.querySelectorAll("#clickerTextGrid [data-clicker-character]")).some((field) => String(field.value || "").trim());
-  }
-
   function clickerUnitPrice(product, sizeChoice, hasCustomText) {
     const basePrice = Number(product?.priceCents || 0);
     if (!isClickerProduct(product)) return basePrice;
@@ -365,7 +361,7 @@
   function updateClickerPrice() {
     const product = state.currentProduct;
     if (!isClickerProduct(product)) return;
-    const price = clickerUnitPrice(product, el("dialogSize")?.value, hasClickerCustomText());
+    const price = clickerUnitPrice(product, el("dialogSize")?.value, Boolean(product.customTextEnabled));
     if (el("dialogPrice")) el("dialogPrice").textContent = `$${money(price)}`;
   }
 
@@ -376,7 +372,11 @@
       toast("Choose a grid size such as 2x3 before adding this clicker.", true);
       return null;
     }
-    if (values.every((value) => !value)) return "";
+    if (values.every((value) => !value)) {
+      toast("Add a letter or number to every clicker square before adding it to the cart.", true);
+      fields[0]?.focus();
+      return null;
+    }
     if (values.some((value) => !/^[A-Z0-9]$/.test(value))) {
       toast("Use one letter or number in every clicker square.", true);
       return null;
