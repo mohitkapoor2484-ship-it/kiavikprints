@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Seller Orders | Kiavik Prints</title>
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <link rel="icon" href="/assets/kiavik-prints-logo.jpg">
+  <link rel="stylesheet" href="/styles.css?v=20260830-10">
+  <script defer src="/seller-orders.js?v=20260830-1"></script>
+</head>
+<body class="admin-body admin-reference-page">
+  <div class="trustbar"><div class="shell trustbar-inner"><span>✦ Melbourne-made</span><span>♡ Australian owned</span><span>⬡ Quality guaranteed</span><span class="trust-right">Seller workspace</span></div></div>
+  <header class="seller-top seller-top-reference">
+    <img src="/assets/kiavik-prints-logo.jpg" alt="Kiavik Prints">
+    <div class="seller-header-actions"><a class="btn outline" href="/">View store</a><div class="seller-account-chip"><span class="seller-account-badge">Ki</span><div><b>Kiavik Prints</b><small>Seller account</small></div></div></div>
+  </header>
+  <main class="admin-main">
+    <section class="admin-auth-panel" id="sellerOrdersAuthPanel">
+      <div class="seller-login-card">
+        <img src="/assets/kiavik-prints-logo.jpg" alt="Kiavik Prints">
+        <p class="eyebrow">Seller account</p><h1>Review submitted orders</h1><p>Sign in to view customer, pickup and product details.</p>
+        <form class="stack-form" id="sellerOrdersLoginForm"><label>Email<input name="email" type="email" required></label><label>Password<input name="password" type="password" required></label><button class="primary-button" type="submit">Sign In</button></form>
+      </div>
+    </section>
+    <section class="admin-dashboard hidden" id="sellerOrdersDashboard">
+      <div class="seller-reference-shell">
+        <aside class="seller-nav seller-nav-reference"><b>Seller Dashboard</b><a href="/seller/inventory/">Products</a><a class="active" href="/seller/orders/">Orders</a><a href="/">View store</a><button class="ghost-button" id="sellerOrdersLogoutButton" type="button">Sign Out</button></aside>
+        <div class="seller-reference-main">
+          <div class="seller-heading seller-heading-reference"><div><h1>Submitted orders</h1><p>Cash pickup and paid online orders. Drafts are not shown here.</p></div></div>
+          <div class="seller-orders-list" id="sellerOrdersList"><div class="loading-card">Loading orders...</div></div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <div class="status-toast hidden" id="sellerOrdersToast"></div>
+</body>
+</html>

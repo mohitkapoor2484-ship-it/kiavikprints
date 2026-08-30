@@ -48,6 +48,7 @@
     el("signupForm")?.addEventListener("submit", signUp);
     el("logoutButton")?.addEventListener("click", logout);
     el("previewOrderButton")?.addEventListener("click", saveDraft);
+    el("cashPickupOrderButton")?.addEventListener("click", placeCashPickupOrder);
     el("priceRange")?.addEventListener("input", updatePriceRange);
     el("shopSort")?.addEventListener("change", updateSort);
     document.querySelectorAll("[data-search-form]").forEach((form) => form.addEventListener("submit", submitSearch));
@@ -441,7 +442,14 @@
     if (el("cartSubtotal")) el("cartSubtotal").textContent = `$${money(cartSubtotal())}`;
     const target = el("cartItems"); if (!target) return;
     if (!state.cart.length) { target.innerHTML = `<div class="empty-state">Your cart is empty.</div>`; return; }
-    target.innerHTML = state.cart.map((item) => `<article class="cart-item"><div class="cart-row"><strong>${esc(item.name)}</strong><span class="cart-qty-badge">Qty ${item.quantity}</span></div><div class="cart-meta">${esc(item.sizeChoice || "Default")} · ${esc((item.colorChoices?.length ? item.colorChoices.join(" / ") : item.colorChoice) || "Default")}</div>${item.customText ? `<div class="cart-meta">Text: ${esc(item.customText)}${item.textColorChoice ? ` · ${esc(item.textColorChoice)}` : ""}</div>` : ""}<div class="cart-row"><strong>$${money(item.priceCents * item.quantity)}</strong><button class="ghost-button" data-remove="${esc(item.id)}" type="button">Remove</button></div></article>`).join("");
+    target.innerHTML = state.cart.map((item) => {
+      const colours = (item.colorChoices?.length ? item.colorChoices.join(" / ") : item.colorChoice) || "Default";
+      return `<article class="cart-item">
+        <div class="cart-row cart-item-heading"><strong>${esc(item.name)}</strong><span class="cart-qty-badge">Qty ${item.quantity}</span></div>
+        <div class="cart-item-options"><span class="cart-meta">Size: ${esc(item.sizeChoice || "Default")}</span><span class="cart-meta">Colours: ${esc(colours)}</span>${item.customText ? `<span class="cart-meta">Text: ${esc(item.customText)}${item.textColorChoice ? ` · ${esc(item.textColorChoice)}` : ""}</span>` : ""}</div>
+        <div class="cart-row cart-item-total"><strong>$${money(item.priceCents * item.quantity)}</strong><button class="ghost-button" data-remove="${esc(item.id)}" type="button">Remove</button></div>
+      </article>`;
+    }).join("");
     target.querySelectorAll("[data-remove]").forEach((button) => button.addEventListener("click", () => { state.cart = state.cart.filter((x) => x.id !== button.dataset.remove); saveCart(); renderCart(); }));
   }
 
@@ -449,6 +457,8 @@
     const target = el("shippingOptions"); if (!target) return;
     const options = state.bootstrap?.shop?.shippingOptions || [];
     target.innerHTML = options.map((o, i) => `<label class="shipping-choice"><input type="radio" name="deliveryMethod" value="${esc(o.code)}" ${i === 0 ? "checked" : ""}><span>${esc(o.label)} · $${money(o.amountCents)}</span></label>`).join("");
+    target.querySelectorAll('input[name="deliveryMethod"]').forEach((input) => input.addEventListener("change", syncDeliveryFields));
+    syncDeliveryFields();
   }
 
   function switchAuth(tab) {
@@ -465,7 +475,9 @@
     el("signedInName").textContent = user.fullName || "Customer";
     el("signedInEmail").textContent = user.email || "";
     const orders = state.bootstrap.orders || [];
-    el("ordersList").innerHTML = orders.length ? orders.map((o) => `<article class="order-card"><strong>${esc(o.orderNumber)}</strong><div class="cart-meta">${new Date(o.createdAt).toLocaleDateString()} · ${esc(o.paymentStatus)}</div><div class="cart-row"><span>${o.items?.length || 0} item(s)</span><strong>$${esc(o.totalLabel)}</strong></div></article>`).join("") : `<div class="empty-state">No orders yet.</div>`;
+    const target = el("ordersList");
+    target.innerHTML = orders.length ? orders.map((o) => `<article class="order-card"><strong>${esc(o.orderNumber)}</strong><div class="cart-meta">${new Date(o.createdAt).toLocaleDateString()} · ${esc(o.paymentStatus)}</div><div class="cart-row"><span>${o.items?.length || 0} item(s)</span><strong>$${esc(o.totalLabel)}</strong></div>${o.paymentStatus === "draft" ? `<button class="ghost-button draft-delete-button" data-delete-draft="${esc(o.id)}" type="button">Delete draft</button>` : ""}</article>`).join("") : `<div class="empty-state">No orders yet.</div>`;
+    target.querySelectorAll("[data-delete-draft]").forEach((button) => button.addEventListener("click", () => deleteDraftOrder(button.dataset.deleteDraft)));
   }
 
   async function signIn(event) {
@@ -490,6 +502,14 @@
     if (!form.customerName.value) form.customerName.value = user.fullName || "";
     if (!form.customerEmail.value) form.customerEmail.value = user.email || "";
     if (!form.shippingName.value) form.shippingName.value = user.fullName || "";
+  }
+
+  function syncDeliveryFields() {
+    const method = document.querySelector('input[name="deliveryMethod"]:checked')?.value || "delivery";
+    const delivery = method === "delivery";
+    document.querySelectorAll("[data-delivery-field]").forEach((field) => field.classList.toggle("hidden", !delivery));
+    const requiredDeliveryFields = new Set(["addressLine1", "suburb", "state", "postcode", "country"]);
+    document.querySelectorAll("[data-delivery-field] input").forEach((input) => { input.required = delivery && requiredDeliveryFields.has(input.name); });
   }
 
   function orderPayload() {
@@ -517,6 +537,45 @@
       toast(`Draft ${payload.order.orderNumber} saved.`);
       await refresh();
     } catch (e) { toast(e.message, true); }
+  }
+
+  async function placeCashPickupOrder() {
+    const form = el("checkoutForm");
+    if (!form?.reportValidity()) return;
+    if (document.querySelector('input[name="deliveryMethod"]:checked')?.value !== "pickup") {
+      toast("Select Pickup before placing a cash pickup order.", true);
+      return;
+    }
+    try {
+      const payload = await request("/api/orders/cash-pickup", { method: "POST", body: JSON.stringify(orderPayload()) });
+      state.cart = []; saveCart(); renderCart();
+      let notificationSent = true;
+      try { await submitCashPickupNotification(payload.order); } catch { notificationSent = false; }
+      toast(notificationSent ? `Order ${payload.order.orderNumber} placed for cash pickup.` : `Order ${payload.order.orderNumber} is saved. The seller notification could not be sent.`, !notificationSent);
+      await refresh();
+    } catch (e) { toast(e.message, true); }
+  }
+
+  async function deleteDraftOrder(orderId) {
+    if (!orderId || !confirm("Delete this draft order?")) return;
+    try { await request(`/api/orders/draft?id=${encodeURIComponent(orderId)}`, { method: "DELETE" }); toast("Draft order deleted."); await refresh(); } catch (e) { toast(e.message, true); }
+  }
+
+  async function submitCashPickupNotification(order) {
+    const items = (order.items || []).map((item) => `${item.quantity} × ${item.productName} (${item.sizeChoice || "Default"}; ${item.colorChoices?.join(" / ") || item.colorChoice || "Default"}${item.customText ? `; Text: ${item.customText}` : ""}) - $${item.lineTotalLabel}`).join("\n");
+    const fields = new URLSearchParams({
+      "form-name": "cash-pickup-order",
+      subject: `Cash pickup order ${order.orderNumber}`,
+      order_number: order.orderNumber,
+      customer_name: order.customerName,
+      customer_email: order.customerEmail,
+      customer_phone: order.customerPhone || "",
+      collection_method: "Cash on pickup",
+      total_aud: `$${order.totalLabel} ${order.currencyCode}`,
+      order_details: `${items}\n\nNotes: ${order.orderNotes || "None"}`,
+    });
+    const response = await fetch("/", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: fields.toString() });
+    if (!response.ok) throw new Error("Order notification failed.");
   }
 
   async function setupPaypal() {

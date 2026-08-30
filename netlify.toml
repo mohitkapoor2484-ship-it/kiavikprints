@@ -10,6 +10,11 @@
   [headers.values]
     X-Robots-Tag = "noindex, nofollow, noarchive"
 
+[[headers]]
+  for = "/seller/orders/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow, noarchive"
+
 [[redirects]]
   from = "/admin"
   to = "/seller/inventory/"

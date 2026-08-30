@@ -9,8 +9,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/styles.css?v=20260830-9">
-  <script defer src="/app.js?v=20260830-5"></script>
+  <link rel="stylesheet" href="/styles.css?v=20260830-10">
+  <script defer src="/app.js?v=20260830-6"></script>
 </head>
 <body class="customer-page page-marketplace">
   <div class="trustbar">
@@ -221,7 +221,7 @@
       <section class="checkout-panel checkout-panel-inline">
         <p class="eyebrow">Checkout</p>
         <h2>Cart and shipping</h2>
-        <div class="checkout-confidence"><span>Secure PayPal</span><span>Guest or account</span><span>Pickup or delivery</span></div>
+        <div class="checkout-confidence"><span>Secure checkout</span><span>Guest or account</span><span>Cash pickup available</span></div>
         <div class="cart-list" id="cartItems"></div>
         <div class="summary-card"><div class="summary-row"><span>Subtotal</span><strong id="cartSubtotal">$0.00</strong></div></div>
         <form class="stack-form" id="checkoutForm">
@@ -231,15 +231,17 @@
           <label>Phone<input name="customerPhone" type="tel"></label>
           <h3>Shipping details</h3>
           <label>Shipping name<input name="shippingName" required></label>
-          <label>Address line 1<input name="addressLine1" required></label>
-          <label>Address line 2<input name="addressLine2"></label>
-          <div class="split-fields"><label>Suburb<input name="suburb" required></label><label>State<input name="state" required></label></div>
-          <div class="split-fields"><label>Postcode<input name="postcode" required></label><label>Country<input name="country" value="Australia" required></label></div>
+          <div data-delivery-field><label>Address line 1<input name="addressLine1" required></label></div>
+          <div data-delivery-field><label>Address line 2<input name="addressLine2"></label></div>
+          <div class="split-fields" data-delivery-field><label>Suburb<input name="suburb" required></label><label>State<input name="state" required></label></div>
+          <div class="split-fields" data-delivery-field><label>Postcode<input name="postcode" required></label><label>Country<input name="country" value="Australia" required></label></div>
           <fieldset class="shipping-options"><legend>Delivery method</legend><div id="shippingOptions"></div></fieldset>
           <label>Order notes<textarea name="orderNotes" rows="3"></textarea></label>
         </form>
         <div class="payment-area">
           <button class="primary-button" id="previewOrderButton" type="button">Save Draft Order</button>
+          <button class="primary-button cash-pickup-button" id="cashPickupOrderButton" type="button">Place cash pickup order</button>
+          <p class="summary-note">Cash pickup orders are sent to Kiavik Prints for confirmation. Select Pickup above to use this option.</p>
           <div class="paypal-shell hidden" id="paypalShell"><p class="paypal-label">Checkout with PayPal</p><div id="paypalButtons"></div></div>
           <p class="summary-note" id="paypalNotice">PayPal buttons appear once PAYPAL_CLIENT_ID and PAYPAL_CLIENT_SECRET are configured in Netlify.</p>
         </div>
@@ -299,7 +301,7 @@
     </section>
 
     <div class="status-toast hidden" id="statusToast"></div>
-    <dialog class="product-dialog" id="productDialog">
+  <dialog class="product-dialog" id="productDialog">
       <div class="dialog-shell">
         <button class="dialog-close" id="closeProductDialog" type="button">x</button>
         <div class="dialog-media" id="dialogMedia"></div>
@@ -324,7 +326,20 @@
           </form>
         </div>
       </div>
-    </dialog>
+  </dialog>
+
+  <form name="cash-pickup-order" method="POST" data-netlify="true" netlify-honeypot="bot-field" hidden>
+    <input type="hidden" name="form-name" value="cash-pickup-order">
+    <input type="text" name="bot-field">
+    <input type="text" name="subject">
+    <input type="text" name="order_number">
+    <input type="text" name="customer_name">
+    <input type="email" name="customer_email">
+    <input type="text" name="customer_phone">
+    <input type="text" name="collection_method">
+    <input type="text" name="total_aud">
+    <textarea name="order_details"></textarea>
+  </form>
   </main>
 
   <footer class="footer">
