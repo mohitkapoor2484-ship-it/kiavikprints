@@ -13,6 +13,7 @@
 
   async function init() {
     bind();
+    syncSubcategory();
     syncColorConfig();
     try {
       const bootstrap = await request("/api/bootstrap");
@@ -27,6 +28,7 @@
     el("productForm")?.addEventListener("submit", saveProduct);
     el("resetProductButton")?.addEventListener("click", resetForm);
     el("productImageFile")?.addEventListener("change", readImage);
+    el("productCategory")?.addEventListener("input", syncSubcategory);
     el("productColorMode")?.addEventListener("change", syncColorConfig);
     el("productColorSlots")?.addEventListener("change", syncColorConfig);
     el("clearProductButton")?.addEventListener("click", resetForm);
@@ -69,13 +71,13 @@
     const query = String(el("adminSearch")?.value || "").trim().toLowerCase();
     const category = String(el("adminCategoryFilter")?.value || "");
     const products = state.products.filter((product) => {
-      const queryOk = !query || [product.name, product.category, product.description].join(" ").toLowerCase().includes(query);
+      const queryOk = !query || [product.name, product.category, product.subcategory, product.description].join(" ").toLowerCase().includes(query);
       const categoryOk = !category || String(product.category || "") === category;
       return queryOk && categoryOk;
     });
     target.innerHTML = products.map((p) => `<tr>
       <td><div class="inventory-product">${p.imageData ? `<img src="${p.imageData}" alt="${esc(p.name)}">` : `<div class="placeholder-art">${esc(p.name)}</div>`}<div><strong>${esc(p.name)}</strong><div class="cart-meta">${esc(p.description || "").slice(0, 42)}</div></div></div></td>
-      <td>${esc(p.category || "Uncategorised")}</td>
+      <td>${esc(formatCategory(p))}</td>
       <td>$${esc(p.priceLabel)}</td>
       <td>${esc(formatColorSetup(p))}</td>
       <td><span class="status">${p.isActive ? "Active" : "Hidden"}</span></td>
@@ -91,6 +93,10 @@
     const categories = [...new Set(state.products.map((product) => String(product.category || "").trim()).filter(Boolean))].sort((a, b) => a.localeCompare(b));
     target.innerHTML = `<option value="">All categories</option>${categories.map((category) => `<option value="${esc(category)}">${esc(category)}</option>`).join("")}`;
     target.value = categories.includes(current) ? current : "";
+  }
+
+  function formatCategory(product) {
+    return [product.category, product.subcategory].filter(Boolean).join(" / ") || "Uncategorised";
   }
 
   function formatColorSetup(product) {
@@ -120,6 +126,7 @@
   function editProduct(id) {
     const p = state.products.find((x) => x.id === id); if (!p) return;
     el("productId").value = p.id; el("productName").value = p.name || ""; el("productCategory").value = p.category || "";
+    syncSubcategory(); el("productSubcategory").value = p.subcategory === "Clickers" ? "Clickers" : "";
     el("productPrice").value = (Number(p.priceCents || 0) / 100).toFixed(2); el("productDescription").value = p.description || "";
     el("productSizes").value = (p.sizeOptions || []).join(", "); el("productColors").value = (p.colorOptions || []).join(", ");
     el("productBaseColors").value = (p.baseColorOptions || []).join(", ");
@@ -132,7 +139,14 @@
   }
 
   function resetForm() {
-    el("productForm")?.reset(); el("productId").value = ""; el("productColorMode").value = "single"; el("productColorSlots").value = "1"; el("productActive").checked = true; state.imageData = ""; syncColorConfig(); renderImage();
+    el("productForm")?.reset(); el("productId").value = ""; el("productColorMode").value = "single"; el("productColorSlots").value = "1"; el("productActive").checked = true; state.imageData = ""; syncSubcategory(); syncColorConfig(); renderImage();
+  }
+
+  function syncSubcategory() {
+    const select = el("productSubcategory"); if (!select) return;
+    const isToyCategory = String(el("productCategory")?.value || "").trim().toLowerCase() === "toys & fidgets";
+    select.disabled = !isToyCategory;
+    if (!isToyCategory) select.value = "";
   }
 
   function syncColorConfig() {
@@ -165,6 +179,7 @@
       id: el("productId").value || undefined,
       name: el("productName").value,
       category: el("productCategory").value,
+      subcategory: el("productSubcategory").value,
       price: Number(el("productPrice").value || 0),
       description: el("productDescription").value,
       sizeOptions: el("productSizes").value,

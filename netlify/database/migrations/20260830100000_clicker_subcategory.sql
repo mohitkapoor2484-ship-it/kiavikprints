@@ -1,0 +1,2 @@
+ALTER TABLE kp_products
+  ADD COLUMN IF NOT EXISTS subcategory TEXT NOT NULL DEFAULT '';

@@ -6,8 +6,8 @@
   <title>Private Inventory | Kiavik Prints</title>
   <meta name="robots" content="noindex,nofollow,noarchive">
   <link rel="icon" href="/assets/kiavik-prints-logo.jpg">
-  <link rel="stylesheet" href="/styles.css?v=20260830-6">
-  <script defer src="/admin.js?v=20260819-4"></script>
+  <link rel="stylesheet" href="/styles.css?v=20260830-7">
+  <script defer src="/admin.js?v=20260830-2"></script>
 </head>
 <body class="admin-body admin-reference-page">
   <div class="trustbar">
@@ -114,9 +114,11 @@
                 <input id="productId" type="hidden">
                 <label>Product name<input id="productName" required></label>
                 <div class="split-fields">
-                  <label>Category<input id="productCategory"></label>
-                  <label>Price (AUD)<input id="productPrice" type="number" min="0" step="0.01" required></label>
+                  <label>Category<input id="productCategory" placeholder="e.g. Toys & Fidgets"></label>
+                  <label>Subcategory<select id="productSubcategory" disabled><option value="">None</option><option value="Clickers">Clickers</option></select></label>
                 </div>
+                <p class="field-note">Choose <strong>Toys &amp; Fidgets</strong> to enable the <strong>Clickers</strong> subcategory.</p>
+                <label>Price (AUD)<input id="productPrice" type="number" min="0" step="0.01" required></label>
                 <label>Description<textarea id="productDescription" rows="4"></textarea></label>
                 <label>Size options<input id="productSizes" placeholder="Small, Medium, Large"></label>
                 <label>Available product colours<input id="productColors" placeholder="Teal, Orange, White"></label>

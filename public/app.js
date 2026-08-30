@@ -42,6 +42,8 @@
     el("cartPill")?.addEventListener("click", () => el("checkout")?.scrollIntoView({ behavior: "smooth", block: "start" }));
     el("closeProductDialog")?.addEventListener("click", () => el("productDialog")?.close());
     el("productOptionForm")?.addEventListener("submit", (e) => { e.preventDefault(); if (!e.currentTarget.reportValidity()) return; addCurrentProduct(); });
+    el("dialogSize")?.addEventListener("change", renderClickerCharacterGrid);
+    el("clickerTextGrid")?.addEventListener("input", normalizeClickerCharacter);
     el("signinForm")?.addEventListener("submit", signIn);
     el("signupForm")?.addEventListener("submit", signUp);
     el("logoutButton")?.addEventListener("click", logout);
@@ -251,16 +253,19 @@
     const p = state.products.find((x) => x.id === id); if (!p) return;
     state.currentProduct = p;
     el("dialogProductId").value = p.id;
-    el("dialogCategory").textContent = p.category || "Kiavik Print";
+    el("dialogCategory").textContent = [p.category, p.subcategory].filter(Boolean).join(" / ") || "Kiavik Print";
     el("dialogName").textContent = p.name;
     el("dialogPrice").textContent = `$${p.priceLabel || money(p.priceCents)}`;
     el("dialogDescription").textContent = p.description || "";
     el("dialogMedia").innerHTML = p.imageData ? `<img src="${p.imageData}" alt="${esc(p.name)}">` : `<div class="placeholder-art">${esc(p.name)}</div>`;
     populateSelect("sizeField", "dialogSize", p.sizeOptions || []);
     renderColorFields(p);
-    el("textField")?.classList.toggle("hidden", !p.customTextEnabled);
+    const usesClickerGrid = isClickerProduct(p) && p.customTextEnabled;
+    el("textField")?.classList.toggle("hidden", !p.customTextEnabled || usesClickerGrid);
+    el("clickerTextField")?.classList.toggle("hidden", !usesClickerGrid);
     populateSelect("textColorField", "dialogTextColor", p.customTextEnabled ? (p.textColorOptions || []) : [], "Choose text colour");
     if (el("dialogText")) el("dialogText").value = "";
+    renderClickerCharacterGrid();
     if (el("dialogTextColor")) el("dialogTextColor").value = "";
     if (el("dialogQuantity")) el("dialogQuantity").value = 1;
     el("productDialog")?.showModal();
@@ -300,6 +305,61 @@
     target.innerHTML = Array.from({ length: count }, (_, index) => colorSelect(colorSlotLabel(index, count), index, options)).join("");
   }
 
+  function isClickerProduct(product) {
+    return String(product?.category || "").trim().toLowerCase() === "toys & fidgets"
+      && String(product?.subcategory || "").trim().toLowerCase() === "clickers";
+  }
+
+  function clickerGridSize(value) {
+    const match = String(value || "").trim().match(/^(\d+)\s*[x×]\s*(\d+)$/i);
+    if (!match) return null;
+    const columns = Number(match[1]);
+    const rows = Number(match[2]);
+    if (!Number.isInteger(columns) || !Number.isInteger(rows) || columns < 1 || rows < 1 || columns > 10 || rows > 10 || columns * rows > 64) return null;
+    return { columns, rows, count: columns * rows };
+  }
+
+  function renderClickerCharacterGrid() {
+    const field = el("clickerTextField");
+    const target = el("clickerTextGrid");
+    const hint = el("clickerGridHint");
+    if (!field || !target || !hint || field.classList.contains("hidden")) return;
+    const grid = clickerGridSize(el("dialogSize")?.value);
+    if (!grid) {
+      hint.textContent = "Choose a size written as XxY, such as 2x3, to set the character grid.";
+      target.innerHTML = "";
+      return;
+    }
+    hint.textContent = `${grid.columns} x ${grid.rows} grid: one letter or number per square.`;
+    target.style.setProperty("--clicker-columns", String(grid.columns));
+    target.innerHTML = Array.from({ length: grid.count }, (_, index) => `<input data-clicker-character="${index}" aria-label="Row ${Math.floor(index / grid.columns) + 1}, column ${(index % grid.columns) + 1}" inputmode="text" autocomplete="off" maxlength="1" pattern="[A-Za-z0-9]">`).join("");
+  }
+
+  function normalizeClickerCharacter(event) {
+    const input = event.target;
+    if (!(input instanceof HTMLInputElement) || !input.matches("[data-clicker-character]")) return;
+    input.value = input.value.replace(/[^a-z0-9]/gi, "").slice(0, 1).toUpperCase();
+    if (!input.value) return;
+    const fields = Array.from(document.querySelectorAll("#clickerTextGrid [data-clicker-character]"));
+    const next = fields[fields.indexOf(input) + 1];
+    if (next instanceof HTMLInputElement) next.focus();
+  }
+
+  function readClickerCustomText() {
+    const fields = Array.from(document.querySelectorAll("#clickerTextGrid [data-clicker-character]"));
+    const values = fields.map((field) => String(field.value || "").trim().toUpperCase());
+    if (!values.length) {
+      toast("Choose a grid size such as 2x3 before adding this clicker.", true);
+      return null;
+    }
+    if (values.every((value) => !value)) return "";
+    if (values.some((value) => !/^[A-Z0-9]$/.test(value))) {
+      toast("Use one letter or number in every clicker square.", true);
+      return null;
+    }
+    return values.join("");
+  }
+
   function colorSelect(label, slot, options) {
     return `<label>${esc(label)}<select data-color-slot="${esc(slot)}" required><option value="">Choose a colour</option>${options.map((value) => `<option value="${esc(value)}">${esc(value)}</option>`).join("")}</select></label>`;
   }
@@ -318,7 +378,11 @@
   function addCurrentProduct() {
     const p = state.currentProduct; if (!p) return;
     const colorChoices = Array.from(document.querySelectorAll("#colorFields select")).map((select) => select.value).filter(Boolean);
-    const customText = el("textField")?.classList.contains("hidden") ? "" : (el("dialogText")?.value || "").trim();
+    let customText = el("textField")?.classList.contains("hidden") ? "" : (el("dialogText")?.value || "").trim();
+    if (!el("clickerTextField")?.classList.contains("hidden")) {
+      customText = readClickerCustomText();
+      if (customText === null) return;
+    }
     const textColorRequired = !el("textColorField")?.classList.contains("hidden") && Boolean(customText);
     const textColorChoice = textColorRequired ? (el("dialogTextColor")?.value || "") : "";
     if (textColorRequired && !textColorChoice) {

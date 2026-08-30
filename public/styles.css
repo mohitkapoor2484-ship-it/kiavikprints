@@ -238,6 +238,11 @@
 .dialog-description{margin:8px 0 18px;color:var(--muted)}
 #colorFields{gap:12px}
 #colorFields label{margin:0}
+.clicker-text-field{display:flex;flex-direction:column;gap:8px;font-size:12px;font-weight:800}
+.clicker-text-field .field-note{margin:0;font-weight:500}
+.clicker-character-grid{display:grid;grid-template-columns:repeat(var(--clicker-columns,1),minmax(42px,1fr));gap:8px;max-width:420px}
+.clicker-character-grid input{width:100%;aspect-ratio:1;border:1px solid var(--border);border-radius:9px;background:#fff;color:var(--ink);font-size:18px;font-weight:900;text-align:center;text-transform:uppercase}
+.clicker-character-grid input:focus{outline:2px solid rgba(6,127,128,.25);border-color:var(--teal)}
 
 .admin-body,.admin-reference-page{background:#f5f7f6}
 .seller-top-reference{height:104px;padding:0 34px;background:#fff;border-bottom:1px solid var(--border)}
