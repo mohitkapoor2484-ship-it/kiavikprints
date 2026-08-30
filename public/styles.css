@@ -254,7 +254,7 @@
 .seller-heading-reference p{margin:6px 0 0}
 .seller-stats-reference{margin:20px 0 24px}
 .seller-stats-reference article{box-shadow:0 12px 30px rgba(9,37,40,.05)}
-.seller-admin-grid{display:grid;grid-template-columns:minmax(0,1.45fr) 390px;gap:24px;align-items:start}
+.seller-admin-grid{display:grid;grid-template-columns:minmax(0,2fr) minmax(360px,1fr);gap:24px;align-items:start}
 .inventory-panel-reference,.product-editor-panel-reference,.orders-admin-panel{box-shadow:0 12px 30px rgba(9,37,40,.05)}
 .inventory-panel-reference .section-title,.product-editor-panel-reference .section-title{padding:22px 22px 0;margin-bottom:12px}
 .inventory-panel-reference .section-title h2,.product-editor-panel-reference .section-title h2{font-size:28px}
