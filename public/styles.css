@@ -243,6 +243,7 @@
 .clicker-character-grid{display:grid;grid-template-columns:repeat(var(--clicker-columns,1),38px);gap:7px;width:max-content}
 .clicker-character-grid input{width:38px;height:38px;border:1px solid var(--border);border-radius:8px;background:#fff;color:var(--ink);font-size:16px;font-weight:900;text-align:center;text-transform:uppercase}
 .clicker-character-grid input:focus{outline:2px solid rgba(6,127,128,.25);border-color:var(--teal)}
+.clicker-pricing-fields{padding:14px;border:1px solid #cfe7e3;border-radius:12px;background:#f3fbfa}
 
 .admin-body,.admin-reference-page{background:#f5f7f6}
 .seller-top-reference{height:104px;padding:0 34px;background:#fff;border-bottom:1px solid var(--border)}

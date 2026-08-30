@@ -29,6 +29,7 @@
     el("resetProductButton")?.addEventListener("click", resetForm);
     el("productImageFile")?.addEventListener("change", readImage);
     el("productCategory")?.addEventListener("input", syncSubcategory);
+    el("productSubcategory")?.addEventListener("change", syncClickerPricingFields);
     el("productColorMode")?.addEventListener("change", syncColorConfig);
     el("productColorSlots")?.addEventListener("change", syncColorConfig);
     el("clearProductButton")?.addEventListener("click", resetForm);
@@ -128,6 +129,8 @@
     el("productId").value = p.id; el("productName").value = p.name || ""; el("productCategory").value = p.category || "";
     syncSubcategory(); el("productSubcategory").value = p.subcategory === "Clickers" ? "Clickers" : "";
     el("productPrice").value = (Number(p.priceCents || 0) / 100).toFixed(2); el("productDescription").value = p.description || "";
+    el("productExtraClickerPrice").value = (Number(p.extraClickerPriceCents || 0) / 100).toFixed(2);
+    el("productExtraTextClickerPrice").value = (Number(p.extraTextClickerPriceCents || 0) / 100).toFixed(2);
     el("productSizes").value = (p.sizeOptions || []).join(", "); el("productColors").value = (p.colorOptions || []).join(", ");
     el("productBaseColors").value = (p.baseColorOptions || []).join(", ");
     el("productButtonColors").value = (p.buttonColorOptions || []).join(", ");
@@ -135,11 +138,11 @@
     el("productColorSlots").value = String(p.colorSlotCount || 1);
     el("productTextColors").value = (p.textColorOptions || []).join(", ");
     el("productCustomText").checked = Boolean(p.customTextEnabled); el("productActive").checked = Boolean(p.isActive); state.imageData = p.imageData || "";
-    syncColorConfig(); renderImage(); el("productName").focus();
+    syncClickerPricingFields(); syncColorConfig(); renderImage(); el("productName").focus();
   }
 
   function resetForm() {
-    el("productForm")?.reset(); el("productId").value = ""; el("productColorMode").value = "single"; el("productColorSlots").value = "1"; el("productActive").checked = true; state.imageData = ""; syncSubcategory(); syncColorConfig(); renderImage();
+    el("productForm")?.reset(); el("productId").value = ""; el("productColorMode").value = "single"; el("productColorSlots").value = "1"; el("productActive").checked = true; el("productExtraClickerPrice").value = "0"; el("productExtraTextClickerPrice").value = "0"; state.imageData = ""; syncSubcategory(); syncClickerPricingFields(); syncColorConfig(); renderImage();
   }
 
   function syncSubcategory() {
@@ -147,6 +150,15 @@
     const isToyCategory = String(el("productCategory")?.value || "").trim().toLowerCase() === "toys & fidgets";
     select.disabled = !isToyCategory;
     if (!isToyCategory) select.value = "";
+    syncClickerPricingFields();
+  }
+
+  function syncClickerPricingFields() {
+    const isClicker = String(el("productCategory")?.value || "").trim().toLowerCase() === "toys & fidgets"
+      && el("productSubcategory")?.value === "Clickers";
+    el("clickerPricingFields")?.classList.toggle("hidden", !isClicker);
+    const label = el("productPriceLabel");
+    if (label) label.textContent = isClicker ? "1x1 price (AUD)" : "Price (AUD)";
   }
 
   function syncColorConfig() {
@@ -181,6 +193,8 @@
       category: el("productCategory").value,
       subcategory: el("productSubcategory").value,
       price: Number(el("productPrice").value || 0),
+      extraClickerPrice: Number(el("productExtraClickerPrice").value || 0),
+      extraTextClickerPrice: Number(el("productExtraTextClickerPrice").value || 0),
       description: el("productDescription").value,
       sizeOptions: el("productSizes").value,
       colorMode: el("productColorMode").value,

@@ -151,6 +151,7 @@
     target.innerHTML = products.map((p, index) => {
       const media = p.imageData ? `<img src="${p.imageData}" alt="${esc(p.name)}">` : `<div class="placeholder-art">${esc(p.name)}</div>`;
       const badge = index % 3 === 1 ? "Popular" : "New";
+      const price = `${isClickerProduct(p) ? "From " : ""}$${p.priceLabel || money(p.priceCents)}`;
       return `<article class="product-card catalog-card">
         <div class="product-card-media catalog-media">
           <span class="product-badge ${badge === "Popular" ? "hot" : ""}">${badge}</span>
@@ -162,7 +163,7 @@
           <h3>${esc(p.name)}</h3>
           <p class="card-copy">${esc((p.description || "Custom 3D printed product").slice(0, 72))}</p>
           <div class="product-card-footer">
-            <p class="product-price">$${esc(p.priceLabel || money(p.priceCents))}</p>
+            <p class="product-price">${esc(price)}</p>
             <button class="ghost-button catalog-action" type="button" data-open-product="${esc(p.id)}">${p.customTextEnabled ? "Customise" : "View"} →</button>
           </div>
         </div>
@@ -328,21 +329,44 @@
     if (!grid) {
       hint.textContent = "Choose a size written as XxY, such as 2x3, to set the character grid.";
       target.innerHTML = "";
+      updateClickerPrice();
       return;
     }
     hint.textContent = `${grid.columns} x ${grid.rows} grid: one letter or number per square.`;
     target.style.setProperty("--clicker-columns", String(grid.columns));
     target.innerHTML = Array.from({ length: grid.count }, (_, index) => `<input data-clicker-character="${index}" aria-label="Row ${Math.floor(index / grid.columns) + 1}, column ${(index % grid.columns) + 1}" inputmode="text" autocomplete="off" maxlength="1" pattern="[A-Za-z0-9]">`).join("");
+    updateClickerPrice();
   }
 
   function normalizeClickerCharacter(event) {
     const input = event.target;
     if (!(input instanceof HTMLInputElement) || !input.matches("[data-clicker-character]")) return;
     input.value = input.value.replace(/[^a-z0-9]/gi, "").slice(0, 1).toUpperCase();
+    updateClickerPrice();
     if (!input.value) return;
     const fields = Array.from(document.querySelectorAll("#clickerTextGrid [data-clicker-character]"));
     const next = fields[fields.indexOf(input) + 1];
     if (next instanceof HTMLInputElement) next.focus();
+  }
+
+  function hasClickerCustomText() {
+    return Array.from(document.querySelectorAll("#clickerTextGrid [data-clicker-character]")).some((field) => String(field.value || "").trim());
+  }
+
+  function clickerUnitPrice(product, sizeChoice, hasCustomText) {
+    const basePrice = Number(product?.priceCents || 0);
+    if (!isClickerProduct(product)) return basePrice;
+    const grid = clickerGridSize(sizeChoice);
+    if (!grid) return basePrice;
+    const extraPrice = Number(hasCustomText ? product.extraTextClickerPriceCents : product.extraClickerPriceCents) || 0;
+    return basePrice + Math.max(0, grid.count - 1) * extraPrice;
+  }
+
+  function updateClickerPrice() {
+    const product = state.currentProduct;
+    if (!isClickerProduct(product)) return;
+    const price = clickerUnitPrice(product, el("dialogSize")?.value, hasClickerCustomText());
+    if (el("dialogPrice")) el("dialogPrice").textContent = `$${money(price)}`;
   }
 
   function readClickerCustomText() {
@@ -394,7 +418,7 @@
       id: crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`,
       productId: p.id,
       name: p.name,
-      priceCents: p.priceCents,
+      priceCents: clickerUnitPrice(p, el("dialogSize")?.value, Boolean(customText)),
       quantity: Math.max(1, Number(el("dialogQuantity")?.value || 1)),
       sizeChoice: el("sizeField")?.classList.contains("hidden") ? "" : (el("dialogSize")?.value || ""),
       colorChoices,
