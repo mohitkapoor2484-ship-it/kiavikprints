@@ -58,7 +58,7 @@
     target.innerHTML = state.orders.map((order) => {
       const delivery = order.deliveryMethod === "pickup" ? "Cash pickup" : "Delivery";
       const address = [order.addressLine1, order.addressLine2, order.suburb, order.state, order.postcode, order.country].filter(Boolean).join(", ");
-      const items = (order.items || []).map((item) => `<li><strong>${esc(item.quantity)} × ${esc(item.productName)}</strong><span>${esc(item.sizeChoice || "Default")} · ${esc(item.colorChoices?.join(" / ") || item.colorChoice || "Default")}${item.customText ? ` · Text: ${esc(item.customText)}` : ""}</span><b>$${esc(item.lineTotalLabel)}</b></li>`).join("");
+      const items = (order.items || []).map((item) => `<li><div><strong>${esc(item.quantity)} × ${esc(item.productName)}</strong><span>${esc(item.sizeChoice || "Default")} · ${esc(item.colorChoices?.join(" / ") || item.colorChoice || "Default")}${item.customText ? ` · Text: ${esc(item.customText)}` : ""}</span>${clickerTextPreview(item)}</div><b>$${esc(item.lineTotalLabel)}</b></li>`).join("");
       const options = fulfillmentStatuses.map(([value, label]) => `<option value="${value}" ${order.fulfillmentStatus === value ? "selected" : ""}>${label}</option>`).join("");
       return `<article class="seller-order-card"><div class="seller-order-head"><div><p class="eyebrow">${esc(delivery)}</p><h2>${esc(order.orderNumber)}</h2><p>${new Date(order.createdAt).toLocaleString()}</p></div><div><span class="product-pill">${esc(formatStatus(order.fulfillmentStatus))}</span><strong>$${esc(order.totalLabel)} ${esc(order.currencyCode)}</strong></div></div><div class="seller-order-details"><div><h3>Customer</h3><p>${esc(order.customerName)}<br>${esc(order.customerEmail)}${order.customerPhone ? `<br>${esc(order.customerPhone)}` : ""}</p></div><div><h3>${delivery}</h3><p>${order.deliveryMethod === "pickup" ? "Customer will pay cash when collecting." : esc(address || "Address not supplied.")}</p></div><div><h3>Notes</h3><p>${esc(order.orderNotes || "No notes.")}</p></div></div><div class="seller-order-status"><label>Customer progress<select data-order-status="${esc(order.id)}">${options}</select></label><button class="primary-button" type="button" data-save-status="${esc(order.id)}">Update status</button></div><div class="seller-order-actions">${order.fulfillmentStatus !== "cancelled" ? `<button class="ghost-button" type="button" data-cancel-order="${esc(order.id)}">Cancel order</button>` : ""}<button class="ghost-button danger-button" type="button" data-delete-order="${esc(order.id)}">Delete order</button></div><h3>Items</h3><ul class="seller-order-items">${items}</ul></article>`;
     }).join("");
@@ -69,6 +69,24 @@
 
   function formatStatus(status) {
     return fulfillmentStatuses.find(([value]) => value === status)?.[1] || "Order received";
+  }
+
+  function clickerTextPreview(item) {
+    const match = String(item.sizeChoice || "").trim().match(/^(\d+)\s*[x×]\s*(\d+)$/i);
+    const text = String(item.customText || "").trim().toUpperCase();
+    if (!match || !text) return "";
+    const columns = Number(match[1]);
+    const rows = Number(match[2]);
+    if (!Number.isInteger(columns) || !Number.isInteger(rows) || columns < 1 || rows < 1 || columns * rows !== text.length) return "";
+    const cell = 34, gap = 4, pad = 10;
+    const width = pad * 2 + columns * cell + (columns - 1) * gap;
+    const height = pad * 2 + rows * cell + (rows - 1) * gap;
+    const cells = Array.from({ length: text.length }, (_, index) => {
+      const x = pad + (index % columns) * (cell + gap);
+      const y = pad + Math.floor(index / columns) * (cell + gap);
+      return `<rect x="${x}" y="${y}" width="${cell}" height="${cell}" rx="6" fill="#f4fbfa" stroke="#78aaa6"/><text x="${x + cell / 2}" y="${y + 22}" text-anchor="middle" fill="#173f40" font-family="sans-serif" font-size="16" font-weight="700">${esc(text[index])}</text>`;
+    }).join("");
+    return `<figure class="clicker-order-preview"><figcaption>Buyer character layout</figcaption><svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${esc(`${columns} by ${rows} clicker text layout: ${text}`)}">${cells}</svg></figure>`;
   }
 
   async function saveStatus(orderId) {
