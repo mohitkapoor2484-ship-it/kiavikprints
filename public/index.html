@@ -9,8 +9,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/styles.css?v=20260830-12">
-  <script defer src="/app.js?v=20260830-8"></script>
+  <link rel="stylesheet" href="/styles.css?v=20260831-1">
+  <script defer src="/app.js?v=20260831-1"></script>
 </head>
 <body class="customer-page page-marketplace">
   <div class="trustbar">
@@ -322,7 +322,8 @@
             </div>
             <label id="textColorField" class="hidden">Text colour<select id="dialogTextColor"></select></label>
             <label>Quantity<input id="dialogQuantity" type="number" min="1" max="99" value="1"></label>
-            <button class="primary-button" type="submit">Add To Cart</button>
+            <p class="summary-note hidden" id="comingSoonNotice">This product is coming soon and cannot be ordered yet.</p>
+            <button class="primary-button" id="addToCartButton" type="submit">Add To Cart</button>
           </form>
         </div>
       </div>

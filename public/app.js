@@ -151,7 +151,7 @@
     }
     target.innerHTML = products.map((p, index) => {
       const media = p.imageData ? `<img src="${p.imageData}" alt="${esc(p.name)}">` : `<div class="placeholder-art">${esc(p.name)}</div>`;
-      const badge = index % 3 === 1 ? "Popular" : "New";
+      const badge = p.isComingSoon ? "Coming soon" : index % 3 === 1 ? "Popular" : "New";
       const price = `${isClickerProduct(p) ? "From " : ""}$${p.priceLabel || money(p.priceCents)}`;
       return `<article class="product-card catalog-card">
         <div class="product-card-media catalog-media">
@@ -165,7 +165,7 @@
           <p class="card-copy">${esc((p.description || "Custom 3D printed product").slice(0, 72))}</p>
           <div class="product-card-footer">
             <p class="product-price">${esc(price)}</p>
-            <button class="ghost-button catalog-action" type="button" data-open-product="${esc(p.id)}">${p.customTextEnabled ? "Customise" : "View"} →</button>
+            <button class="ghost-button catalog-action" type="button" data-open-product="${esc(p.id)}" ${p.isComingSoon ? "disabled" : ""}>${p.isComingSoon ? "Coming soon" : p.customTextEnabled ? "Customise" : "View"} →</button>
           </div>
         </div>
       </article>`;
@@ -270,6 +270,9 @@
     renderClickerCharacterGrid();
     if (el("dialogTextColor")) el("dialogTextColor").value = "";
     if (el("dialogQuantity")) el("dialogQuantity").value = 1;
+    const comingSoon = Boolean(p.isComingSoon);
+    if (el("addToCartButton")) { el("addToCartButton").disabled = comingSoon; el("addToCartButton").textContent = comingSoon ? "Coming soon" : "Add To Cart"; }
+    el("comingSoonNotice")?.classList.toggle("hidden", !comingSoon);
     el("productDialog")?.showModal();
     const u = new URL(location.href); u.searchParams.set("product", p.id); history.replaceState({}, "", u);
   }
@@ -402,6 +405,7 @@
 
   function addCurrentProduct() {
     const p = state.currentProduct; if (!p) return;
+    if (p.isComingSoon) { toast("This product is coming soon and cannot be ordered yet.", true); return; }
     const colorChoices = Array.from(document.querySelectorAll("#colorFields select")).map((select) => select.value).filter(Boolean);
     let customText = el("textField")?.classList.contains("hidden") ? "" : (el("dialogText")?.value || "").trim();
     if (!el("clickerTextField")?.classList.contains("hidden")) {

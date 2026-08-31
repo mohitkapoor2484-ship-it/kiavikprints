@@ -81,7 +81,7 @@
       <td>${esc(formatCategory(p))}</td>
       <td>$${esc(p.priceLabel)}</td>
       <td>${esc(formatColorSetup(p))}</td>
-      <td><span class="status">${p.isActive ? "Active" : "Hidden"}</span></td>
+      <td><span class="status">${p.isComingSoon ? "Coming soon" : p.isActive ? "Active" : "Hidden"}</span></td>
       <td><div class="inline-actions"><button class="edit-action" type="button" data-edit="${esc(p.id)}">Edit</button><button class="edit-action" type="button" data-delete="${esc(p.id)}">Delete</button></div></td>
     </tr>`).join("");
     target.querySelectorAll("[data-edit]").forEach((b) => b.addEventListener("click", () => editProduct(b.dataset.edit)));
@@ -137,12 +137,12 @@
     el("productColorMode").value = p.colorMode === "multi" ? "multi" : "single";
     el("productColorSlots").value = String(p.colorSlotCount || 1);
     el("productTextColors").value = (p.textColorOptions || []).join(", ");
-    el("productCustomText").checked = Boolean(p.customTextEnabled); el("productActive").checked = Boolean(p.isActive); state.imageData = p.imageData || "";
+    el("productCustomText").checked = Boolean(p.customTextEnabled); el("productActive").checked = Boolean(p.isActive); el("productComingSoon").checked = Boolean(p.isComingSoon); state.imageData = p.imageData || "";
     syncClickerPricingFields(); syncColorConfig(); renderImage(); el("productName").focus();
   }
 
   function resetForm() {
-    el("productForm")?.reset(); el("productId").value = ""; el("productColorMode").value = "single"; el("productColorSlots").value = "1"; el("productActive").checked = true; el("productExtraClickerPrice").value = "0"; el("productExtraTextClickerPrice").value = "0"; state.imageData = ""; syncSubcategory(); syncClickerPricingFields(); syncColorConfig(); renderImage();
+    el("productForm")?.reset(); el("productId").value = ""; el("productColorMode").value = "single"; el("productColorSlots").value = "1"; el("productActive").checked = true; el("productComingSoon").checked = false; el("productExtraClickerPrice").value = "0"; el("productExtraTextClickerPrice").value = "0"; state.imageData = ""; syncSubcategory(); syncClickerPricingFields(); syncColorConfig(); renderImage();
   }
 
   function syncSubcategory() {
@@ -205,6 +205,7 @@
       textColorOptions: el("productTextColors").value,
       customTextEnabled: el("productCustomText").checked,
       isActive: el("productActive").checked,
+      isComingSoon: el("productComingSoon").checked,
       imageData: state.imageData,
     };
     try { await request("/api/admin/products", { method: body.id ? "PUT" : "POST", body: JSON.stringify(body) }); resetForm(); await loadProducts(); toast("Product saved."); } catch (e) { toast(e.message, true); }

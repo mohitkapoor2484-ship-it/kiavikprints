@@ -245,6 +245,7 @@
 .clicker-character-grid input:focus{outline:2px solid rgba(6,127,128,.25);border-color:var(--teal)}
 .clicker-pricing-fields{padding:14px;border:1px solid #cfe7e3;border-radius:12px;background:#f3fbfa}
 .cash-pickup-button{background:var(--orange);border-color:var(--orange)}
+.catalog-action:disabled,.primary-button:disabled{cursor:not-allowed;opacity:.58}
 .cart-item-heading{align-items:flex-start}
 .cart-item-heading strong{min-width:0;overflow-wrap:anywhere}
 .cart-item-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px 12px;margin:8px 0 12px}
