@@ -152,7 +152,7 @@
       return;
     }
     target.innerHTML = products.map((p, index) => {
-      const media = p.imageData ? `<img src="${p.imageData}" alt="${esc(p.name)}">` : `<div class="placeholder-art">${esc(p.name)}</div>`;
+      const media = p.imageData ? `<img src="${p.imageData}" alt="${esc(p.name)}" loading="lazy" decoding="async">` : `<div class="placeholder-art">${esc(p.name)}</div>`;
       const badge = p.isComingSoon ? "Coming soon" : index % 3 === 1 ? "Popular" : "New";
       const price = `${isClickerProduct(p) ? "From " : ""}$${p.priceLabel || money(p.priceCents)}`;
       return `<article class="product-card catalog-card">

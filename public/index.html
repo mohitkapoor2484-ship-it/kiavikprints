@@ -9,8 +9,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/styles.css?v=20260831-3">
-  <script defer src="/app.js?v=20260831-3"></script>
+  <link rel="preload" as="image" type="image/avif" href="/assets/kiavik-hero-filament-1200.avif" imagesrcset="/assets/kiavik-hero-filament-768.avif 768w, /assets/kiavik-hero-filament-1200.avif 1200w, /assets/kiavik-hero-filament-1600.avif 1600w" imagesizes="(max-width: 900px) 105vw, 62vw" fetchpriority="high">
+  <link rel="stylesheet" href="/styles.css?v=20260831-4">
+  <script defer src="/app.js?v=20260831-4"></script>
 </head>
 <body class="customer-page page-marketplace">
   <div class="trustbar">
@@ -80,8 +81,16 @@
           </div>
         </div>
         <div class="marketplace-hero-art hero-product-stage">
-          <img class="hero-product-scene" src="/assets/kiavik-hero-filament.png" alt="Kiavik 3D printed decor pieces beside a teal filament spool">
-          <img class="hero-fidget-scene" src="/assets/kiavik-hero-fidgets.png" alt="Kiavik clicker and fidget toys">
+          <picture class="hero-product-scene">
+            <source type="image/avif" srcset="/assets/kiavik-hero-filament-768.avif 768w, /assets/kiavik-hero-filament-1200.avif 1200w, /assets/kiavik-hero-filament-1600.avif 1600w" sizes="(max-width: 900px) 105vw, 62vw">
+            <source type="image/webp" srcset="/assets/kiavik-hero-filament-768.webp 768w, /assets/kiavik-hero-filament-1200.webp 1200w, /assets/kiavik-hero-filament-1600.webp 1600w" sizes="(max-width: 900px) 105vw, 62vw">
+            <img src="/assets/kiavik-hero-filament.png" width="1672" height="941" alt="Kiavik 3D printed decor pieces beside a teal filament spool" fetchpriority="high" decoding="async">
+          </picture>
+          <picture class="hero-fidget-scene">
+            <source type="image/avif" srcset="/assets/kiavik-hero-fidgets-480.avif 480w, /assets/kiavik-hero-fidgets-768.avif 768w, /assets/kiavik-hero-fidgets-1200.avif 1200w" sizes="(max-width: 900px) 47vw, 27vw">
+            <source type="image/webp" srcset="/assets/kiavik-hero-fidgets-480.webp 480w, /assets/kiavik-hero-fidgets-768.webp 768w, /assets/kiavik-hero-fidgets-1200.webp 1200w" sizes="(max-width: 900px) 47vw, 27vw">
+            <img src="/assets/kiavik-hero-fidgets.png" width="1536" height="1024" alt="Kiavik clicker and fidget toys" decoding="async">
+          </picture>
         </div>
       </div>
       <svg class="hero-product-thread" viewBox="0 0 1440 650" preserveAspectRatio="none" aria-hidden="true">
