@@ -22,6 +22,7 @@
     paypalLoaded: false,
     localOrderId: "",
     activeDraftId: loadActiveDraftId(),
+    expandedOrderId: "",
   };
 
   document.addEventListener("DOMContentLoaded", init);
@@ -494,9 +495,27 @@
     el("signedInEmail").textContent = user.email || "";
     const orders = state.bootstrap.orders || [];
     const target = el("ordersList");
-    target.innerHTML = orders.length ? orders.map((o) => `<article class="order-card"><strong>${esc(o.orderNumber)}</strong><div class="cart-meta">${new Date(o.createdAt).toLocaleDateString()} · ${esc(formatOrderStatus(o.fulfillmentStatus || o.paymentStatus))}</div><div class="cart-row"><span>${o.items?.length || 0} item(s)</span><strong>$${esc(o.totalLabel)}</strong></div>${o.paymentStatus === "draft" ? `<div class="draft-order-actions"><button class="ghost-button" data-use-draft="${esc(o.id)}" type="button">Edit / place order</button><button class="ghost-button draft-delete-button" data-delete-draft="${esc(o.id)}" type="button">Delete draft</button></div>` : ""}</article>`).join("") : `<div class="empty-state">No orders yet.</div>`;
+    target.innerHTML = orders.length ? orders.map((o) => {
+      const submitted = o.paymentStatus !== "draft";
+      const expanded = submitted && state.expandedOrderId === o.id;
+      return `<article class="order-card ${expanded ? "order-card-expanded" : ""}"><strong>${esc(o.orderNumber)}</strong><div class="cart-meta">${new Date(o.createdAt).toLocaleDateString()} · ${esc(formatOrderStatus(o.fulfillmentStatus || o.paymentStatus))}</div><div class="cart-row"><span>${o.items?.length || 0} item(s)</span><strong>$${esc(o.totalLabel)}</strong></div>${submitted ? `<button class="ghost-button order-card-toggle" data-toggle-order="${esc(o.id)}" type="button" aria-expanded="${expanded}">${expanded ? "Hide order details" : "View order details"}</button>${expanded ? renderSubmittedOrderDetails(o) : ""}` : `<div class="draft-order-actions"><button class="ghost-button" data-use-draft="${esc(o.id)}" type="button">Edit / place order</button><button class="ghost-button draft-delete-button" data-delete-draft="${esc(o.id)}" type="button">Delete draft</button></div>`}</article>`;
+    }).join("") : `<div class="empty-state">No orders yet.</div>`;
+    target.querySelectorAll("[data-toggle-order]").forEach((button) => button.addEventListener("click", () => {
+      state.expandedOrderId = state.expandedOrderId === button.dataset.toggleOrder ? "" : button.dataset.toggleOrder;
+      renderAccount();
+    }));
     target.querySelectorAll("[data-use-draft]").forEach((button) => button.addEventListener("click", () => useDraftOrder(button.dataset.useDraft)));
     target.querySelectorAll("[data-delete-draft]").forEach((button) => button.addEventListener("click", () => deleteDraftOrder(button.dataset.deleteDraft)));
+  }
+
+  function renderSubmittedOrderDetails(order) {
+    const items = (order.items || []).map((item) => {
+      const colours = (item.colorChoices?.length ? item.colorChoices.join(" / ") : item.colorChoice) || "Default";
+      const choices = [`Size: ${item.sizeChoice || "Default"}`, `Colours: ${colours}`];
+      if (item.customText) choices.push(`Text: ${item.customText}${item.textColorChoice ? ` · ${item.textColorChoice}` : ""}`);
+      return `<li><div><strong>${esc(item.productName)}</strong><span>${esc(choices.join(" | "))}</span><small>Quantity: ${Number(item.quantity || 1)}</small></div><strong>$${esc(item.lineTotalLabel)}</strong></li>`;
+    }).join("");
+    return `<section class="customer-order-details"><h4>Your order</h4><ul>${items}</ul><p class="cart-meta">${esc(order.deliveryMethod === "pickup" ? "Pickup order" : "Delivery order")}${order.orderNotes ? ` · Note: ${esc(order.orderNotes)}` : ""}</p></section>`;
   }
 
   function formatOrderStatus(status) {
