@@ -9,8 +9,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/styles.css?v=20260831-1">
-  <script defer src="/app.js?v=20260831-1"></script>
+  <link rel="stylesheet" href="/styles.css?v=20260831-2">
+  <script defer src="/app.js?v=20260831-2"></script>
 </head>
 <body class="customer-page page-marketplace">
   <div class="trustbar">
@@ -222,6 +222,7 @@
         <p class="eyebrow">Checkout</p>
         <h2>Cart and shipping</h2>
         <div class="checkout-confidence"><span>Secure checkout</span><span>Guest or account</span><span>Cash pickup available</span></div>
+        <div class="draft-checkout-note hidden" id="draftCheckoutNote"></div>
         <div class="cart-list" id="cartItems"></div>
         <div class="summary-card"><div class="summary-row"><span>Subtotal</span><strong id="cartSubtotal">$0.00</strong></div></div>
         <form class="stack-form" id="checkoutForm">
@@ -237,6 +238,7 @@
           <div class="split-fields" data-delivery-field><label>Postcode<input name="postcode" required></label><label>Country<input name="country" value="Australia" required></label></div>
           <fieldset class="shipping-options"><legend>Delivery method</legend><div id="shippingOptions"></div></fieldset>
           <label>Order notes<textarea name="orderNotes" rows="3"></textarea></label>
+          <label class="order-confirmation"><input id="orderConfirmed" name="orderConfirmed" type="checkbox"> I have checked my items and confirmed that my contact details are correct.</label>
         </form>
         <div class="payment-area">
           <button class="primary-button" id="previewOrderButton" type="button">Save Draft Order</button>

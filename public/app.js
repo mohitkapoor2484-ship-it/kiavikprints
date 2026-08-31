@@ -21,6 +21,7 @@
     currentProduct: null,
     paypalLoaded: false,
     localOrderId: "",
+    activeDraftId: loadActiveDraftId(),
   };
 
   document.addEventListener("DOMContentLoaded", init);
@@ -437,7 +438,12 @@
   function cartCount() { return state.cart.reduce((s, i) => s + Number(i.quantity || 1), 0); }
   function cartSubtotal() { return state.cart.reduce((s, i) => s + Number(i.priceCents || 0) * Number(i.quantity || 1), 0); }
   function loadCart() { try { return JSON.parse(localStorage.getItem("kiavik_cart") || "[]"); } catch { return []; } }
-  function saveCart() { localStorage.setItem("kiavik_cart", JSON.stringify(state.cart)); }
+  function loadActiveDraftId() { return localStorage.getItem("kiavik_active_draft") || ""; }
+  function saveCart() {
+    localStorage.setItem("kiavik_cart", JSON.stringify(state.cart));
+    if (state.activeDraftId) localStorage.setItem("kiavik_active_draft", state.activeDraftId);
+    else localStorage.removeItem("kiavik_active_draft");
+  }
 
   function renderCart() {
     const count = cartCount();
@@ -449,12 +455,20 @@
     target.innerHTML = state.cart.map((item) => {
       const colours = (item.colorChoices?.length ? item.colorChoices.join(" / ") : item.colorChoice) || "Default";
       return `<article class="cart-item">
-        <div class="cart-row cart-item-heading"><strong>${esc(item.name)}</strong><span class="cart-qty-badge">Qty ${item.quantity}</span></div>
+        <div class="cart-row cart-item-heading"><strong>${esc(item.name)}</strong></div>
         <div class="cart-item-options"><span class="cart-meta">Size: ${esc(item.sizeChoice || "Default")}</span><span class="cart-meta">Colours: ${esc(colours)}</span>${item.customText ? `<span class="cart-meta">Text: ${esc(item.customText)}${item.textColorChoice ? ` · ${esc(item.textColorChoice)}` : ""}</span>` : ""}</div>
-        <div class="cart-row cart-item-total"><strong>$${money(item.priceCents * item.quantity)}</strong><button class="ghost-button" data-remove="${esc(item.id)}" type="button">Remove</button></div>
+        <div class="cart-row cart-item-total"><label class="cart-quantity"><span>Qty</span><input data-quantity="${esc(item.id)}" type="number" min="1" max="99" value="${Math.max(1, Number(item.quantity || 1))}" aria-label="Quantity for ${esc(item.name)}"></label><strong>$${money(item.priceCents * item.quantity)}</strong><button class="ghost-button" data-remove="${esc(item.id)}" type="button">Remove</button></div>
       </article>`;
     }).join("");
+    target.querySelectorAll("[data-quantity]").forEach((input) => input.addEventListener("change", () => {
+      const item = state.cart.find((x) => x.id === input.dataset.quantity);
+      if (!item) return;
+      item.quantity = Math.max(1, Math.min(99, Math.floor(Number(input.value) || 1)));
+      saveCart();
+      renderCart();
+    }));
     target.querySelectorAll("[data-remove]").forEach((button) => button.addEventListener("click", () => { state.cart = state.cart.filter((x) => x.id !== button.dataset.remove); saveCart(); renderCart(); }));
+    renderDraftCheckoutNote();
   }
 
   function renderShipping() {
@@ -480,7 +494,8 @@
     el("signedInEmail").textContent = user.email || "";
     const orders = state.bootstrap.orders || [];
     const target = el("ordersList");
-    target.innerHTML = orders.length ? orders.map((o) => `<article class="order-card"><strong>${esc(o.orderNumber)}</strong><div class="cart-meta">${new Date(o.createdAt).toLocaleDateString()} · ${esc(formatOrderStatus(o.fulfillmentStatus || o.paymentStatus))}</div><div class="cart-row"><span>${o.items?.length || 0} item(s)</span><strong>$${esc(o.totalLabel)}</strong></div>${o.paymentStatus === "draft" ? `<button class="ghost-button draft-delete-button" data-delete-draft="${esc(o.id)}" type="button">Delete draft</button>` : ""}</article>`).join("") : `<div class="empty-state">No orders yet.</div>`;
+    target.innerHTML = orders.length ? orders.map((o) => `<article class="order-card"><strong>${esc(o.orderNumber)}</strong><div class="cart-meta">${new Date(o.createdAt).toLocaleDateString()} · ${esc(formatOrderStatus(o.fulfillmentStatus || o.paymentStatus))}</div><div class="cart-row"><span>${o.items?.length || 0} item(s)</span><strong>$${esc(o.totalLabel)}</strong></div>${o.paymentStatus === "draft" ? `<div class="draft-order-actions"><button class="ghost-button" data-use-draft="${esc(o.id)}" type="button">Edit / place order</button><button class="ghost-button draft-delete-button" data-delete-draft="${esc(o.id)}" type="button">Delete draft</button></div>` : ""}</article>`).join("") : `<div class="empty-state">No orders yet.</div>`;
+    target.querySelectorAll("[data-use-draft]").forEach((button) => button.addEventListener("click", () => useDraftOrder(button.dataset.useDraft)));
     target.querySelectorAll("[data-delete-draft]").forEach((button) => button.addEventListener("click", () => deleteDraftOrder(button.dataset.deleteDraft)));
   }
 
@@ -522,6 +537,45 @@
     if (!form.shippingName.value) form.shippingName.value = user.fullName || "";
   }
 
+  function renderDraftCheckoutNote() {
+    const target = el("draftCheckoutNote");
+    if (!target) return;
+    const draft = (state.bootstrap?.orders || []).find((order) => order.id === state.activeDraftId && order.paymentStatus === "draft");
+    target.classList.toggle("hidden", !draft);
+    target.textContent = draft ? `Editing draft ${draft.orderNumber}. Changes are saved when you select Save Draft Order, or submit it using a final checkout option below.` : "";
+  }
+
+  function useDraftOrder(orderId) {
+    const draft = (state.bootstrap?.orders || []).find((order) => order.id === orderId && order.paymentStatus === "draft");
+    if (!draft) { toast("That draft order is no longer available.", true); return; }
+    state.activeDraftId = draft.id;
+    state.cart = (draft.items || []).map((item) => ({
+      id: item.id,
+      productId: item.productId,
+      name: item.productName,
+      priceCents: Number(item.unitPriceCents || 0),
+      quantity: Number(item.quantity || 1),
+      sizeChoice: item.sizeChoice || "",
+      colorChoices: item.colorChoices || [],
+      colorChoice: item.colorChoice || "",
+      customText: item.customText || "",
+      textColorChoice: item.textColorChoice || "",
+    }));
+    const form = el("checkoutForm");
+    if (form) {
+      const fields = ["customerName", "customerEmail", "customerPhone", "shippingName", "addressLine1", "addressLine2", "suburb", "state", "postcode", "country", "orderNotes"];
+      const values = { customerName:draft.customerName, customerEmail:draft.customerEmail, customerPhone:draft.customerPhone, shippingName:draft.shippingName, addressLine1:draft.addressLine1, addressLine2:draft.addressLine2, suburb:draft.suburb, state:draft.state, postcode:draft.postcode, country:draft.country, orderNotes:draft.orderNotes };
+      fields.forEach((name) => { if (form.elements[name]) form.elements[name].value = values[name] || ""; });
+      const method = document.querySelector(`input[name="deliveryMethod"][value="${CSS.escape(draft.deliveryMethod || "delivery")}"]`);
+      if (method) method.checked = true;
+      syncDeliveryFields();
+    }
+    saveCart();
+    renderCart();
+    el("checkout")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    toast(`Draft ${draft.orderNumber} is ready to edit or place.`);
+  }
+
   function syncDeliveryFields() {
     const method = document.querySelector('input[name="deliveryMethod"]:checked')?.value || "delivery";
     const delivery = method === "delivery";
@@ -550,8 +604,13 @@
   }
 
   async function saveDraft() {
+    const form = el("checkoutForm");
+    if (!state.bootstrap?.user) { toast("Sign in to save and edit a draft order.", true); return; }
+    if (!form?.reportValidity()) return;
     try {
-      const payload = await request("/api/orders/preview", { method: "POST", body: JSON.stringify(orderPayload()) });
+      const payload = await request("/api/orders/preview", { method: "POST", body: JSON.stringify({ ...orderPayload(), draftOrderId: state.activeDraftId }) });
+      state.activeDraftId = payload.order.id;
+      saveCart();
       toast(`Draft ${payload.order.orderNumber} saved.`);
       await refresh();
     } catch (e) { toast(e.message, true); }
@@ -559,14 +618,17 @@
 
   async function placeCashPickupOrder() {
     const form = el("checkoutForm");
-    if (!form?.reportValidity()) return;
+    if (!canSubmitFinalOrder(form)) return;
     if (document.querySelector('input[name="deliveryMethod"]:checked')?.value !== "pickup") {
       toast("Select Pickup before placing a cash pickup order.", true);
       return;
     }
     try {
-      const payload = await request("/api/orders/cash-pickup", { method: "POST", body: JSON.stringify(orderPayload()) });
-      state.cart = []; saveCart(); renderCart();
+      const payload = await request("/api/orders/cash-pickup", { method: "POST", body: JSON.stringify({ ...orderPayload(), draftOrderId: state.activeDraftId, orderConfirmed: true }) });
+      state.cart = [];
+      state.activeDraftId = "";
+      saveCart();
+      renderCart();
       let notificationSent = true;
       try { await submitCashPickupNotification(payload.order); } catch { notificationSent = false; }
       toast(notificationSent ? `Order ${payload.order.orderNumber} placed for cash pickup.` : `Order ${payload.order.orderNumber} is saved. The seller notification could not be sent.`, !notificationSent);
@@ -576,7 +638,17 @@
 
   async function deleteDraftOrder(orderId) {
     if (!orderId || !confirm("Delete this draft order?")) return;
-    try { await request(`/api/orders/draft?id=${encodeURIComponent(orderId)}`, { method: "DELETE" }); toast("Draft order deleted."); await refresh(); } catch (e) { toast(e.message, true); }
+    try { await request(`/api/orders/draft?id=${encodeURIComponent(orderId)}`, { method: "DELETE" }); if (state.activeDraftId === orderId) { state.activeDraftId = ""; saveCart(); } renderDraftCheckoutNote(); toast("Draft order deleted."); await refresh(); } catch (e) { toast(e.message, true); }
+  }
+
+  function canSubmitFinalOrder(form = el("checkoutForm")) {
+    if (!form?.reportValidity()) return false;
+    if (!el("orderConfirmed")?.checked) {
+      toast("Please confirm that your items and contact details are correct before placing the order.", true);
+      el("orderConfirmed")?.focus();
+      return false;
+    }
+    return true;
   }
 
   async function submitCashPickupNotification(order) {
@@ -613,13 +685,14 @@
     el("paypalButtons").innerHTML = "";
     globalThis.paypal.Buttons({
       createOrder: async () => {
-        const result = await request("/api/paypal/create-order", { method: "POST", body: JSON.stringify(orderPayload()) });
+        if (!canSubmitFinalOrder()) throw new Error("Please complete and confirm your order details before paying.");
+        const result = await request("/api/paypal/create-order", { method: "POST", body: JSON.stringify({ ...orderPayload(), draftOrderId: state.activeDraftId, orderConfirmed: true }) });
         state.localOrderId = result.order.id;
         return result.paypalOrderId;
       },
       onApprove: async (data) => {
         await request("/api/paypal/capture-order", { method: "POST", body: JSON.stringify({ paypalOrderId: data.orderID, localOrderId: state.localOrderId }) });
-        state.cart = []; saveCart(); renderCart(); toast("Payment received. Thank you."); await refresh();
+        state.cart = []; state.activeDraftId = ""; saveCart(); renderCart(); toast("Payment received. Thank you."); await refresh();
       },
       onError: (err) => toast(err?.message || "PayPal checkout failed.", true),
     }).render("#paypalButtons");
