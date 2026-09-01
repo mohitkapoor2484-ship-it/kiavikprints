@@ -10,8 +10,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
   <link rel="preload" as="image" type="image/avif" href="/assets/kiavik-hero-filament-1200.avif" imagesrcset="/assets/kiavik-hero-filament-768.avif 768w, /assets/kiavik-hero-filament-1200.avif 1200w, /assets/kiavik-hero-filament-1600.avif 1600w" imagesizes="(max-width: 900px) 105vw, 62vw" fetchpriority="high">
-  <link rel="stylesheet" href="/styles.css?v=20260831-4">
-  <script defer src="/app.js?v=20260831-4"></script>
+  <link rel="stylesheet" href="/styles.css?v=20260901-1">
+  <script defer src="/app.js?v=20260901-1"></script>
 </head>
 <body class="customer-page page-marketplace">
   <div class="trustbar">
@@ -332,7 +332,7 @@
               <div id="clickerTextGrid" class="clicker-character-grid"></div>
             </div>
             <label id="textColorField" class="hidden">Text colour<select id="dialogTextColor"></select></label>
-            <label>Quantity<input id="dialogQuantity" type="number" min="1" max="99" value="1"></label>
+            <label>Quantity<span class="quantity-stepper"><button id="dialogQuantityDecrease" type="button" aria-label="Decrease quantity">−</button><input id="dialogQuantity" type="number" min="1" max="99" value="1" readonly aria-label="Quantity"><button id="dialogQuantityIncrease" type="button" aria-label="Increase quantity">+</button></span></label>
             <p class="summary-note hidden" id="comingSoonNotice">This product is coming soon and cannot be ordered yet.</p>
             <button class="primary-button" id="addToCartButton" type="submit">Add To Cart</button>
           </form>

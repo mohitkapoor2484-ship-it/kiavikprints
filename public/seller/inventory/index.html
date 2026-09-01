@@ -6,8 +6,8 @@
   <title>Private Inventory | Kiavik Prints</title>
   <meta name="robots" content="noindex,nofollow,noarchive">
   <link rel="icon" href="/assets/kiavik-prints-logo.jpg">
-  <link rel="stylesheet" href="/styles.css?v=20260831-1">
-  <script defer src="/admin.js?v=20260831-1"></script>
+  <link rel="stylesheet" href="/styles.css?v=20260901-1">
+  <script defer src="/admin.js?v=20260901-1"></script>
 </head>
 <body class="admin-body admin-reference-page">
   <div class="trustbar">
@@ -93,6 +93,7 @@
                       <th>Product</th>
                       <th>Category</th>
                       <th>Price</th>
+                      <th>Stock</th>
                       <th>Colour setup</th>
                       <th>Status</th>
                       <th>Actions</th>
@@ -119,6 +120,8 @@
                 </div>
                 <p class="field-note">Choose <strong>Toys &amp; Fidgets</strong> to enable the <strong>Clickers</strong> subcategory.</p>
                 <label><span id="productPriceLabel">Price (AUD)</span><input id="productPrice" type="number" min="0" step="0.01" required></label>
+                <label>Stock available (optional)<input id="productStockQuantity" type="number" min="0" step="1" placeholder="Leave blank for unlimited"></label>
+                <p class="field-note">Set a whole number to limit sales. Leave this empty to keep the product available without a stock limit.</p>
                 <div id="clickerPricingFields" class="clicker-pricing-fields hidden">
                   <div class="split-fields">
                     <label>Each extra clicker, no text (AUD)<input id="productExtraClickerPrice" type="number" min="0" step="0.01" value="0"></label>

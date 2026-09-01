@@ -68,7 +68,7 @@
 
   function renderProducts() {
     const target = el("adminProductList"); if (!target) return;
-    if (!state.products.length) { target.innerHTML = `<tr><td colspan="6" class="empty-state">No products yet.</td></tr>`; return; }
+    if (!state.products.length) { target.innerHTML = `<tr><td colspan="7" class="empty-state">No products yet.</td></tr>`; return; }
     const query = String(el("adminSearch")?.value || "").trim().toLowerCase();
     const category = String(el("adminCategoryFilter")?.value || "");
     const products = state.products.filter((product) => {
@@ -80,6 +80,7 @@
       <td><div class="inventory-product">${p.imageData ? `<img src="${p.imageData}" alt="${esc(p.name)}">` : `<div class="placeholder-art">${esc(p.name)}</div>`}<div><strong>${esc(p.name)}</strong><div class="cart-meta">${esc(p.description || "").slice(0, 42)}</div></div></div></td>
       <td>${esc(formatCategory(p))}</td>
       <td>$${esc(p.priceLabel)}</td>
+      <td>${esc(formatStock(p))}</td>
       <td>${esc(formatColorSetup(p))}</td>
       <td><span class="status">${p.isComingSoon ? "Coming soon" : p.isActive ? "Active" : "Hidden"}</span></td>
       <td><div class="inline-actions"><button class="edit-action" type="button" data-edit="${esc(p.id)}">Edit</button><button class="edit-action" type="button" data-delete="${esc(p.id)}">Delete</button></div></td>
@@ -108,6 +109,12 @@
     return count > 1 ? `${count} buyer colours` : "Single colour";
   }
 
+  function formatStock(product) {
+    if (product.stockQuantity === null || product.stockQuantity === undefined) return "Unlimited";
+    const quantity = Number(product.stockQuantity || 0);
+    return quantity > 0 ? `${quantity} available` : "Sold out";
+  }
+
   function renderStats() {
     const active = state.products.filter((product) => product.isActive).length;
     const hidden = state.products.filter((product) => !product.isActive).length;
@@ -129,6 +136,7 @@
     el("productId").value = p.id; el("productName").value = p.name || ""; el("productCategory").value = p.category || "";
     syncSubcategory(); el("productSubcategory").value = p.subcategory === "Clickers" ? "Clickers" : "";
     el("productPrice").value = (Number(p.priceCents || 0) / 100).toFixed(2); el("productDescription").value = p.description || "";
+    el("productStockQuantity").value = p.stockQuantity === null || p.stockQuantity === undefined ? "" : String(p.stockQuantity);
     el("productExtraClickerPrice").value = (Number(p.extraClickerPriceCents || 0) / 100).toFixed(2);
     el("productExtraTextClickerPrice").value = (Number(p.extraTextClickerPriceCents || 0) / 100).toFixed(2);
     el("productSizes").value = (p.sizeOptions || []).join(", "); el("productColors").value = (p.colorOptions || []).join(", ");
@@ -142,7 +150,7 @@
   }
 
   function resetForm() {
-    el("productForm")?.reset(); el("productId").value = ""; el("productColorMode").value = "single"; el("productColorSlots").value = "1"; el("productActive").checked = true; el("productComingSoon").checked = false; el("productExtraClickerPrice").value = "0"; el("productExtraTextClickerPrice").value = "0"; state.imageData = ""; syncSubcategory(); syncClickerPricingFields(); syncColorConfig(); renderImage();
+    el("productForm")?.reset(); el("productId").value = ""; el("productColorMode").value = "single"; el("productColorSlots").value = "1"; el("productStockQuantity").value = ""; el("productActive").checked = true; el("productComingSoon").checked = false; el("productExtraClickerPrice").value = "0"; el("productExtraTextClickerPrice").value = "0"; state.imageData = ""; syncSubcategory(); syncClickerPricingFields(); syncColorConfig(); renderImage();
   }
 
   function syncSubcategory() {
@@ -193,6 +201,7 @@
       category: el("productCategory").value,
       subcategory: el("productSubcategory").value,
       price: Number(el("productPrice").value || 0),
+      stockQuantity: el("productStockQuantity").value === "" ? null : Number(el("productStockQuantity").value),
       extraClickerPrice: Number(el("productExtraClickerPrice").value || 0),
       extraTextClickerPrice: Number(el("productExtraTextClickerPrice").value || 0),
       description: el("productDescription").value,

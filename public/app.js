@@ -45,6 +45,8 @@
     el("closeProductDialog")?.addEventListener("click", () => el("productDialog")?.close());
     el("productOptionForm")?.addEventListener("submit", (e) => { e.preventDefault(); if (!e.currentTarget.reportValidity()) return; addCurrentProduct(); });
     el("dialogSize")?.addEventListener("change", () => { renderClickerCharacterGrid(); updateClickerPrice(); });
+    el("dialogQuantityDecrease")?.addEventListener("click", () => updateDialogQuantity(-1));
+    el("dialogQuantityIncrease")?.addEventListener("click", () => updateDialogQuantity(1));
     el("clickerTextGrid")?.addEventListener("input", normalizeClickerCharacter);
     el("signinForm")?.addEventListener("submit", signIn);
     el("signupForm")?.addEventListener("submit", signUp);
@@ -153,7 +155,8 @@
     }
     target.innerHTML = products.map((p, index) => {
       const media = p.imageData ? `<img src="${p.imageData}" alt="${esc(p.name)}" loading="lazy" decoding="async">` : `<div class="placeholder-art">${esc(p.name)}</div>`;
-      const badge = p.isComingSoon ? "Coming soon" : index % 3 === 1 ? "Popular" : "New";
+      const soldOut = isSoldOut(p);
+      const badge = p.isComingSoon ? "Coming soon" : soldOut ? "Sold out" : index % 3 === 1 ? "Popular" : "New";
       const price = `${isClickerProduct(p) ? "From " : ""}$${p.priceLabel || money(p.priceCents)}`;
       return `<article class="product-card catalog-card">
         <div class="product-card-media catalog-media">
@@ -167,7 +170,7 @@
           <p class="card-copy">${esc((p.description || "Custom 3D printed product").slice(0, 72))}</p>
           <div class="product-card-footer">
             <p class="product-price">${esc(price)}</p>
-            <button class="ghost-button catalog-action" type="button" data-open-product="${esc(p.id)}" ${p.isComingSoon ? "disabled" : ""}>${p.isComingSoon ? "Coming soon" : p.customTextEnabled ? "Customise" : "View"} →</button>
+            <button class="ghost-button catalog-action" type="button" data-open-product="${esc(p.id)}" ${p.isComingSoon || soldOut ? "disabled" : ""}>${p.isComingSoon ? "Coming soon" : soldOut ? "Sold out" : p.customTextEnabled ? "Customise" : "View"} →</button>
           </div>
         </div>
       </article>`;
@@ -206,6 +209,36 @@
     if (range) range.value = String(state.maxPrice);
     if (label) label.textContent = `$10 to $${state.maxPrice}`;
     if (sort) sort.value = state.sort;
+  }
+
+  function stockLimit(product) {
+    if (product?.stockQuantity === null || product?.stockQuantity === undefined || product?.stockQuantity === "") return null;
+    return Math.max(0, Math.floor(Number(product.stockQuantity) || 0));
+  }
+
+  function isSoldOut(product) { return stockLimit(product) === 0; }
+
+  function cartQuantityForProduct(productId, excludedItemId = "") {
+    return state.cart.reduce((total, item) => item.productId === productId && item.id !== excludedItemId ? total + Number(item.quantity || 0) : total, 0);
+  }
+
+  function availableQuantity(productId, excludedItemId = "") {
+    const product = state.products.find((item) => item.id === productId);
+    const limit = stockLimit(product);
+    return limit === null ? 99 : Math.max(0, Math.min(99, limit - cartQuantityForProduct(productId, excludedItemId)));
+  }
+
+  function updateDialogQuantity(change = 0) {
+    const input = el("dialogQuantity");
+    const product = state.currentProduct;
+    if (!input || !product) return;
+    const max = availableQuantity(product.id);
+    const current = Math.max(1, Number(input.value || 1));
+    const next = max ? Math.max(1, Math.min(max, current + change)) : 1;
+    input.value = String(next);
+    input.max = String(Math.max(1, max));
+    if (el("dialogQuantityDecrease")) el("dialogQuantityDecrease").disabled = next <= 1;
+    if (el("dialogQuantityIncrease")) el("dialogQuantityIncrease").disabled = !max || next >= max;
   }
 
   function syncSearchInputs() {
@@ -273,8 +306,15 @@
     if (el("dialogTextColor")) el("dialogTextColor").value = "";
     if (el("dialogQuantity")) el("dialogQuantity").value = 1;
     const comingSoon = Boolean(p.isComingSoon);
-    if (el("addToCartButton")) { el("addToCartButton").disabled = comingSoon; el("addToCartButton").textContent = comingSoon ? "Coming soon" : "Add To Cart"; }
-    el("comingSoonNotice")?.classList.toggle("hidden", !comingSoon);
+    const productSoldOut = isSoldOut(p);
+    const allStockInCart = !productSoldOut && availableQuantity(p.id) < 1;
+    const unavailable = productSoldOut || allStockInCart;
+    if (el("addToCartButton")) { el("addToCartButton").disabled = comingSoon || unavailable; el("addToCartButton").textContent = comingSoon ? "Coming soon" : productSoldOut ? "Sold out" : allStockInCart ? "All available units are in cart" : "Add To Cart"; }
+    if (el("comingSoonNotice")) {
+      el("comingSoonNotice").textContent = comingSoon ? "This product is coming soon and cannot be ordered yet." : productSoldOut ? "This product is sold out and cannot be ordered right now." : "All available units of this product are already in your cart.";
+      el("comingSoonNotice").classList.toggle("hidden", !comingSoon && !unavailable);
+    }
+    updateDialogQuantity();
     el("productDialog")?.showModal();
     const u = new URL(location.href); u.searchParams.set("product", p.id); history.replaceState({}, "", u);
   }
@@ -408,6 +448,8 @@
   function addCurrentProduct() {
     const p = state.currentProduct; if (!p) return;
     if (p.isComingSoon) { toast("This product is coming soon and cannot be ordered yet.", true); return; }
+    const available = availableQuantity(p.id);
+    if (!available) { toast("All available units of this product are already in your cart.", true); return; }
     const colorChoices = Array.from(document.querySelectorAll("#colorFields select")).map((select) => select.value).filter(Boolean);
     let customText = el("textField")?.classList.contains("hidden") ? "" : (el("dialogText")?.value || "").trim();
     if (!el("clickerTextField")?.classList.contains("hidden")) {
@@ -421,12 +463,13 @@
       el("dialogTextColor")?.focus();
       return;
     }
+    const quantity = Math.max(1, Math.min(available, Number(el("dialogQuantity")?.value || 1)));
     const item = {
       id: crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`,
       productId: p.id,
       name: p.name,
       priceCents: clickerUnitPrice(p, el("dialogSize")?.value, Boolean(customText)),
-      quantity: Math.max(1, Number(el("dialogQuantity")?.value || 1)),
+      quantity,
       sizeChoice: el("sizeField")?.classList.contains("hidden") ? "" : (el("dialogSize")?.value || ""),
       colorChoices,
       colorChoice: colorChoices.join(" / "),
@@ -458,13 +501,14 @@
       return `<article class="cart-item">
         <div class="cart-row cart-item-heading"><strong>${esc(item.name)}</strong></div>
         <div class="cart-item-options"><span class="cart-meta">Size: ${esc(item.sizeChoice || "Default")}</span><span class="cart-meta">Colours: ${esc(colours)}</span>${item.customText ? `<span class="cart-meta">Text: ${esc(item.customText)}${item.textColorChoice ? ` · ${esc(item.textColorChoice)}` : ""}</span>` : ""}</div>
-        <div class="cart-row cart-item-total"><label class="cart-quantity"><span>Qty</span><input data-quantity="${esc(item.id)}" type="number" min="1" max="99" value="${Math.max(1, Number(item.quantity || 1))}" aria-label="Quantity for ${esc(item.name)}"></label><strong>$${money(item.priceCents * item.quantity)}</strong><button class="ghost-button" data-remove="${esc(item.id)}" type="button">Remove</button></div>
+        <div class="cart-row cart-item-total"><label class="cart-quantity"><span>Qty</span><span class="quantity-stepper"><button type="button" data-cart-quantity="${esc(item.id)}" data-change="-1" aria-label="Decrease quantity for ${esc(item.name)}" ${Number(item.quantity || 1) <= 1 ? "disabled" : ""}>−</button><input type="number" value="${Math.max(1, Number(item.quantity || 1))}" readonly aria-label="Quantity for ${esc(item.name)}"><button type="button" data-cart-quantity="${esc(item.id)}" data-change="1" aria-label="Increase quantity for ${esc(item.name)}" ${Number(item.quantity || 1) >= availableQuantity(item.productId, item.id) ? "disabled" : ""}>+</button></span></label><strong>$${money(item.priceCents * item.quantity)}</strong><button class="ghost-button" data-remove="${esc(item.id)}" type="button">Remove</button></div>
       </article>`;
     }).join("");
-    target.querySelectorAll("[data-quantity]").forEach((input) => input.addEventListener("change", () => {
-      const item = state.cart.find((x) => x.id === input.dataset.quantity);
+    target.querySelectorAll("[data-cart-quantity]").forEach((button) => button.addEventListener("click", () => {
+      const item = state.cart.find((x) => x.id === button.dataset.cartQuantity);
       if (!item) return;
-      item.quantity = Math.max(1, Math.min(99, Math.floor(Number(input.value) || 1)));
+      const max = availableQuantity(item.productId, item.id);
+      item.quantity = Math.max(1, Math.min(max, Number(item.quantity || 1) + Number(button.dataset.change || 0)));
       saveCart();
       renderCart();
     }));

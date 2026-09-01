@@ -255,7 +255,12 @@
 .checkout-panel .cart-item-heading strong{font-size:14px;line-height:1.35}
 .checkout-panel .cart-item-total{align-items:center}
 .cart-quantity{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:800;color:var(--muted)}
-.cart-quantity input{width:58px;padding:7px 5px;border:1px solid var(--border);border-radius:7px;background:#fff;text-align:center;color:var(--ink);font-weight:800}
+.quantity-stepper{display:inline-grid;grid-template-columns:32px 48px 32px;align-items:center;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:#fff}
+.quantity-stepper button{height:34px;border:0;background:#f4f7f6;color:var(--teal);font-size:19px;font-weight:900;cursor:pointer}
+.quantity-stepper button:hover:not(:disabled){background:var(--soft)}
+.quantity-stepper button:disabled{cursor:not-allowed;color:#a5b1af;background:#f7f8f7}
+.quantity-stepper input{width:48px!important;min-width:0!important;height:34px!important;padding:4px!important;border:0!important;border-radius:0!important;background:#fff!important;text-align:center!important;color:var(--ink);font-size:13px;font-weight:800;appearance:textfield}
+.quantity-stepper input::-webkit-inner-spin-button,.quantity-stepper input::-webkit-outer-spin-button{appearance:none;margin:0}
 .draft-checkout-note{margin:0 0 12px;padding:10px 12px;border:1px solid #b8ded9;border-radius:10px;background:var(--soft);color:var(--teal);font-size:12px;font-weight:750}
 .draft-order-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .order-confirmation{flex-direction:row!important;align-items:flex-start;gap:9px!important;padding:11px;border:1px solid #b8ded9;border-radius:10px;background:#f3fbfa;font-size:12px!important}
