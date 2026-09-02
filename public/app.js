@@ -24,6 +24,7 @@
     activeDraftId: loadActiveDraftId(),
     expandedOrderId: "",
     addressResults: { checkout: [], account: [] },
+    addressSelected: { checkout: false, account: false },
   };
 
   document.addEventListener("DOMContentLoaded", init);
@@ -596,7 +597,8 @@
     event.preventDefault();
     const fd = new FormData(event.currentTarget);
     if (!savedAccountAddressIsValid(event.currentTarget)) return;
-    try { await request("/api/auth/signup", { method: "POST", body: JSON.stringify(Object.fromEntries(fd)) }); await refresh(); toast("Account created."); } catch (e) { toast(e.message, true); }
+    const payload = { ...Object.fromEntries(fd), savedAddressVerified: state.addressSelected.account || event.currentTarget.dataset.addressSelected === "true" ? "true" : "" };
+    try { await request("/api/auth/signup", { method: "POST", body: JSON.stringify(payload) }); await refresh(); toast("Account created."); } catch (e) { toast(e.message, true); }
   }
 
   async function logout() {
@@ -676,6 +678,8 @@
   function clearAddressSelection(key) {
     const config = addressConfig(key); const form = config && el(config.formId);
     if (!config || !form) return;
+    state.addressSelected[key] = false;
+    form.dataset.addressSelected = "false";
     const verifiedField = addressFormField(form, config.verified);
     if (verifiedField) verifiedField.value = "";
     Object.values(config.fields).forEach((name) => { const field = addressFormField(form, name); if (field) field.value = ""; });
@@ -717,6 +721,8 @@
     Object.entries(config.fields).forEach(([field, name]) => { const input = addressFormField(form, name); if (input) input.value = values[field] || ""; });
     const verifiedField = addressFormField(form, config.verified);
     if (verifiedField) verifiedField.value = "true";
+    state.addressSelected[key] = true;
+    form.dataset.addressSelected = "true";
     const searchField = addressFormField(form, config.search);
     if (updateSearch && searchField) searchField.value = address.label;
     const results = el(config.resultsId); if (results) { results.innerHTML = '<p class="field-note address-selected">Address selected.</p>'; results.classList.remove("hidden"); }
@@ -724,7 +730,7 @@
 
   function deliveryAddressIsSelected(form) {
     if (document.querySelector('input[name="deliveryMethod"]:checked')?.value !== "delivery") return true;
-    if (addressFormField(form, "addressVerified")?.value === "true") return true;
+    if (state.addressSelected.checkout || form?.dataset.addressSelected === "true") return true;
     toast("Search for and select a delivery address before continuing.", true);
     addressFormField(form, "addressSearch")?.focus();
     return false;
@@ -732,7 +738,7 @@
 
   function savedAccountAddressIsValid(form) {
     const hasSavedAddress = Object.values(addressFieldSets.account.fields).some((name) => String(addressFormField(form, name)?.value || "").trim());
-    if (!hasSavedAddress || addressFormField(form, "savedAddressVerified")?.value === "true") return true;
+    if (!hasSavedAddress || state.addressSelected.account || form.dataset.addressSelected === "true") return true;
     toast("Search for and select your saved address, or clear it before creating the account.", true);
     addressFormField(form, "savedAddressSearch")?.focus();
     return false;
@@ -745,6 +751,7 @@
     const fd = new FormData(form);
     return {
       ...Object.fromEntries(fd),
+      addressVerified: state.addressSelected.checkout || form.dataset.addressSelected === "true" ? "true" : "",
       items: state.cart.map((i) => ({
         productId: i.productId,
         quantity: i.quantity,
