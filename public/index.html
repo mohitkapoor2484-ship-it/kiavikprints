@@ -10,8 +10,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
   <link rel="preload" as="image" type="image/avif" href="/assets/kiavik-hero-filament-1200.avif" imagesrcset="/assets/kiavik-hero-filament-768.avif 768w, /assets/kiavik-hero-filament-1200.avif 1200w, /assets/kiavik-hero-filament-1600.avif 1600w" imagesizes="(max-width: 900px) 105vw, 62vw" fetchpriority="high">
-  <link rel="stylesheet" href="/styles.css?v=20260901-1">
-  <script defer src="/app.js?v=20260901-1"></script>
+  <link rel="stylesheet" href="/styles.css?v=20260902-1">
+  <script defer src="/app.js?v=20260902-1"></script>
 </head>
 <body class="customer-page page-marketplace">
   <div class="trustbar">
@@ -212,6 +212,19 @@
               <label>Full name<input name="fullName" required></label>
               <label>Email<input name="email" type="email" required></label>
               <label>Password<input name="password" type="password" minlength="8" required></label>
+              <fieldset class="address-search" data-address-search="account">
+                <legend>Saved delivery address <span>(optional)</span></legend>
+                <label>Search your address
+                  <div class="address-search-control"><input name="savedAddressSearch" type="search" autocomplete="off" placeholder="Start with street number and street name"><button class="ghost-button" type="button" data-address-search-button="account">Search</button></div>
+                </label>
+                <p class="field-note">Choose an Australian address from the search results to save it to your account.</p>
+                <p class="field-note">Address search data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap contributors</a>.</p>
+                <div class="address-results hidden" id="accountAddressResults" aria-live="polite"></div>
+                <input name="savedAddressVerified" type="hidden" value="">
+                <label>Address line 1<input name="savedAddressLine1" readonly></label>
+                <div class="split-fields"><label>Suburb<input name="savedSuburb" readonly></label><label>State<input name="savedState" readonly></label></div>
+                <div class="split-fields"><label>Postcode<input name="savedPostcode" readonly></label><label>Country<input name="savedCountry" readonly></label></div>
+              </fieldset>
               <button class="primary-button" type="submit">Create Account</button>
             </form>
           </div>
@@ -241,10 +254,19 @@
           <label>Phone<input name="customerPhone" type="tel"></label>
           <h3>Shipping details</h3>
           <label>Shipping name<input name="shippingName" required></label>
-          <div data-delivery-field><label>Address line 1<input name="addressLine1" required></label></div>
+          <div class="address-search" data-address-search="checkout" data-delivery-field>
+            <label>Search delivery address
+              <div class="address-search-control"><input name="addressSearch" type="search" autocomplete="off" placeholder="Start with street number and street name"><button class="ghost-button" type="button" data-address-search-button="checkout">Search</button></div>
+            </label>
+            <p class="field-note">Select an Australian address from the search results. This helps us deliver your order correctly.</p>
+            <p class="field-note">Address search data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap contributors</a>.</p>
+            <div class="address-results hidden" id="checkoutAddressResults" aria-live="polite"></div>
+            <input name="addressVerified" type="hidden" value="">
+          </div>
+          <div data-delivery-field><label>Address line 1<input name="addressLine1" readonly required></label></div>
           <div data-delivery-field><label>Address line 2<input name="addressLine2"></label></div>
-          <div class="split-fields" data-delivery-field><label>Suburb<input name="suburb" required></label><label>State<input name="state" required></label></div>
-          <div class="split-fields" data-delivery-field><label>Postcode<input name="postcode" required></label><label>Country<input name="country" value="Australia" required></label></div>
+          <div class="split-fields" data-delivery-field><label>Suburb<input name="suburb" readonly required></label><label>State<input name="state" readonly required></label></div>
+          <div class="split-fields" data-delivery-field><label>Postcode<input name="postcode" readonly required></label><label>Country<input name="country" readonly value="Australia" required></label></div>
           <fieldset class="shipping-options"><legend>Delivery method</legend><div id="shippingOptions"></div></fieldset>
           <label>Order notes<textarea name="orderNotes" rows="3"></textarea></label>
           <label class="order-confirmation"><input id="orderConfirmed" name="orderConfirmed" type="checkbox"> I have checked my items and confirmed that my contact details are correct.</label>

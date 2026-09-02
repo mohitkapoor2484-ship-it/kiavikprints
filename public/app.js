@@ -23,6 +23,7 @@
     localOrderId: "",
     activeDraftId: loadActiveDraftId(),
     expandedOrderId: "",
+    addressResults: { checkout: [], account: [] },
   };
 
   document.addEventListener("DOMContentLoaded", init);
@@ -57,6 +58,15 @@
     el("shopSort")?.addEventListener("change", updateSort);
     document.querySelectorAll("[data-search-form]").forEach((form) => form.addEventListener("submit", submitSearch));
     document.querySelectorAll("[data-auth-tab]").forEach((button) => button.addEventListener("click", () => switchAuth(button.dataset.authTab)));
+    document.querySelectorAll("[data-address-search-button]").forEach((button) => button.addEventListener("click", () => searchAddresses(button.dataset.addressSearchButton)));
+    document.querySelectorAll("[data-address-search]").forEach((container) => {
+      const key = container.dataset.addressSearch;
+      const input = container.querySelector('input[type="search"]');
+      input?.addEventListener("input", () => clearAddressSelection(key));
+      input?.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") { event.preventDefault(); searchAddresses(key); }
+      });
+    });
     el("productDialog")?.addEventListener("close", () => {
       const u = new URL(location.href); u.searchParams.delete("product"); history.replaceState({}, "", u);
     });
@@ -585,6 +595,7 @@
   async function signUp(event) {
     event.preventDefault();
     const fd = new FormData(event.currentTarget);
+    if (!savedAccountAddressIsValid(event.currentTarget)) return;
     try { await request("/api/auth/signup", { method: "POST", body: JSON.stringify(Object.fromEntries(fd)) }); await refresh(); toast("Account created."); } catch (e) { toast(e.message, true); }
   }
 
@@ -598,6 +609,7 @@
     if (!form.customerName.value) form.customerName.value = user.fullName || "";
     if (!form.customerEmail.value) form.customerEmail.value = user.email || "";
     if (!form.shippingName.value) form.shippingName.value = user.fullName || "";
+    if (user.savedAddress && !form.addressLine1.value) applyAddressSelection("checkout", user.savedAddress, false);
   }
 
   function renderDraftCheckoutNote() {
@@ -647,6 +659,80 @@
     document.querySelectorAll("[data-delivery-field] input").forEach((input) => { input.required = delivery && requiredDeliveryFields.has(input.name); });
   }
 
+  const addressFieldSets = {
+    checkout: {
+      formId: "checkoutForm", resultsId: "checkoutAddressResults", verified: "addressVerified", search: "addressSearch",
+      fields: { line1: "addressLine1", suburb: "suburb", state: "state", postcode: "postcode", country: "country" },
+    },
+    account: {
+      formId: "signupForm", resultsId: "accountAddressResults", verified: "savedAddressVerified", search: "savedAddressSearch",
+      fields: { line1: "savedAddressLine1", suburb: "savedSuburb", state: "savedState", postcode: "savedPostcode", country: "savedCountry" },
+    },
+  };
+
+  function addressConfig(key) { return addressFieldSets[key]; }
+
+  function clearAddressSelection(key) {
+    const config = addressConfig(key); const form = config && el(config.formId);
+    if (!config || !form) return;
+    form.elements[config.verified].value = "";
+    Object.values(config.fields).forEach((name) => { if (form.elements[name]) form.elements[name].value = ""; });
+    const results = el(config.resultsId);
+    if (results) { results.innerHTML = ""; results.classList.add("hidden"); }
+  }
+
+  async function searchAddresses(key) {
+    const config = addressConfig(key); const form = config && el(config.formId);
+    if (!config || !form) return;
+    const query = String(form.elements[config.search]?.value || "").trim();
+    if (query.length < 5) { toast("Enter at least 5 characters, including the street number where possible.", true); form.elements[config.search]?.focus(); return; }
+    const results = el(config.resultsId);
+    if (results) { results.classList.remove("hidden"); results.innerHTML = '<p class="field-note">Searching Australian addresses...</p>'; }
+    try {
+      const payload = await request(`/api/addresses/search?q=${encodeURIComponent(query)}`);
+      state.addressResults[key] = payload.results || [];
+      renderAddressResults(key);
+    } catch (error) {
+      if (results) results.innerHTML = `<p class="field-note address-search-error">${esc(error.message)}</p>`;
+    }
+  }
+
+  function renderAddressResults(key) {
+    const config = addressConfig(key); const target = config && el(config.resultsId);
+    if (!config || !target) return;
+    const results = state.addressResults[key] || [];
+    if (!results.length) { target.innerHTML = '<p class="field-note">No matching street addresses found. Try adding the street number, suburb or postcode.</p>'; target.classList.remove("hidden"); return; }
+    target.innerHTML = results.map((address, index) => `<button type="button" class="address-result" data-address-result="${esc(key)}" data-address-index="${index}">${esc(address.label)}</button>`).join("");
+    target.classList.remove("hidden");
+    target.querySelectorAll("[data-address-result]").forEach((button) => button.addEventListener("click", () => applyAddressSelection(key, state.addressResults[key][Number(button.dataset.addressIndex)])));
+  }
+
+  function applyAddressSelection(key, address, updateSearch = true) {
+    const config = addressConfig(key); const form = config && el(config.formId);
+    if (!config || !form || !address) return;
+    const values = { line1: address.line1, suburb: address.suburb, state: address.state, postcode: address.postcode, country: address.country || "Australia" };
+    Object.entries(config.fields).forEach(([field, name]) => { if (form.elements[name]) form.elements[name].value = values[field] || ""; });
+    form.elements[config.verified].value = "true";
+    if (updateSearch && form.elements[config.search]) form.elements[config.search].value = address.label;
+    const results = el(config.resultsId); if (results) { results.innerHTML = '<p class="field-note address-selected">Address selected.</p>'; results.classList.remove("hidden"); }
+  }
+
+  function deliveryAddressIsSelected(form) {
+    if (document.querySelector('input[name="deliveryMethod"]:checked')?.value !== "delivery") return true;
+    if (form?.elements.addressVerified?.value === "true") return true;
+    toast("Search for and select a delivery address before continuing.", true);
+    form?.elements.addressSearch?.focus();
+    return false;
+  }
+
+  function savedAccountAddressIsValid(form) {
+    const hasSavedAddress = Object.values(addressFieldSets.account.fields).some((name) => String(form.elements[name]?.value || "").trim());
+    if (!hasSavedAddress || form.elements.savedAddressVerified?.value === "true") return true;
+    toast("Search for and select your saved address, or clear it before creating the account.", true);
+    form.elements.savedAddressSearch?.focus();
+    return false;
+  }
+
   function orderPayload() {
     const form = el("checkoutForm");
     if (!state.cart.length) throw new Error("Add at least one product to your cart.");
@@ -669,6 +755,7 @@
   async function saveDraft() {
     const form = el("checkoutForm");
     if (!state.bootstrap?.user) { toast("Sign in to save and edit a draft order.", true); return; }
+    if (!deliveryAddressIsSelected(form)) return;
     if (!form?.reportValidity()) return;
     try {
       const payload = await request("/api/orders/preview", { method: "POST", body: JSON.stringify({ ...orderPayload(), draftOrderId: state.activeDraftId }) });
@@ -705,6 +792,7 @@
   }
 
   function canSubmitFinalOrder(form = el("checkoutForm")) {
+    if (!deliveryAddressIsSelected(form)) return false;
     if (!form?.reportValidity()) return false;
     if (!el("orderConfirmed")?.checked) {
       toast("Please confirm that your items and contact details are correct before placing the order.", true);

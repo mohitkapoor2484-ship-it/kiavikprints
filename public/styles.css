@@ -811,3 +811,16 @@ body.page-marketplace{
   .page-marketplace .hero-product-stage>.hero-product-scene{width:105%;transform:none}
   .page-marketplace .hero-product-stage>.hero-fidget-scene{left:31%;bottom:1%;width:47%}
 }
+
+.address-search{margin:0;border:1px solid var(--border);border-radius:10px;padding:12px;background:var(--off)}
+.address-search legend{padding:0 4px;font-size:12px;font-weight:800}
+.address-search legend span{font-weight:500;color:var(--muted)}
+.address-search-control{display:flex;gap:8px}
+.address-search-control input{min-width:0;flex:1}
+.address-search-control .ghost-button{padding:9px 12px;white-space:nowrap}
+.address-results{display:flex;flex-direction:column;gap:6px;margin:8px 0}
+.address-result{width:100%;border:1px solid var(--border);border-radius:8px;background:#fff;padding:9px 10px;text-align:left;font-size:12px;cursor:pointer}
+.address-result:hover,.address-result:focus{border-color:var(--teal);background:var(--soft)}
+.address-search-error{color:#a33}
+.address-selected{color:var(--teal);font-weight:800}
+@media(max-width:600px){.address-search-control{flex-direction:column}.address-search-control .ghost-button{width:100%}}
