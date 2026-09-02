@@ -671,12 +671,14 @@
   };
 
   function addressConfig(key) { return addressFieldSets[key]; }
+  function addressFormField(form, name) { return form?.querySelector(`[name="${name}"]`); }
 
   function clearAddressSelection(key) {
     const config = addressConfig(key); const form = config && el(config.formId);
     if (!config || !form) return;
-    form.elements[config.verified].value = "";
-    Object.values(config.fields).forEach((name) => { if (form.elements[name]) form.elements[name].value = ""; });
+    const verifiedField = addressFormField(form, config.verified);
+    if (verifiedField) verifiedField.value = "";
+    Object.values(config.fields).forEach((name) => { const field = addressFormField(form, name); if (field) field.value = ""; });
     const results = el(config.resultsId);
     if (results) { results.innerHTML = ""; results.classList.add("hidden"); }
   }
@@ -684,8 +686,9 @@
   async function searchAddresses(key) {
     const config = addressConfig(key); const form = config && el(config.formId);
     if (!config || !form) return;
-    const query = String(form.elements[config.search]?.value || "").trim();
-    if (query.length < 5) { toast("Enter at least 5 characters, including the street number where possible.", true); form.elements[config.search]?.focus(); return; }
+    const searchField = addressFormField(form, config.search);
+    const query = String(searchField?.value || "").trim();
+    if (query.length < 5) { toast("Enter at least 5 characters, including the street number where possible.", true); searchField?.focus(); return; }
     const results = el(config.resultsId);
     if (results) { results.classList.remove("hidden"); results.innerHTML = '<p class="field-note">Searching Australian addresses...</p>'; }
     try {
@@ -711,25 +714,27 @@
     const config = addressConfig(key); const form = config && el(config.formId);
     if (!config || !form || !address) return;
     const values = { line1: address.line1, suburb: address.suburb, state: address.state, postcode: address.postcode, country: address.country || "Australia" };
-    Object.entries(config.fields).forEach(([field, name]) => { if (form.elements[name]) form.elements[name].value = values[field] || ""; });
-    form.elements[config.verified].value = "true";
-    if (updateSearch && form.elements[config.search]) form.elements[config.search].value = address.label;
+    Object.entries(config.fields).forEach(([field, name]) => { const input = addressFormField(form, name); if (input) input.value = values[field] || ""; });
+    const verifiedField = addressFormField(form, config.verified);
+    if (verifiedField) verifiedField.value = "true";
+    const searchField = addressFormField(form, config.search);
+    if (updateSearch && searchField) searchField.value = address.label;
     const results = el(config.resultsId); if (results) { results.innerHTML = '<p class="field-note address-selected">Address selected.</p>'; results.classList.remove("hidden"); }
   }
 
   function deliveryAddressIsSelected(form) {
     if (document.querySelector('input[name="deliveryMethod"]:checked')?.value !== "delivery") return true;
-    if (form?.elements.addressVerified?.value === "true") return true;
+    if (addressFormField(form, "addressVerified")?.value === "true") return true;
     toast("Search for and select a delivery address before continuing.", true);
-    form?.elements.addressSearch?.focus();
+    addressFormField(form, "addressSearch")?.focus();
     return false;
   }
 
   function savedAccountAddressIsValid(form) {
-    const hasSavedAddress = Object.values(addressFieldSets.account.fields).some((name) => String(form.elements[name]?.value || "").trim());
-    if (!hasSavedAddress || form.elements.savedAddressVerified?.value === "true") return true;
+    const hasSavedAddress = Object.values(addressFieldSets.account.fields).some((name) => String(addressFormField(form, name)?.value || "").trim());
+    if (!hasSavedAddress || addressFormField(form, "savedAddressVerified")?.value === "true") return true;
     toast("Search for and select your saved address, or clear it before creating the account.", true);
-    form.elements.savedAddressSearch?.focus();
+    addressFormField(form, "savedAddressSearch")?.focus();
     return false;
   }
 
