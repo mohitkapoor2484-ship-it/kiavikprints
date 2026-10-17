@@ -301,7 +301,7 @@
     const p = state.products.find((x) => x.id === id); if (!p) return;
     state.currentProduct = p;
     el("dialogProductId").value = p.id;
-    el("dialogCategory").textContent = [p.category, p.subcategory].filter(Boolean).join(" / ") || "Kiavik Print";
+    el("dialogCategory").textContent = [p.category, p.subcategory].filter(Boolean).join(" / ") || "3DReimagined Print";
     el("dialogName").textContent = p.name;
     el("dialogPrice").textContent = `$${p.priceLabel || money(p.priceCents)}`;
     el("dialogDescription").textContent = p.description || "";

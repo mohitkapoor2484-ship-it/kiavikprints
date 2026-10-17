@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 150" role="img" aria-labelledby="title">
+  <title id="title">3DReimagined</title>
+  <rect width="460" height="150" rx="24" fill="#fffdf9"/>
+  <g transform="translate(22 27)" fill="none" stroke-linejoin="round">
+    <path d="M48 3 88 26v46L48 95 8 72V26Z" stroke="#067f80" stroke-width="8"/>
+    <path d="m8 26 40 24 40-24M48 50v45" stroke="#067f80" stroke-width="8"/>
+    <path d="m59 10 20 12" stroke="#f26722" stroke-width="8" stroke-linecap="round"/>
+  </g>
+  <text x="138" y="68" fill="#10262b" font-family="DM Sans, Arial, sans-serif" font-size="47" font-weight="800" letter-spacing="-2">3D</text>
+  <text x="138" y="108" fill="#067f80" font-family="DM Sans, Arial, sans-serif" font-size="31" font-weight="800" letter-spacing="-.9">Reimagined</text>
+  <path d="M139 121h252" stroke="#f26722" stroke-linecap="round" stroke-width="5"/>
+</svg>

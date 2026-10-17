@@ -36,7 +36,7 @@
       </div>
       <div class="product-card-body">
         <div class="product-topline">
-          <span class="product-category">${esc(product.category || "Kiavik")}</span>
+          <span class="product-category">${esc(product.category || "3DReimagined")}</span>
           <span class="product-status">Made to order</span>
         </div>
         <h3>${esc(product.name)}</h3>

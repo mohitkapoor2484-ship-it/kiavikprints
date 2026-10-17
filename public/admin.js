@@ -41,7 +41,7 @@
   async function showDashboard() {
     el("adminAuthPanel")?.classList.add("hidden"); el("adminDashboard")?.classList.remove("hidden");
     const adminWelcome = el("adminWelcome");
-    if (adminWelcome) adminWelcome.textContent = state.user?.fullName || "Kiavik Prints";
+    if (adminWelcome) adminWelcome.textContent = state.user?.fullName || "3DReimagined";
     await Promise.all([loadProducts(), loadOrders()]);
   }
 
