@@ -1,5 +1,5 @@
 (function () {
-  const categories = [
+  const curatedCategories = [
     { slug: "lamps-light-boxes", label: "Lamps & Light Boxes", matches: ["Lamps & Light Boxes", "Lamps"] },
     { slug: "personalised-gifts", label: "Personalised Gifts", matches: ["Personalised Gifts", "Badges", "Keychains", "Desk Signs", "Custom Gifts"] },
     { slug: "keychains", label: "Keychains", matches: ["Keychains"] },
@@ -107,8 +107,8 @@
   function renderCategories() {
     const targets = [el("categoryChips"), el("categorySidebar")].filter(Boolean);
     if (!targets.length) return;
-    const all = [{ slug: "all", label: "All Prints" }, ...categories];
-    const counts = new Map(all.map((category) => [category.slug, countProductsForCategory(category.slug)]));
+    const all = [{ slug: "all", label: "All Prints" }, ...storefrontCategories()];
+    const counts = new Map(all.map((category) => [category.slug, countProductsForCategory(category)]));
     const markup = all.map((category) => `<button type="button" class="category-link ${state.activeCategory === category.slug ? "active" : ""}" data-category="${esc(category.slug)}"><span>${esc(category.label)}</span><b>${counts.get(category.slug) || 0}</b></button>`).join("");
     targets.forEach((target) => { target.innerHTML = markup; });
     document.querySelectorAll("[data-category]").forEach((button) => button.addEventListener("click", () => {
@@ -119,6 +119,34 @@
       scrollToCatalog();
       renderCategories(); renderProducts();
     }));
+  }
+
+  function categoryKey(value) {
+    return String(value || "").trim().replace(/\s+/g, " ").toLowerCase();
+  }
+
+  function customCategorySlug(label) {
+    const slug = categoryKey(label).replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+    return `seller-${slug || "category"}`;
+  }
+
+  function storefrontCategories() {
+    const knownCategoryKeys = new Set(curatedCategories.flatMap((category) => category.matches).map(categoryKey));
+    const customCategories = new Map();
+    state.products.forEach((product) => {
+      const label = String(product.category || "").trim();
+      const key = categoryKey(label);
+      if (!key || knownCategoryKeys.has(key) || customCategories.has(key)) return;
+      customCategories.set(key, { slug: customCategorySlug(label), label, matches: [label] });
+    });
+    return [
+      ...curatedCategories,
+      ...Array.from(customCategories.values()).sort((a, b) => a.label.localeCompare(b.label)),
+    ];
+  }
+
+  function categoryMatchesProduct(category, product) {
+    return category.matches.some((match) => categoryKey(product.category) === categoryKey(match));
   }
 
   function renderColorFilters() {
@@ -139,16 +167,14 @@
     });
   }
 
-  function countProductsForCategory(slug) {
-    if (slug === "all") return state.products.length;
-    const category = categories.find((item) => item.slug === slug);
-    if (!category) return 0;
-    return state.products.filter((product) => category.matches.some((match) => String(product.category || "").toLowerCase() === match.toLowerCase())).length;
+  function countProductsForCategory(category) {
+    if (category.slug === "all") return state.products.length;
+    return state.products.filter((product) => categoryMatchesProduct(category, product)).length;
   }
 
   function productMatches(product) {
-    const category = categories.find((c) => c.slug === state.activeCategory);
-    const catOk = !category || state.activeCategory === "all" || category.matches.some((m) => String(product.category || "").toLowerCase() === m.toLowerCase());
+    const category = storefrontCategories().find((item) => item.slug === state.activeCategory);
+    const catOk = !category || state.activeCategory === "all" || categoryMatchesProduct(category, product);
     const q = state.query;
     const qOk = !q || [product.name, product.category, product.description].join(" ").toLowerCase().includes(q);
     const colors = Array.isArray(product.colorOptions) ? product.colorOptions : [];
