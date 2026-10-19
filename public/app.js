@@ -141,7 +141,10 @@
     });
     return [
       ...curatedCategories,
-      ...Array.from(customCategories.values()).sort((a, b) => a.label.localeCompare(b.label)),
+      ...Array.from(customCategories.values()).sort((a, b) => {
+        const productCountDifference = countProductsForCategory(b) - countProductsForCategory(a);
+        return productCountDifference || a.label.localeCompare(b.label);
+      }),
     ];
   }
 
