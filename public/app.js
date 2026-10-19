@@ -141,11 +141,13 @@
     });
     return [
       ...curatedCategories,
-      ...Array.from(customCategories.values()).sort((a, b) => {
+      ...Array.from(customCategories.values()),
+    ]
+      .filter((category) => countProductsForCategory(category) > 0)
+      .sort((a, b) => {
         const productCountDifference = countProductsForCategory(b) - countProductsForCategory(a);
         return productCountDifference || a.label.localeCompare(b.label);
-      }),
-    ];
+      });
   }
 
   function categoryMatchesProduct(category, product) {
