@@ -1,12 +1,38 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 150" role="img" aria-labelledby="title">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 180" role="img" aria-labelledby="title desc">
   <title id="title">3DReimagined</title>
-  <rect width="460" height="150" rx="24" fill="#fffdf9"/>
-  <g transform="translate(22 27)" fill="none" stroke-linejoin="round">
-    <path d="M48 3 88 26v46L48 95 8 72V26Z" stroke="#067f80" stroke-width="8"/>
-    <path d="m8 26 40 24 40-24M48 50v45" stroke="#067f80" stroke-width="8"/>
-    <path d="m59 10 20 12" stroke="#f26722" stroke-width="8" stroke-linecap="round"/>
+  <desc id="desc">A teal and navy three-dimensional 3DReimagined logo.</desc>
+  <defs>
+    <linearGradient id="tealFace" x1="25" y1="20" x2="145" y2="125" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#48d8d5"/>
+      <stop offset=".48" stop-color="#0b9ba1"/>
+      <stop offset="1" stop-color="#067f80"/>
+    </linearGradient>
+    <linearGradient id="tealDepth" x1="58" y1="63" x2="135" y2="142" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0b6e73"/>
+      <stop offset="1" stop-color="#10262b"/>
+    </linearGradient>
+    <linearGradient id="orangeEdge" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#ff9a50"/>
+      <stop offset="1" stop-color="#f26722"/>
+    </linearGradient>
+    <filter id="lift" x="-30%" y="-30%" width="160%" height="180%">
+      <feDropShadow dx="0" dy="8" stdDeviation="6" flood-color="#0d3138" flood-opacity=".2"/>
+    </filter>
+  </defs>
+
+  <rect width="640" height="180" rx="28" fill="#fffdf9"/>
+  <g transform="translate(24 31)" filter="url(#lift)">
+    <!-- Offset lettering creates a compact 3D-print style monogram. -->
+    <text x="11" y="108" fill="url(#tealDepth)" font-family="Arial Black,Arial,sans-serif" font-size="111" font-weight="900" letter-spacing="-14">3D</text>
+    <text x="0" y="96" fill="url(#tealFace)" font-family="Arial Black,Arial,sans-serif" font-size="111" font-weight="900" letter-spacing="-14">3D</text>
+    <path d="M8 28 76 18 127 43 126 55 77 32 10 42Z" fill="#7be7e2" opacity=".8"/>
+    <path d="m103 95 25-12-1 15-26 13Z" fill="url(#orangeEdge)"/>
+    <path d="M0 99 56 114 111 99 130 108 68 130 11 115Z" fill="#064f5f" opacity=".58"/>
   </g>
-  <text x="138" y="68" fill="#10262b" font-family="DM Sans, Arial, sans-serif" font-size="47" font-weight="800" letter-spacing="-2">3D</text>
-  <text x="138" y="108" fill="#067f80" font-family="DM Sans, Arial, sans-serif" font-size="31" font-weight="800" letter-spacing="-.9">Reimagined</text>
-  <path d="M139 121h252" stroke="#f26722" stroke-linecap="round" stroke-width="5"/>
+
+  <g transform="translate(176 48)">
+    <text x="0" y="53" fill="#10262b" font-family="Arial,Helvetica,sans-serif" font-size="53" font-weight="850" letter-spacing="-2.8"><tspan fill="#078c90">3D</tspan><tspan>Reimagined</tspan></text>
+    <path d="M2 69h73" stroke="url(#orangeEdge)" stroke-linecap="round" stroke-width="5"/>
+    <text x="89" y="73" fill="#426367" font-family="Arial,Helvetica,sans-serif" font-size="12" font-weight="800" letter-spacing="2.55">FUN. USEFUL. UNIQUELY YOURS.</text>
+  </g>
 </svg>
