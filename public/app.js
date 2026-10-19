@@ -19,6 +19,7 @@
     activeColor: (new URL(location.href).searchParams.get("color") || "").trim().toLowerCase(),
     maxPrice: Number(new URL(location.href).searchParams.get("maxPrice") || 150),
     currentProduct: null,
+    currentProductImageIndex: 0,
     paypalLoaded: false,
     localOrderId: "",
     activeDraftId: loadActiveDraftId(),
@@ -165,13 +166,16 @@
       return;
     }
     target.innerHTML = products.map((p, index) => {
-      const media = p.imageData ? `<img src="${p.imageData}" alt="${esc(p.name)}" loading="lazy" decoding="async">` : `<div class="placeholder-art">${esc(p.name)}</div>`;
+      const images = productImages(p);
+      const primaryImage = images[0];
+      const media = primaryImage ? `<img src="${primaryImage.src}" alt="${esc(p.name)}" loading="lazy" decoding="async">` : `<div class="placeholder-art">${esc(p.name)}</div>`;
       const soldOut = isSoldOut(p);
       const badge = p.isComingSoon ? "Coming soon" : soldOut ? "Sold out" : index % 3 === 1 ? "Popular" : "New";
       const price = `${isClickerProduct(p) ? "From " : ""}$${p.priceLabel || money(p.priceCents)}`;
       return `<article class="product-card catalog-card">
         <div class="product-card-media catalog-media">
           <span class="product-badge ${badge === "Popular" ? "hot" : ""}">${badge}</span>
+          ${images.length > 1 ? `<span class="product-photo-count">${images.length} photos</span>` : ""}
           <button class="catalog-heart" type="button" aria-label="Save item">♡</button>
           ${media}
         </div>
@@ -297,15 +301,43 @@
     return count > 1 ? `${count} colour build` : "Single colour";
   }
 
+  function productImages(product) {
+    const images = Array.isArray(product?.imageGallery) && product.imageGallery.length
+      ? product.imageGallery
+      : product?.imageData ? [{ id: product.imageData, src: product.imageData }] : [];
+    return images.map((image) => {
+      const id = typeof image === "string" ? image : String(image?.id || image?.key || image?.src || "");
+      const src = typeof image === "string" ? image : String(image?.src || image?.url || image?.id || "");
+      return id && src ? { id, src } : null;
+    }).filter(Boolean);
+  }
+
+  function renderDialogMedia(product) {
+    const target = el("dialogMedia"); if (!target) return;
+    const images = productImages(product);
+    if (!images.length) {
+      target.innerHTML = `<div class="placeholder-art">${esc(product.name)}</div>`;
+      return;
+    }
+    state.currentProductImageIndex = Math.max(0, Math.min(state.currentProductImageIndex, images.length - 1));
+    const selectedImage = images[state.currentProductImageIndex];
+    target.innerHTML = `<div class="dialog-image-stage"><img src="${esc(selectedImage.src)}" alt="${esc(product.name)}"></div>${images.length > 1 ? `<div class="dialog-gallery-thumbs" aria-label="More product photos">${images.map((image, index) => `<button type="button" class="${index === state.currentProductImageIndex ? "active" : ""}" data-dialog-image="${index}" aria-label="View photo ${index + 1} of ${images.length}"><img src="${esc(image.src)}" alt=""></button>`).join("")}</div>` : ""}`;
+    target.querySelectorAll("[data-dialog-image]").forEach((button) => button.addEventListener("click", () => {
+      state.currentProductImageIndex = Number(button.dataset.dialogImage || 0);
+      renderDialogMedia(product);
+    }));
+  }
+
   function openProduct(id) {
     const p = state.products.find((x) => x.id === id); if (!p) return;
     state.currentProduct = p;
+    state.currentProductImageIndex = 0;
     el("dialogProductId").value = p.id;
     el("dialogCategory").textContent = [p.category, p.subcategory].filter(Boolean).join(" / ") || "3DReimagined Print";
     el("dialogName").textContent = p.name;
     el("dialogPrice").textContent = `$${p.priceLabel || money(p.priceCents)}`;
     el("dialogDescription").textContent = p.description || "";
-    el("dialogMedia").innerHTML = p.imageData ? `<img src="${p.imageData}" alt="${esc(p.name)}">` : `<div class="placeholder-art">${esc(p.name)}</div>`;
+    renderDialogMedia(p);
     populateSelect("sizeField", "dialogSize", p.sizeOptions || []);
     renderColorFields(p);
     const usesClickerGrid = isClickerProduct(p) && p.customTextEnabled;

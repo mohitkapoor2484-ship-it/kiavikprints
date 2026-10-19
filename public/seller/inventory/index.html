@@ -6,8 +6,8 @@
   <title>Private Inventory | 3DReimagined</title>
   <meta name="robots" content="noindex,nofollow,noarchive">
   <link rel="icon" href="/assets/3dreimagined-logo.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="/styles.css?v=20261017-1">
-  <script defer src="/admin.js?v=20261017-1"></script>
+  <link rel="stylesheet" href="/styles.css?v=20261019-1">
+  <script defer src="/admin.js?v=20261019-1"></script>
 </head>
 <body class="admin-body admin-reference-page">
   <div class="trustbar">
@@ -147,7 +147,8 @@
                   <label class="checkbox-row"><input id="productActive" type="checkbox" checked> Show on store</label>
                   <label class="checkbox-row"><input id="productComingSoon" type="checkbox"> Mark as coming soon</label>
                 </div>
-                <label>Product image<input id="productImageFile" type="file" accept="image/*"></label>
+                <label>Product photos (up to 10)<input id="productImageFile" type="file" accept="image/avif,image/gif,image/jpeg,image/png,image/webp" multiple></label>
+                <p class="field-note">Add up to 10 photos, 5 MB each. The first photo is the main image shoppers see in the catalogue.</p>
                 <div class="image-preview" id="imagePreview"></div>
                 <div class="inline-actions">
                   <button class="primary-button" type="submit">Save product</button>

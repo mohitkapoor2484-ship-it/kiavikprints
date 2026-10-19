@@ -9,6 +9,7 @@
     "check": "node --check public/app.js && node --check public/admin.js && node --check public/brand.js && node --check public/seller-orders.js && node --check lib/api-handler.mjs && node --check lib/netlify-store.mjs && node --check netlify/functions/api.mjs"
   },
   "dependencies": {
+    "@netlify/blobs": "^11.1.4",
     "@netlify/database": "^1.1.0"
   }
 }
