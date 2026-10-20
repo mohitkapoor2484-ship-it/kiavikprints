@@ -619,13 +619,20 @@
 
   function renderAccount() {
     const user = state.bootstrap?.user;
-    el("accountAuth")?.classList.toggle("hidden", Boolean(user));
-    el("accountSummary")?.classList.toggle("hidden", !user);
-    if (!user) return;
-    el("signedInName").textContent = user.fullName || "Customer";
-    el("signedInEmail").textContent = user.email || "";
-    const orders = state.bootstrap.orders || [];
+    const accountAuth = el("accountAuth");
+    const accountSummary = el("accountSummary");
+    const signedInName = el("signedInName");
+    const signedInEmail = el("signedInEmail");
     const target = el("ordersList");
+
+    // Account controls live only on checkout; signed-in shoppers can browse every route.
+    if (!accountAuth && !accountSummary && !target) return;
+    accountAuth?.classList.toggle("hidden", Boolean(user));
+    accountSummary?.classList.toggle("hidden", !user);
+    if (!user || !target) return;
+    if (signedInName) signedInName.textContent = user.fullName || "Customer";
+    if (signedInEmail) signedInEmail.textContent = user.email || "";
+    const orders = state.bootstrap.orders || [];
     target.innerHTML = orders.length ? orders.map((o) => {
       const submitted = o.paymentStatus !== "draft";
       const expanded = submitted && state.expandedOrderId === o.id;
