@@ -27,12 +27,22 @@
 
 [[redirects]]
   from = "/custom-print"
-  to = "/custom-printing/"
+  to = "/personalise/"
   status = 301
 
 [[redirects]]
   from = "/custom-print/*"
-  to = "/custom-printing/"
+  to = "/personalise/"
+  status = 301
+
+[[redirects]]
+  from = "/custom-printing"
+  to = "/personalise/"
+  status = 301
+
+[[redirects]]
+  from = "/custom-printing/*"
+  to = "/personalise/"
   status = 301
 
 [[redirects]]
@@ -47,12 +57,7 @@
 
 [[redirects]]
   from = "/shop"
-  to = "/"
-  status = 301
-
-[[redirects]]
-  from = "/shop/"
-  to = "/"
+  to = "/shop/"
   status = 301
 
 [[redirects]]

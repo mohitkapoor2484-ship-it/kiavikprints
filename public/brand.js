@@ -16,7 +16,8 @@
     try {
       const response = await fetch("/api/bootstrap");
       const payload = await response.json();
-      const products = (payload.products || []).slice(0, 6);
+      const requestedLimit = Number(home.dataset.homeLimit || 4);
+      const products = (payload.products || []).slice(0, Number.isFinite(requestedLimit) ? requestedLimit : 4);
       home.innerHTML = products.map((product, index) => renderHomeProduct(product, index)).join("") || "<p>Products are being added now.</p>";
     } catch {
       home.innerHTML = "<p>Visit the shop to see the current catalogue.</p>";
@@ -29,6 +30,7 @@
       : `<div class="placeholder-art">${esc(product.name)}</div>`;
     const badge = index % 2 === 0 ? "New" : "Popular";
     const action = product.customTextEnabled ? "Customise" : "View";
+    const destination = product.customTextEnabled ? "/personalise/" : "/shop/";
     return `<article class="product-card home-catalog-card">
       <div class="product-card-media">
         <span class="product-badge ${badge === "Popular" ? "hot" : ""}">${badge}</span>
@@ -43,7 +45,7 @@
         <p class="card-copy">${esc((product.description || "Custom 3D printed product").slice(0, 92))}</p>
         <div class="product-card-footer">
           <p class="product-price"><span>From</span>$${esc(product.priceLabel || "0.00")}</p>
-          <a class="ghost-button product-link" href="/shop/?product=${encodeURIComponent(product.id)}">${action} →</a>
+          <a class="ghost-button product-link" href="${destination}?product=${encodeURIComponent(product.id)}">${action} →</a>
         </div>
       </div>
     </article>`;

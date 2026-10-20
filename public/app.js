@@ -44,7 +44,11 @@
     const nav = document.querySelector(".main-nav");
     if (menuButton && nav) menuButton.addEventListener("click", () => nav.classList.toggle("open"));
 
-    el("cartPill")?.addEventListener("click", () => el("checkout")?.scrollIntoView({ behavior: "smooth", block: "start" }));
+    el("cartPill")?.addEventListener("click", () => {
+      const checkout = el("checkout");
+      if (checkout) checkout.scrollIntoView({ behavior: "smooth", block: "start" });
+      else location.assign("/checkout/");
+    });
     el("closeProductDialog")?.addEventListener("click", () => el("productDialog")?.close());
     el("productOptionForm")?.addEventListener("submit", (e) => { e.preventDefault(); if (!e.currentTarget.reportValidity()) return; addCurrentProduct(); });
     el("dialogSize")?.addEventListener("change", () => { renderClickerCharacterGrid(); updateClickerPrice(); });
@@ -188,10 +192,19 @@
     return catOk && qOk && colorOk && priceOk;
   }
 
+  function catalogProducts() {
+    // Personalise only exposes products that have an actual customisation flow.
+    if (document.body.dataset.catalogScope === "personalise") {
+      return state.products.filter((product) => product.customTextEnabled);
+    }
+    return state.products;
+  }
+
   function renderProducts() {
     const target = el("productsGrid"); if (!target) return;
-    const products = sortProducts(state.products.filter(productMatches));
-    renderShopResults(products.length, state.products.length);
+    const availableProducts = catalogProducts();
+    const products = sortProducts(availableProducts.filter(productMatches));
+    renderShopResults(products.length, availableProducts.length);
     if (!products.length) {
       target.innerHTML = `<div class="empty-state">No products match this view right now. Try another filter or use the enquiry form below.</div>`;
       return;
