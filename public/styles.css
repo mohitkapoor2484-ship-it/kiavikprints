@@ -979,6 +979,11 @@ body.page-marketplace{
 .checkout-route-hero{padding:42px 0 36px;border-bottom:1px solid #e9e0d6;background:linear-gradient(112deg,#fffdf9,#eef8f5)}
 .checkout-route-hero h1{max-width:740px;margin:0;color:#183f40;font-size:clamp(2.55rem,4vw,4.2rem);line-height:.98;letter-spacing:-.065em}.checkout-route-hero p:not(.eyebrow){max-width:600px;margin:13px 0 0;color:#4b5e5d;font-size:15px;line-height:1.65}.checkout-route-panels{padding-top:42px}.page-checkout .account-panel,.page-checkout .checkout-panel{border-color:#e8ded4;background:#fffdf9;box-shadow:0 14px 35px rgba(71,57,40,.05)}.page-checkout .account-panel{margin-top:0}.page-checkout .checkout-panel{top:104px}.page-checkout .checkout-panel h2,.page-checkout .account-panel h2{font-size:28px;color:#183f40}.page-checkout .cash-pickup-button{background:#e96b2f;border-color:#e96b2f}
 
+/* Keep the product scene beside the home copy through tablet landscape widths. */
+@media(min-width:901px) and (max-width:1180px){
+  .page-home-short .marketplace-hero-grid{grid-template-columns:minmax(0,1.02fr) minmax(320px,.98fr);gap:24px}
+}
+
 @media(max-width:1180px){
   .page-retail .header-inner,.page-home-short .header-inner{grid-template-columns:205px minmax(0,1fr) auto;gap:12px}
   .page-retail .main-nav,.page-home-short .main-nav{gap:15px;font-size:11px}
