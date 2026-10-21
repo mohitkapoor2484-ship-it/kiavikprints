@@ -20,7 +20,7 @@
       const products = (payload.products || []).slice(0, Number.isFinite(requestedLimit) ? requestedLimit : 4);
       home.innerHTML = products.map((product, index) => renderHomeProduct(product, index)).join("") || "<p>Products are being added now.</p>";
     } catch {
-      home.innerHTML = "<p>Visit the shop to see the current catalogue.</p>";
+      home.innerHTML = renderHomeFallback();
     }
   });
 
@@ -49,6 +49,23 @@
         </div>
       </div>
     </article>`;
+  }
+
+  function renderHomeFallback() {
+    const collections = [
+      { name: "Fidget favourites", category: "Toys & Fidgets", image: "/assets/kiavik-hero-fidgets-480.webp", href: "/shop/?category=toys-fidgets" },
+      { name: "Desk-ready prints", category: "Desk & Home", image: "/assets/products/desk-organiser.jpg", href: "/shop/?category=home-decor" },
+      { name: "Made personal", category: "Personalised", image: "/assets/products/name-tag.jpg", href: "/personalise/" },
+      { name: "Party-ready gifts", category: "Party Favours", image: "/assets/products/octopus.jpg", href: "/party-favours/" },
+    ];
+    return collections.map((collection) => `<article class="product-card home-catalog-card home-fallback-card">
+      <div class="product-card-media"><img src="${collection.image}" alt="${esc(collection.name)}"></div>
+      <div class="product-card-body">
+        <div class="product-topline"><span class="product-category">${esc(collection.category)}</span><span class="product-status">Explore</span></div>
+        <h3>${esc(collection.name)}</h3>
+        <div class="product-card-footer"><p class="product-price"><span>Made to order</span>Discover more</p><a class="ghost-button product-link" href="${collection.href}">Browse &rarr;</a></div>
+      </div>
+    </article>`).join("");
   }
 
   function esc(value) {
