@@ -42,7 +42,7 @@
   function bind() {
     const menuButton = document.querySelector(".menu-button");
     const nav = document.querySelector(".main-nav");
-    if (menuButton && nav) menuButton.addEventListener("click", () => nav.classList.toggle("open"));
+    bindMenu(menuButton, nav);
 
     el("cartPill")?.addEventListener("click", () => {
       const checkout = el("checkout");
@@ -78,6 +78,24 @@
     });
   }
 
+  function bindMenu(menuButton, nav) {
+    if (!menuButton || !nav) return;
+    const closeMenu = () => {
+      nav.classList.remove("open");
+      document.body.classList.remove("menu-open");
+      menuButton.setAttribute("aria-expanded", "false");
+      menuButton.setAttribute("aria-label", "Open menu");
+    };
+    menuButton.addEventListener("click", () => {
+      const open = nav.classList.toggle("open");
+      document.body.classList.toggle("menu-open", open);
+      menuButton.setAttribute("aria-expanded", String(open));
+      menuButton.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+    });
+    nav.addEventListener("click", (event) => { if (event.target.closest("a")) closeMenu(); });
+    document.addEventListener("keydown", (event) => { if (event.key === "Escape") closeMenu(); });
+  }
+
   async function request(path, options = {}) {
     const response = await fetch(path, { ...options, headers: { "Content-Type": "application/json", ...(options.headers || {}) } });
     const payload = await response.json().catch(() => ({}));
@@ -93,7 +111,29 @@
       hydrateCustomer();
       openDeepLink();
       await setupPaypal();
-    } catch (error) { toast(error.message, true); }
+    } catch (error) {
+      if (isLocalCatalogPreview()) {
+        state.bootstrap = { products: localPreviewProducts(), shop: { shippingOptions: [], paypalEnabled: false } };
+        state.products = state.bootstrap.products;
+        renderAll();
+        openDeepLink();
+        return;
+      }
+      toast(error.message, true);
+    }
+  }
+
+  function isLocalCatalogPreview() {
+    return Boolean(document.body.dataset.catalogScope) && ["localhost", "127.0.0.1"].includes(location.hostname);
+  }
+
+  function localPreviewProducts() {
+    return [
+      { id: "preview-clicker", name: "Infinity Fidget Clicker", category: "Toys & Fidgets", subcategory: "Clickers", description: "A satisfying little clicker made for hands that need something to do.", priceCents: 1495, priceLabel: "14.95", imageData: "/assets/kiavik-hero-fidgets-480.webp", colorOptions: ["Teal", "Orange", "Cream"], baseColorOptions: ["Teal", "Blue", "Black"], buttonColorOptions: ["Orange", "Cream", "White"], sizeOptions: ["1x1", "2x2", "2x3"], extraClickerPriceCents: 250, extraTextClickerPriceCents: 350, customTextEnabled: true },
+      { id: "preview-name-tag", name: "Personalised Name Tag", category: "Personalised Gifts", description: "A bright, useful name tag made for bags, keys and little gifts.", priceCents: 1695, priceLabel: "16.95", imageData: "/assets/products/name-tag.jpg", colorOptions: ["Teal", "Orange", "Pink", "White"], sizeOptions: ["Small", "Large"], textColorOptions: ["White", "Orange", "Black"], customTextEnabled: true },
+      { id: "preview-desk-organiser", name: "Desk Organiser", category: "Home & Decor", description: "A tidy, geometric home for pens and everyday desk tools.", priceCents: 2495, priceLabel: "24.95", imageData: "/assets/products/desk-organiser.jpg", colorOptions: ["Teal", "Black", "Cream"], sizeOptions: ["Standard"], customTextEnabled: false },
+      { id: "preview-octopus", name: "Pocket Octopus", category: "Toys & Fidgets", description: "A playful small print for desks, party bags and curious hands.", priceCents: 1495, priceLabel: "14.95", imageData: "/assets/products/octopus.jpg", colorOptions: ["Orange", "Teal", "Pink"], sizeOptions: ["Standard"], customTextEnabled: false },
+    ];
   }
 
   function renderAll() {
@@ -113,7 +153,10 @@
     if (!targets.length) return;
     const all = [{ slug: "all", label: "All Prints" }, ...storefrontCategories()];
     const counts = new Map(all.map((category) => [category.slug, countProductsForCategory(category)]));
-    const markup = all.map((category) => `<button type="button" class="category-link ${state.activeCategory === category.slug ? "active" : ""}" data-category="${esc(category.slug)}"><span>${esc(category.label)}</span><b>${counts.get(category.slug) || 0}</b></button>`).join("");
+    const markup = all.map((category) => {
+      const active = state.activeCategory === category.slug;
+      return `<button type="button" class="category-link ${active ? "active" : ""}" data-category="${esc(category.slug)}" aria-pressed="${active}"><span>${esc(category.label)}</span><b>${counts.get(category.slug) || 0}</b></button>`;
+    }).join("");
     targets.forEach((target) => { target.innerHTML = markup; });
     document.querySelectorAll("[data-category]").forEach((button) => button.addEventListener("click", () => {
       state.activeCategory = button.dataset.category;
@@ -163,7 +206,9 @@
     if (!buttons.length) return;
     buttons.forEach((button) => {
       const value = String(button.dataset.colorChip || "").trim().toLowerCase();
-      button.classList.toggle("is-active", value === state.activeColor);
+      const active = value === state.activeColor;
+      button.classList.toggle("is-active", active);
+      button.setAttribute("aria-pressed", String(active));
       button.onclick = () => {
         state.activeColor = value;
         const u = new URL(location.href);
@@ -220,7 +265,7 @@
         <div class="product-card-media catalog-media">
           <span class="product-badge ${badge === "Popular" ? "hot" : ""}">${badge}</span>
           ${images.length > 1 ? `<span class="product-photo-count">${images.length} photos</span>` : ""}
-          <button class="catalog-heart" type="button" aria-label="Save item">♡</button>
+          <span class="catalog-heart" aria-hidden="true">♡</span>
           ${media}
         </div>
         <div class="product-card-body catalog-body">
@@ -365,7 +410,7 @@
     }
     state.currentProductImageIndex = Math.max(0, Math.min(state.currentProductImageIndex, images.length - 1));
     const selectedImage = images[state.currentProductImageIndex];
-    target.innerHTML = `<div class="dialog-image-stage"><img src="${esc(selectedImage.src)}" alt="${esc(product.name)}"></div>${images.length > 1 ? `<div class="dialog-gallery-thumbs" aria-label="More product photos">${images.map((image, index) => `<button type="button" class="${index === state.currentProductImageIndex ? "active" : ""}" data-dialog-image="${index}" aria-label="View photo ${index + 1} of ${images.length}"><img src="${esc(image.src)}" alt=""></button>`).join("")}</div>` : ""}`;
+    target.innerHTML = `<div class="dialog-image-stage"><img src="${esc(selectedImage.src)}" alt="${esc(product.name)}"></div>${images.length > 1 ? `<div class="dialog-gallery-thumbs" aria-label="More product photos">${images.map((image, index) => `<button type="button" class="${index === state.currentProductImageIndex ? "active" : ""}" data-dialog-image="${index}" aria-label="View photo ${index + 1} of ${images.length}" aria-pressed="${index === state.currentProductImageIndex}"><img src="${esc(image.src)}" alt=""></button>`).join("")}</div>` : ""}`;
     target.querySelectorAll("[data-dialog-image]").forEach((button) => button.addEventListener("click", () => {
       state.currentProductImageIndex = Number(button.dataset.dialogImage || 0);
       renderDialogMedia(product);
@@ -402,7 +447,10 @@
       el("comingSoonNotice").classList.toggle("hidden", !comingSoon && !unavailable);
     }
     updateDialogQuantity();
-    el("productDialog")?.showModal();
+    const dialog = el("productDialog");
+    dialog?.showModal();
+    const dialogName = el("dialogName");
+    if (dialogName) { dialogName.tabIndex = -1; requestAnimationFrame(() => dialogName.focus()); }
     const u = new URL(location.href); u.searchParams.set("product", p.id); history.replaceState({}, "", u);
   }
 

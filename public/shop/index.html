@@ -9,53 +9,58 @@
   <link rel="icon" href="/assets/3dreimagined-logo.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/styles.css?v=20261021-1">
-  <script defer src="/app.js?v=20261020-1"></script>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css?v=20261021-2">
+  <script defer src="/app.js?v=20261021-2"></script>
 </head>
 <body class="customer-page page-shop page-retail" data-catalog-scope="shop">
   <div class="trustbar"><div class="shell trustbar-inner"><span>Melbourne-made</span><span>Australian owned</span><span>Made to order</span><span class="trust-right">Thoughtfully printed in Melbourne</span><a class="trust-email" href="/contact/">Need help?</a></div></div>
   <header class="site-header">
     <div class="shell header-inner">
       <a href="/" class="brand"><img src="/assets/3dreimagined-logo.svg" alt="3DReimagined"></a>
-      <button class="menu-button" aria-label="Open menu">Menu</button>
-      <nav class="main-nav" aria-label="Main navigation"><a href="/">Home</a><a class="active" href="/shop/">Shop</a><a href="/personalise/">Personalise</a><a href="/party-favours/">Party Favours</a><a href="/about/">About</a></nav>
+      <button class="menu-button" type="button" aria-label="Open menu" aria-controls="primary-navigation" aria-expanded="false">Menu</button>
+      <nav class="main-nav" id="primary-navigation" aria-label="Main navigation"><a href="/">Home</a><a class="active" aria-current="page" href="/shop/">Shop</a><a href="/personalise/">Personalise</a><a href="/party-favours/">Party Favours</a><a href="/about/">About</a></nav>
       <div class="header-actions">
-        <form class="search-form retail-search" data-search-form action="/shop/"><input type="search" name="q" placeholder="Search products..."><button type="submit" aria-label="Search products">Search</button></form>
+        <form class="search-form retail-search" data-search-form action="/shop/"><label class="sr-only" for="shopHeaderSearch">Search products</label><input id="shopHeaderSearch" type="search" name="q" placeholder="Search products..."><button type="submit" aria-label="Search products">Search</button></form>
         <a class="header-icon-link" href="/checkout/#account" aria-label="Account"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a4.2 4.2 0 1 0-4.2-4.2A4.2 4.2 0 0 0 12 12Zm0 2.1c-4.14 0-7.5 2.47-7.5 5.52V21h15v-1.38c0-3.05-3.36-5.52-7.5-5.52Z"></path></svg></a>
         <a class="header-icon-link cart-link" href="/checkout/" aria-label="Cart"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.2 6.3h13l-1.36 6.44a1 1 0 0 1-.98.79H9.37a1 1 0 0 1-.98-.8L6.3 4.5H3.5"></path><circle cx="10.2" cy="18.3" r="1.35"></circle><circle cx="17.3" cy="18.3" r="1.35"></circle></svg><b id="headerCartCount">0</b></a>
       </div>
     </div>
   </header>
 
-  <main>
-    <section class="page-hero simple-hero shop-hero-reference retail-page-hero">
-      <div class="shell shop-hero-shell"><div><p class="eyebrow">The 3DReimagined collection</p><h1>Shop all prints.</h1><p>Useful, giftable and made to order in Melbourne. Open a product to choose its available options.</p></div><svg class="simple-filament" viewBox="0 0 900 90" aria-hidden="true"><path d="M0 62 C260 32 500 22 690 48 C760 58 800 22 830 20 C860 18 842 76 900 66"></path></svg></div>
-    </section>
-
-    <section class="shell shop-layout shop-layout-reference retail-shop-layout" id="catalog">
-      <aside class="filters filters-reference">
-        <div class="filter-card"><h3>Categories</h3><div class="category-sidebar" id="categorySidebar"></div></div>
-        <div class="filter-card">
-          <h3>Filter by</h3>
-          <label class="range-label">Price<input id="priceRange" type="range" min="10" max="150" value="150"><span id="priceRangeValue">$10 to $150</span></label>
-          <div class="filter-group"><h4>Colour</h4><div class="colour-filter-row"><button type="button" class="colour-dot any is-active" data-color-chip="" aria-label="Any colour">All</button><button type="button" class="colour-dot teal" data-color-chip="teal" aria-label="Teal"></button><button type="button" class="colour-dot black" data-color-chip="black" aria-label="Black"></button><button type="button" class="colour-dot white" data-color-chip="white" aria-label="White"></button><button type="button" class="colour-dot cream" data-color-chip="cream" aria-label="Cream"></button><button type="button" class="colour-dot orange" data-color-chip="orange" aria-label="Orange"></button></div></div>
-        </div>
-        <div class="filter-card retail-side-note"><p class="eyebrow">Need a name or message?</p><h3>Make it personal.</h3><p>Items with custom options open in the Personalise flow, where colour, size and text choices stay clear.</p><a class="btn outline" href="/personalise/">Personalise a print →</a></div>
-      </aside>
-      <div class="shop-main-reference">
-        <div class="shop-toolbar shop-toolbar-reference"><div><p class="eyebrow">All products</p><p id="shopResultsText">Showing 0 of 0 products</p></div><div class="shop-toolbar-actions"><select id="shopSort" aria-label="Sort products"><option value="featured">Sort by: Featured</option><option value="price-asc">Price: Low to high</option><option value="price-desc">Price: High to low</option><option value="name-asc">Name: A to Z</option></select><a class="cart-pill" href="/checkout/">View cart (<span id="cartCount">0</span>)</a></div></div>
-        <div class="product-grid store-product-grid shop-products-reference" id="productsGrid"><div class="loading-card">Loading products...</div></div>
+  <main class="shop-catalogue-page">
+    <section class="catalogue-hero" aria-labelledby="shop-heading">
+      <div class="shell catalogue-hero-inner">
+        <div class="catalogue-hero-copy"><p class="eyebrow">The 3DReimagined collection</p><h1 id="shop-heading">Shop all prints.</h1><p>Practical, playful and personal pieces printed to order in Melbourne. Find the right starting point, then choose the options that make it yours.</p></div>
+        <form class="catalogue-search-form" data-search-form action="/shop/" role="search"><label for="catalogueSearch">Search the collection</label><div><input id="catalogueSearch" type="search" name="q" placeholder="Search products, gifts and ideas"><button type="submit">Search <span aria-hidden="true">→</span></button></div><small>Try “clicker”, “name tag” or “desk”.</small></form>
       </div>
+      <div class="shell catalogue-hero-notes" aria-label="Shopping benefits"><span>Australian made</span><span>Custom options on selected prints</span><span>Pickup or delivery</span></div>
     </section>
 
-    <section class="shell shop-benefits shop-benefits-reference"><div class="benefit-row"><span><b>Made for real life</b>Useful prints for homes, desks and gifting</span><span><b>Make it yours</b>Colours, sizes and text where available</span><span><b>Made to order</b>We print your piece after you choose it</span><span><b>Simple buying</b>Delivery or local pickup</span></div></section>
+    <section class="shell catalogue-browser" id="catalog" aria-labelledby="catalogue-heading">
+      <div class="catalogue-browser-heading"><div><p class="eyebrow">Browse the collection</p><h2 id="catalogue-heading">Find your next useful thing.</h2></div><a href="/personalise/">Looking for a name or message? <span aria-hidden="true">→</span></a></div>
+      <div class="catalogue-chip-row" id="categoryChips" aria-label="Filter products by category"></div>
+      <div class="catalogue-tool-row">
+        <details class="catalogue-filter-panel">
+          <summary>Filter &amp; refine <span aria-hidden="true">+</span></summary>
+          <div class="catalogue-filter-content">
+            <label class="range-label">Price<input id="priceRange" type="range" min="10" max="150" value="150"><span id="priceRangeValue">$10 to $150</span></label>
+            <fieldset class="catalogue-colour-filter"><legend>Colour</legend><div class="colour-filter-row"><button type="button" class="colour-dot any is-active" data-color-chip="" aria-label="Any colour">All</button><button type="button" class="colour-dot teal" data-color-chip="teal" aria-label="Teal"></button><button type="button" class="colour-dot black" data-color-chip="black" aria-label="Black"></button><button type="button" class="colour-dot white" data-color-chip="white" aria-label="White"></button><button type="button" class="colour-dot cream" data-color-chip="cream" aria-label="Cream"></button><button type="button" class="colour-dot orange" data-color-chip="orange" aria-label="Orange"></button></div></fieldset>
+          </div>
+        </details>
+        <p id="shopResultsText" role="status" aria-live="polite">Showing 0 of 0 products</p>
+        <div class="catalogue-tool-actions"><label class="sr-only" for="shopSort">Sort products</label><select id="shopSort"><option value="featured">Featured</option><option value="price-asc">Price: Low to high</option><option value="price-desc">Price: High to low</option><option value="name-asc">Name: A to Z</option></select><a class="cart-pill" href="/checkout/">Cart <span id="cartCount">0</span></a></div>
+      </div>
+      <div class="product-grid store-product-grid shop-products-reference" id="productsGrid" aria-live="polite"><div class="loading-card">Loading products...</div></div>
+    </section>
+
+    <section class="shell catalogue-confidence"><div><b>Made for real life</b><span>Useful pieces for desks, homes and gifting.</span></div><div><b>Choose your details</b><span>Colours, sizes and custom text where available.</span></div><div><b>Made to order</b><span>We print your piece after you choose it.</span></div><div><b>Buy simply</b><span>Use delivery or local pickup at checkout.</span></div></section>
   </main>
 
-  <div class="status-toast hidden" id="statusToast"></div>
-  <dialog class="product-dialog" id="productDialog">
+  <div class="status-toast hidden" id="statusToast" role="status" aria-live="polite"></div>
+  <dialog class="product-dialog" id="productDialog" aria-labelledby="dialogName">
     <div class="dialog-shell">
-      <button class="dialog-close" id="closeProductDialog" type="button">x</button>
+      <button class="dialog-close" id="closeProductDialog" type="button" aria-label="Close product details">x</button>
       <div class="dialog-media" id="dialogMedia"></div>
       <div class="dialog-content">
         <p class="eyebrow" id="dialogCategory"></p><h3 id="dialogName"></h3><p class="product-price" id="dialogPrice"></p><p class="dialog-description" id="dialogDescription"></p>

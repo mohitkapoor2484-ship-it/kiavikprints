@@ -9,10 +9,10 @@
   <link rel="icon" href="/assets/3dreimagined-logo.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="preload" as="image" type="image/avif" href="/assets/kiavik-hero-filament-1200.avif" imagesrcset="/assets/kiavik-hero-filament-768.avif 768w, /assets/kiavik-hero-filament-1200.avif 1200w, /assets/kiavik-hero-filament-1600.avif 1600w" imagesizes="(max-width: 900px) 105vw, 62vw" fetchpriority="high">
-  <link rel="stylesheet" href="/styles.css?v=20261021-1">
-  <script defer src="/brand.js?v=20261021-1"></script>
+  <link rel="stylesheet" href="/styles.css?v=20261021-2">
+  <script defer src="/brand.js?v=20261021-2"></script>
 </head>
 <body class="customer-page page-marketplace page-home-short">
   <div class="trustbar">
@@ -28,9 +28,9 @@
   <header class="site-header">
     <div class="shell header-inner">
       <a href="/" class="brand"><img src="/assets/3dreimagined-logo.svg" alt="3DReimagined"></a>
-      <button class="menu-button" aria-label="Open menu">Menu</button>
-      <nav class="main-nav" aria-label="Main navigation">
-        <a class="active" href="/">Home</a>
+      <button class="menu-button" type="button" aria-label="Open menu" aria-controls="primary-navigation" aria-expanded="false">Menu</button>
+      <nav class="main-nav" id="primary-navigation" aria-label="Main navigation">
+        <a class="active" aria-current="page" href="/">Home</a>
         <a href="/shop/">Shop</a>
         <a href="/personalise/">Personalise</a>
         <a href="/party-favours/">Party Favours</a>

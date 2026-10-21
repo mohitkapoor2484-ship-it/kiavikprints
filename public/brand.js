@@ -4,7 +4,19 @@
   document.addEventListener("DOMContentLoaded", async () => {
     const menuButton = $(".menu-button");
     const nav = $(".main-nav");
-    if (menuButton && nav) menuButton.onclick = () => nav.classList.toggle("open");
+    bindMenu(menuButton, nav);
+
+    document.querySelectorAll("[data-select-party-pack]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const input = Array.from(document.querySelectorAll('input[name="favour_type"]')).find((item) => item.value === button.dataset.selectPartyPack);
+        if (!input) return;
+        input.checked = true;
+        input.dispatchEvent(new Event("change", { bubbles: true }));
+        document.querySelectorAll("[data-select-party-pack]").forEach((choice) => choice.setAttribute("aria-pressed", String(choice === button)));
+        document.getElementById("party-request")?.scrollIntoView({ behavior: "smooth", block: "start" });
+        requestAnimationFrame(() => input.focus({ preventScroll: true }));
+      });
+    });
 
     const count = JSON.parse(localStorage.getItem("kiavik_cart") || "[]").reduce((sum, item) => sum + (item.quantity || 1), 0);
     const headerCart = $("#headerCartCount");
@@ -76,5 +88,23 @@
       "\"": "&quot;",
       "'": "&#039;",
     }[char]));
+  }
+
+  function bindMenu(menuButton, nav) {
+    if (!menuButton || !nav) return;
+    const closeMenu = () => {
+      nav.classList.remove("open");
+      document.body.classList.remove("menu-open");
+      menuButton.setAttribute("aria-expanded", "false");
+      menuButton.setAttribute("aria-label", "Open menu");
+    };
+    menuButton.addEventListener("click", () => {
+      const open = nav.classList.toggle("open");
+      document.body.classList.toggle("menu-open", open);
+      menuButton.setAttribute("aria-expanded", String(open));
+      menuButton.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+    });
+    nav.addEventListener("click", (event) => { if (event.target.closest("a")) closeMenu(); });
+    document.addEventListener("keydown", (event) => { if (event.key === "Escape") closeMenu(); });
   }
 })();
